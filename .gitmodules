@@ -1,3 +1,0 @@
-[submodule "lib/account_gt"]
-	path = lib/account_gt
-	url = git@github.com:jeffrepo/account_gt.git
