@@ -14,9 +14,17 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base'],
+    'depends': ['account','base'],
 
     'data': [
+        'views/report.xml',
         'views/res_partner_views.xml',
+        'report/reporte_libro_compras_views.xml',
+        'report/reporte_libro_bancos_views.xml',
+        'report/reporte_libro_conciliacion_bancaria_views.xml',
+        'wizard/libro_compras_wizard_views.xml',
+        'wizard/libro_bancos_wizard_views.xml',
+        'wizard/libro_conciliacion_bancaria_wizard_views.xml',
+        'wizard/conciliacion_bancaria_wizard_views.xml',
     ],
 }
