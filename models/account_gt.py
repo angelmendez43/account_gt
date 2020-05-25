@@ -126,7 +126,7 @@ class Liquidacion(models.Model):
                     l.remove_move_reconcile()
             dato.move_id.button_draft()
             dato.move_id.button_cancel()
-            dato.move_id.unlink()
+            # dato.move_id.unlink()
 
             if dato.move_id:
                 for linea in dato.factura_ids:
