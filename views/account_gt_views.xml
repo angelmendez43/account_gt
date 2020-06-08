@@ -111,8 +111,7 @@
             name="Liquidaciones"
             action="action_account_gt_liquidacion"
             parent="account.menu_finance_payables"
-            sequence="50"
-            groups="hr.group_hr_manager"/>
+            sequence="50"/>
 
     </data>
 </odoo>
