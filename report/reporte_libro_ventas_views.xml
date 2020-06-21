@@ -2,13 +2,13 @@
 <odoo>
     <data>
 
-        <template id="reporte_libro_compras">
+        <template id="reporte_libro_ventas">
             <t t-call="web.html_container">
 
                     <t t-call="web.external_layout">
                         <div class="page">
                             <center>
-                                <h4>Libro de compras y servicios</h4> <br/><br/><br/>
+                                <h4>Libro de ventas y servicios</h4> <br/><br/><br/>
                             </center>
                             <table class="table table-sm o_main_table">
                                 <tbody>
@@ -29,41 +29,42 @@
                                     </tr>
                                 </tbody>
                             </table>
+
                             <table class="table table-sm o_main_table">
                                 <thead>
                                     <tr>
                                         <th>Fecha</th>
                                         <th>Documento</th>
                                         <th>NIT</th>
-                                        <th>Proveedor</th>
-                                        <th class="text-right">Compra</th>
+                                        <th>Cliente</th>
+                                        <th class="text-right">Ventas</th>
                                         <th class="text-right">Servicios</th>
-                                        <th class="text-right">Importacion</th>
+                                        <th class="text-right">Exportacion</th>
                                         <th class="text-right">IVA</th>
                                         <th class="text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr t-foreach="_get_compras(data)['compras_lista']" t-as="linea">
+                                    <tr t-foreach="_get_ventas(data)['ventas_lista']" t-as="linea">
                                         <td><span t-esc="linea['fecha']" t-options='{"widget": "date"}'/></td>
                                         <td><span t-esc="linea['documento']"/></td>
                                         <td><span t-esc="linea['nit']"/></td>
-                                        <td><span t-esc="linea['proveedor']"/></td>
-                                        <td class="text-right"><span t-esc="linea['compra']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
+                                        <td><span t-esc="linea['cliente']"/></td>
+                                        <td class="text-right"><span t-esc="linea['venta']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
                                         <td class="text-right"><span t-esc="linea['servicio']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
-                                        <td class="text-right"><span t-esc="linea['importacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="linea['exportacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
                                         <td class="text-right"><span t-esc="linea['iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
                                         <td class="text-right"><span t-esc="linea['total']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
                                     </tr>
-                                    <t t-set="t" t-value="_get_compras(data)['total']"/>
+                                    <t t-set="t" t-value="_get_ventas(data)['total']"/>
                                     <tr>
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td class="text-right"><strong><span t-esc="t['compra']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
+                                        <td class="text-right"><strong><span t-esc="t['venta']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
                                         <td class="text-right"><strong><span t-esc="t['servicio']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
-                                        <td class="text-right"><strong><span t-esc="t['importacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
+                                        <td class="text-right"><strong><span t-esc="t['exportacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
                                         <td class="text-right"><strong><span t-esc="t['iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
                                         <td class="text-right"><strong><span t-esc="t['total']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
                                     </tr>
@@ -76,7 +77,7 @@
                                         <td></td>
                                         <td></td>
                                         <td class="text-right"><strong>Documentos operados:</strong></td>
-                                        <td class="text-right"><strong><span t-esc="_get_compras(data)['documentos_operados']"/></strong></td>
+                                        <td class="text-right"><strong><span t-esc="_get_ventas(data)['documentos_operados']"/></strong></td>
                                     </tr>
                                 </tbody>
                             </table>

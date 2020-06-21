@@ -9,6 +9,12 @@
             name="account_gt.reporte_libro_compras"
             file="account_gt.reporte_libro_compras"/>
 
+            <report id="action_libro_ventas"
+                model="account_gt.libro_ventas.wizard"
+                string="Libro de ventas"
+                report_type="qweb-pdf"
+                name="account_gt.reporte_libro_ventas"
+                file="account_gt.reporte_libro_ventas"/>
 
         <report id="action_libro_bancos"
             model="account_gt.libro_bancos.wizard"
