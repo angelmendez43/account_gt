@@ -55,7 +55,7 @@
                                 <field name="factura_ids">
                                     <tree editable="bottom">
                                         <field name="factura_id"/>
-                                        <field name="total"/>
+                                        <field name="total" sum="total"/>
                                     </tree>
                                 </field>
                             </page>

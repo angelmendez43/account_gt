@@ -41,11 +41,14 @@ class Liquidacion(models.Model):
 
     def conciliar_liquidacion(self):
         move = False
+        moneda_factura = False
+        moneda_pago= False
         for dato in self:
             lineas = []
 
             total = 0
             if dato.factura_ids:
+                moneda_factura = dato.factura_ids[0].currency_id.id
                 for linea in dato.factura_ids:
                     # logging.warn(f.number)
                     # logging.warn(f.amount_total)
@@ -61,6 +64,7 @@ class Liquidacion(models.Model):
             logging.warn(lineas)
 
             if dato.pago_ids:
+                moneda_pago = dato.pago_ids[0].currency_id.id
                 for linea in dato.pago_ids:
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
@@ -76,7 +80,7 @@ class Liquidacion(models.Model):
             logging.warn('PASA PAGO')
             logging.warn(lineas)
 
-            if round(total) != 0:
+            if moneda_factura == moneda_pago and round(total) != 0:
                 break
 
             lineas_conciliares = []
@@ -92,6 +96,14 @@ class Liquidacion(models.Model):
                     'date_maturity': dato.fecha,
                 }))
 
+            if total != 0 and moneda_factura != moneda_pago:
+                nuevas_lineas.append((0, 0, {
+                    'name': 'Diferencia de ' + dato.name,
+                    'debit': -1 * total if total < 0 else 0,
+                    'credit': total if total > 0 else 0,
+                    'account_id': dato.cuenta_id.id,
+                    'date_maturity': dato.fecha,
+                }))
 
             move = self.env['account.move'].create({
                 'line_ids': nuevas_lineas,
@@ -157,5 +169,5 @@ class LiquidacionPago(models.Model):
 
     liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion')
     pago_id = fields.Many2one('account.payment','Pago')
-    currency_id = fields.Many2one('res.currency',string='moneda', related='liquidacion_id.currency_id')
+    currency_id = fields.Many2one('res.currency',string='moneda', related='pago_id.currency_id')
     total = fields.Monetary('Total',related='pago_id.amount')
