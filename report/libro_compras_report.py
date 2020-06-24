@@ -376,7 +376,9 @@ class LibroCompras(models.AbstractModel):
                     #                 dic['servicio'] +=  linea.price_subtotal
 
                     total['compra'] += dic['compra']
+                    total['compra_exento'] += dic['compra_exento']
                     total['servicio'] += dic['servicio']
+                    total['servicio_exento'] += dic['servicio_exento']
                     total['importacion'] += dic['importacion']
                     total['iva'] += dic['iva']
                     total['total'] += dic['total']
