@@ -178,6 +178,8 @@ class LibroCompras(models.AbstractModel):
                                     dic['compra'] = monto_convertir
                                 if compra.tipo_factura == 'servicio':
                                     dic['servicio'] = monto_convertir
+                                if compra.tipo_factura == 'importacion':
+                                    dic['importacion'] = monto_convertir
 
 
                         else:
@@ -194,8 +196,13 @@ class LibroCompras(models.AbstractModel):
                                     dic['compra_exento'] = monto_convertir
                                 if compra.tipo_factura == 'servicio':
                                     dic['servicio_exento'] = monto_convertir
+
+                                if compra.tipo_factura == 'importacion':
+                                    dic['importacion'] = monto_convertir
+
                         total['servicio_exento'] += dic['servicio_exento']
                         total['compra_exento'] += dic['compra_exento']
+                        total['importacion'] += dic['importacion']
 
                     else:
                         if compra.tipo_factura == 'varios':
