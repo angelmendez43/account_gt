@@ -95,6 +95,41 @@
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <t t-if="len(_get_compras(data)['gastos_no']) > 0">
+                                <p><strong>Gastos no deducibles</strong></p>
+                                <br/>
+                                <table class="table table-sm o_main_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Documento</th>
+                                            <th>NIT</th>
+                                            <th>Proveedor</th>
+                                            <th class="text-right">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="_get_compras(data)['gastos_no']" t-as="linea">
+                                            <td><span t-esc="linea['fecha']" t-options='{"widget": "date"}'/></td>
+                                            <td><span t-esc="linea['documento']"/></td>
+                                            <td><span t-esc="linea['nit']"/></td>
+                                            <td><span t-esc="linea['proveedor']"/></td>
+                                            <td class="text-right"><span t-esc="linea['total']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><strong>Total gastos no deducibles </strong></td>
+                                            <td class="text-right"><strong><span t-esc="_get_compras(data)['total_gastos_no']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </t>
+
                             <!-- <h2 t-field="doc.name"/>
                             <p>From <span t-field="doc.start_date"/> to <span t-field="doc.end_date"/></p>
                             <h3>Attendees:</h3>
