@@ -186,7 +186,7 @@ class LibroCompras(models.AbstractModel):
                             impuesto_iva = False
                             impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
                             if compra.currency_id.id != compra.company_id.currency_id.id:
-                                if (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name)):
+                                if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                     if len(linea.tax_ids) > 0:
                                         monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
@@ -250,7 +250,8 @@ class LibroCompras(models.AbstractModel):
                                             dic['pequenio'] += monto_convertir
 
                             else:
-                                if (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name)):
+                                logging.warn(linea.product_id.name)
+                                if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                     if len(linea.tax_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
