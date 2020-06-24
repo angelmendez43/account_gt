@@ -141,7 +141,7 @@ class LibroCompras(models.AbstractModel):
     def _get_compras(self,datos):
         compras_lista = []
         compra_ids = self.env['account.move'].search([('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('type','in',['in_invoice','in_refund'])])
-        total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'iva':0,'total':0}
+        total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0}
         documentos_operados = 0
         if compra_ids:
             for compra in compra_ids:
@@ -160,6 +160,7 @@ class LibroCompras(models.AbstractModel):
                     'servicio': 0,
                     'servicio_exento': 0,
                     'importacion': 0,
+                    'pequenio': 0,
                     'iva': 0,
                     'total': 0
                 }
@@ -206,6 +207,15 @@ class LibroCompras(models.AbstractModel):
                                     dic['compra'] += monto_convertir
                                 if linea.product_id.type != 'product':
                                     dic['servicio'] +=  monto_convertir
+
+
+
+                            if compra.partner_id.pequenio_contribuyente:
+                                dic['compra'] = 0
+                                dic['servicio'] = 0
+                                dic['importacion'] = 0
+                                dic['pequenio'] += monto_convertir
+
                             # dic['total']
                         else:
                             monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
@@ -224,6 +234,16 @@ class LibroCompras(models.AbstractModel):
                                 if linea.product_id.type != 'product':
                                     dic['servicio_exento'] +=  monto_convertir
 
+
+
+                            if compra.partner_id.pequenio_contribuyente:
+                                dic['compra'] = 0
+                                dic['servicio'] = 0
+                                dic['importacion'] = 0
+                                dic['compra_exento'] = 0
+                                dic['servicio_exento'] = 0
+                                dic['pequenio'] += monto_convertir
+
                     else:
                         if len(linea.tax_ids) > 0:
                             # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
@@ -237,9 +257,9 @@ class LibroCompras(models.AbstractModel):
 
                             if compra.tipo_factura == 'varios':
                                 if linea.product_id.type == 'product':
-                                    dic['compra_exento'] += linea.price_subtotal
+                                    dic['compra'] += linea.price_subtotal
                                 if linea.product_id.type != 'product':
-                                    dic['servicio_exento'] +=  linea.price_subtotal
+                                    dic['servicio'] +=  linea.price_subtotal
                             elif compra.tipo_factura == 'importacion':
                                 dic['importacion'] += linea.price_subtotal
                             else:
@@ -247,21 +267,34 @@ class LibroCompras(models.AbstractModel):
                                     dic['compra'] += linea.price_subtotal
                                 if linea.product_id.type != 'product':
                                     dic['servicio'] +=  linea.price_subtotal
-                        else:
-                            if compra.tipo_factura == 'varios':
-                                if linea.product_id.type == 'product':
-                                    dic['compra'] += linea.price_total
-                                if linea.product_id.type != 'product':
-                                    dic['servicio'] +=  linea.price_total
-                            elif compra.tipo_factura == 'importacion':
-                                dic['importacion'] += linea.price_total
 
-                            else:
-                                if linea.product_id.type == 'product':
-                                    dic['compra_exento'] += linea.price_total
-                                if linea.product_id.type != 'product':
-                                    dic['servicio_exento'] +=  linea.price_total
-                    dic['total'] += dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva']
+
+                            if compra.partner_id.pequenio_contribuyente:
+                                dic['compra'] = 0
+                                dic['servicio'] = 0
+                                dic['importacion'] = 0
+                                dic['compra_exento'] = 0
+                                dic['servicio_exento'] = 0
+                                dic['pequenio'] += monto_convertir
+
+
+                        else:
+                            if linea.product_id.type == 'product':
+                                dic['compra_exento'] += linea.price_total
+                            if linea.product_id.type != 'product':
+                                dic['servicio_exento'] +=  linea.price_total
+
+
+                            if compra.partner_id.pequenio_contribuyente:
+                                dic['compra'] = 0
+                                dic['servicio'] = 0
+                                dic['importacion'] = 0
+                                dic['compra_exento'] = 0
+                                dic['servicio_exento'] = 0
+                                dic['pequenio'] += monto_convertir
+
+
+                    dic['total'] += dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
                                 # if i['id'] == datos['impuesto_id'][0]:
                                 #     linea['iva'] += i['amount']
                                 #     totales[tipo_linea]['iva'] += i['amount']
@@ -380,6 +413,7 @@ class LibroCompras(models.AbstractModel):
                     total['servicio'] += dic['servicio']
                     total['servicio_exento'] += dic['servicio_exento']
                     total['importacion'] += dic['importacion']
+                    total['pequenio'] += dic['pequenio']
                     total['iva'] += dic['iva']
                     total['total'] += dic['total']
                 compras_lista.append(dic)
