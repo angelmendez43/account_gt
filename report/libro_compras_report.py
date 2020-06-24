@@ -141,7 +141,7 @@ class LibroCompras(models.AbstractModel):
     def _get_compras(self,datos):
         compras_lista = []
         gastos_no_lista = []
-        logging.warn(self.env)
+        logging.warn(self.env.company)
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('type','in',['in_invoice','in_refund'])])
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0}
         total_gastos_no = 0
