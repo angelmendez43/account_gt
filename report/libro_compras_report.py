@@ -149,7 +149,7 @@ class LibroCompras(models.AbstractModel):
         if compra_ids:
 
                 for compra in compra_ids:
-                    if 'RECIBOS' not in compra.journal_id.name:
+                    if 'RECIBOS' not in compra.journal_id.name or 'Recibos' not in compra.journal_id.name:
                         # logging.warn('TIPO CAMBIO')
                         # logging.warn(self._get_conversion(compra))
 
