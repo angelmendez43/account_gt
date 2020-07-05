@@ -36,7 +36,7 @@
                                         <th>Documento</th>
                                         <th>NIT</th>
                                         <th>Proveedor</th>
-                                        <th class="text-right">Compra</th>
+                                        <th class="text-right">Compras</th>
                                         <th class="text-right">Compras exentos</th>
                                         <th class="text-right">Servicios</th>
                                         <th class="text-right">Servicios exentos</th>
