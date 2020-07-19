@@ -144,7 +144,7 @@ class LibroComprasWizard(models.TransientModel):
     def test(self):
         liquidacion_ids = self.env['account_gt.liquidacion'].search([('company_id','=',self.env.company.id),('name','=','Nuevo')], order="id asc")
         if liquidacion_ids:
-            for l in liquidacion:
+            for l in liquidacion_ids:
                 logging.warn(l.id)
         # for l in factura.invoice_line_ids:
         #     l.create_analytic_lines()
