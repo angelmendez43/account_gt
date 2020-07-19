@@ -15,7 +15,7 @@ class Liquidacion(models.Model):
     fecha = fields.Date('Fecha',tracking=True)
     factura_ids = fields.One2many('account_gt.liquidacion_factura','liquidacion_id','Facturas')
     pago_ids = fields.One2many('account_gt.liquidacion_pago','liquidacion_id','Pagos')
-    company_id = fields.Many2one('res.company', 'Company', required=True, default=lambda self: self.env.company.id)
+    company_id = fields.Many2one('res.company', 'Company', required=True, default=lambda self: self.env.company)
     currency_id = fields.Many2one('res.currency','Moneda',default=lambda self: self.env.company.currency_id.id)
     diario_id = fields.Many2one('account.journal', 'Diario', required=True,tracking=True)
     cuenta_id = fields.Many2one('account.account', 'Cuenta de desajuste',tracking=True)
@@ -160,7 +160,7 @@ class LiquidacionFactura(models.Model):
 
     liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion')
     factura_id = fields.Many2one('account.move','Factura')
-    currency_id = fields.Many2one('res.currency',string='moneda', related='liquidacion_id.currency_id')
+    currency_id = fields.Many2one('res.currency',string='moneda', related='factura_id.currency_id')
     total = fields.Monetary('Total',related='factura_id.amount_total')
 
 class LiquidacionPago(models.Model):

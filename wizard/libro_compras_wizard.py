@@ -139,3 +139,12 @@ class LibroComprasWizard(models.TransientModel):
             'type': 'ir.actions.act_window',
             'target': 'new',
         }
+
+
+    def test(self):
+        factura = self.env['account.move'].search([('id','=',27)])
+        for l in factura.invoice_line_ids:
+            l.create_analytic_lines()
+        # factura.button_draft()
+        # factura.action_post()
+        # factura._compute_payments_widget_to_reconcile_info()
