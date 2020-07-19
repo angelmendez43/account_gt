@@ -142,9 +142,12 @@ class LibroComprasWizard(models.TransientModel):
 
 
     def test(self):
-        factura = self.env['account.move'].search([('id','=',27)])
-        for l in factura.invoice_line_ids:
-            l.create_analytic_lines()
+        liquidacion_ids = self.env['account_gt.liquidacion'].search([('company_id','=',self.env.company.id),('name','=','Nuevo')], order="id asc")
+        if liquidacion_ids:
+            for l in liquidacion:
+                logging.warn(l.id)
+        # for l in factura.invoice_line_ids:
+        #     l.create_analytic_lines()
         # factura.button_draft()
         # factura.action_post()
         # factura._compute_payments_widget_to_reconcile_info()
