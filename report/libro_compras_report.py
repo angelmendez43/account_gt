@@ -302,7 +302,7 @@ class LibroCompras(models.AbstractModel):
                                             dic['pequenio'] += linea.price_total
 
 
-                                dic['total'] += dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+                                dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
                                         # if i['id'] == datos['impuesto_id'][0]:
                                         #     linea['iva'] += i['amount']
                                         #     totales[tipo_linea]['iva'] += i['amount']
