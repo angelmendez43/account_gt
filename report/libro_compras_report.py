@@ -424,16 +424,48 @@ class LibroCompras(models.AbstractModel):
                             # total['pequenio'] += dic['pequenio']
                             # total['iva'] += dic['iva']
                             # total['total'] += dic['total']
-
                         dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
-                        total['compra'] += dic['compra']
-                        total['compra_exento'] += dic['compra_exento']
-                        total['servicio'] += dic['servicio']
-                        total['servicio_exento'] += dic['servicio_exento']
-                        total['importacion'] += dic['importacion']
-                        total['pequenio'] += dic['pequenio']
-                        total['iva'] += dic['iva']
-                        total['total'] += dic['total']
+
+                        if compra.type in ['in_refund']:
+                            # dic['total'] = dic['compra'] - dic['servicio'] - dic['compra_exento'] - dic['servicio_exento'] - dic['importacion'] - dic['iva'] - dic['pequenio']
+
+                            dic['compra']  = dic['compra'] * -1
+                            dic['compra_exento'] = dic['compra_exento'] * -1
+                            dic['servicio'] =  dic['servicio'] * -1
+                            dic['servicio_exento'] = dic['servicio_exento'] * -1
+                            dic['importacion'] = dic['importacion'] * -1
+                            dic['pequenio'] = dic['pequenio'] * -1
+                            dic['iva'] = dic['iva'] * -1
+                            dic['total'] = dic['total'] * -1
+                            # total['compra'] -= dic['compra']
+                            # total['compra_exento'] -= dic['compra_exento']
+                            # total['servicio'] -= dic['servicio']
+                            # total['servicio_exento'] -= dic['servicio_exento']
+                            # total['importacion'] -= dic['importacion']
+                            # total['pequenio'] -= dic['pequenio']
+                            # total['iva'] -= dic['iva']
+                            # total['total'] -= dic['total']
+
+
+                            # total['compra'] += dic['compra']
+                            # total['compra_exento'] += dic['compra_exento']
+                            # total['servicio'] += dic['servicio']
+                            # total['servicio_exento'] += dic['servicio_exento']
+                            # total['importacion'] += dic['importacion']
+                            # total['pequenio'] += dic['pequenio']
+                            # total['iva'] += dic['iva']
+                            # total['total'] += dic['total']
+                        else:
+                            # dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+
+                            total['compra'] += dic['compra']
+                            total['compra_exento'] += dic['compra_exento']
+                            total['servicio'] += dic['servicio']
+                            total['servicio_exento'] += dic['servicio_exento']
+                            total['importacion'] += dic['importacion']
+                            total['pequenio'] += dic['pequenio']
+                            total['iva'] += dic['iva']
+                            total['total'] += dic['total']
                         compras_lista.append(dic)
                     else:
                         # GASTOS NO DEDUCIBLES
