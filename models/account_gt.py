@@ -48,7 +48,7 @@ class Liquidacion(models.Model):
 
             total = 0
             if dato.factura_ids:
-                moneda_factura = dato.factura_ids[0].currency_id.id
+                moneda_factura = dato.factura_ids[0].currency_id
                 for linea in dato.factura_ids:
                     # logging.warn(f.number)
                     # logging.warn(f.amount_total)
@@ -64,7 +64,7 @@ class Liquidacion(models.Model):
             logging.warn(lineas)
 
             if dato.pago_ids:
-                moneda_pago = dato.pago_ids[0].currency_id.id
+                moneda_pago = dato.pago_ids[0].currency_id
                 for linea in dato.pago_ids:
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
@@ -80,7 +80,9 @@ class Liquidacion(models.Model):
             logging.warn('PASA PAGO')
             logging.warn(lineas)
 
-            if moneda_factura == moneda_pago and round(total) != 0:
+            if (moneda_pago.name=="GTQ" and moneda_factura.name=="GTQ") and moneda_factura.id == moneda_pago.id and round(total) != 0:
+                logging.warn('TOTAL')
+                logging.warn(total)
                 break
 
             lineas_conciliares = []
