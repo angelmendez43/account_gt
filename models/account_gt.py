@@ -98,7 +98,17 @@ class Liquidacion(models.Model):
                     'date_maturity': dato.fecha,
                 }))
 
-            if total != 0 and moneda_factura != moneda_pago:
+            if total != 0 and moneda_factura.id != moneda_pago.id:
+                nuevas_lineas.append((0, 0, {
+                    'name': 'Diferencia de ' + dato.name,
+                    'debit': -1 * total if total < 0 else 0,
+                    'credit': total if total > 0 else 0,
+                    'account_id': dato.cuenta_id.id,
+                    'date_maturity': dato.fecha,
+                }))
+
+            if total != 0 and moneda_factura.name== 'USD' and moneda_pago.name=='USD':
+                logging.warn('DOLAR')
                 nuevas_lineas.append((0, 0, {
                     'name': 'Diferencia de ' + dato.name,
                     'debit': -1 * total if total < 0 else 0,
