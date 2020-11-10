@@ -141,18 +141,18 @@ class LibroComprasWizard(models.TransientModel):
         }
 
 
-    def test(self):
-        liquidacion_ids = self.env['account_gt.liquidacion'].search([('company_id','=',self.env.company.id),('name','=','Nuevo')], order="id asc")
-        if liquidacion_ids:
-            contador = 1
-            for l in liquidacion_ids:
-                logging.warn(l.id)
-                if contador < 10:
-                    l.write({'name': 'Liquidacion0000'+str(contador)})
-                    contador += 1
-                else:
-                    l.write({'name': 'Liquidacion000'+str(contador)})
-                    contador += 1
+    # def test(self):
+    #     liquidacion_ids = self.env['account_gt.liquidacion'].search([('company_id','=',self.env.company.id),('name','=','Nuevo')], order="id asc")
+    #     if liquidacion_ids:
+    #         contador = 1
+    #         for l in liquidacion_ids:
+    #             logging.warn(l.id)
+    #             if contador < 10:
+    #                 l.write({'name': 'Liquidacion0000'+str(contador)})
+    #                 contador += 1
+    #             else:
+    #                 l.write({'name': 'Liquidacion000'+str(contador)})
+    #                 contador += 1
         # for l in factura.invoice_line_ids:
         #     l.create_analytic_lines()
         # factura.button_draft()

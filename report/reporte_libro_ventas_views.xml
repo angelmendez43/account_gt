@@ -111,13 +111,12 @@
                                         <th>Fecha</th>
                                         <th>Documento</th>
                                         <th>NIT</th>
-                                        <th>Proveedor</th>
+                                        <th>Cliente</th>
                                         <th class="text-right">Bien</th>
                                         <th class="text-right">Ventas exentas</th>
                                         <th class="text-right">Servicios</th>
                                         <th class="text-right">Servicios exentos</th>
                                         <th class="text-right">Exportacion</th>
-                                        <th class="text-right">Pequeño contribuyente</th>
                                         <th class="text-right">IVA</th>
                                         <th class="text-right">Bruto</th>
                                         <th class="text-right">Reten IVA</th>
@@ -139,7 +138,6 @@
                                         <td class="text-right"><span t-esc="linea['servicio_exento']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
 
                                         <td class="text-right"><span t-esc="linea['importacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
-                                        <td class="text-right"><span t-esc="linea['pequenio']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
 
                                         <td class="text-right"><span t-esc="linea['iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
                                         <!-- <td class="text-right"><span t-esc="linea['bruto']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td> -->
@@ -165,7 +163,6 @@
                                         <td class="text-right"><strong><span t-esc="t['servicio_exento']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
 
                                         <td class="text-right"><strong><span t-esc="t['importacion']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
-                                        <td class="text-right"><strong><span t-esc="t['pequenio']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
 
                                         <td class="text-right"><strong><span t-esc="t['iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
                                         <!-- <td class="text-right"><strong><span t-esc="t['bruto']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td> -->
