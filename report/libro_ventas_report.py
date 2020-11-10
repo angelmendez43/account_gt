@@ -182,8 +182,10 @@ class LibroVentas(models.AbstractModel):
         compras_lista = []
         gastos_no_lista = []
         logging.warn(self.env.company)
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('type','in',['out_invoice','out_refund'])])
-        total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0}
+        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
+        ('type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+
+        total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
         logging.warn(compra_ids)
         total_gastos_no = 0
         documentos_operados = 0
@@ -209,7 +211,11 @@ class LibroVentas(models.AbstractModel):
                             'pequenio': 0,
                             'iva': 0,
                             'bruto': 0,
-                            'total': 0
+                            'total': 0,
+                            'reten_iva': 0,
+                            'correlativo_interno': compra.id,
+                            'pais_destino': compra.company_id.country_id.name,
+                            'observaciones': compra.name,
                         }
                         # if compra.currency_id.id != compra.company_id.currency_id.id:
                             # if len(compra.amount_by_group) > 0:
@@ -223,7 +229,13 @@ class LibroVentas(models.AbstractModel):
                             #     dic['iva'] = 0.00
                             #     dic['total'] = self._get_conversion(compra)['total']
 
-
+                        reten_iva = self.env['account.move'].search([('ref','=', str(compra.name))])
+                        if reten_iva:
+                            for linea in reten_iva.line_ids:
+                                logging.warn(linea.account_id.user_type_id.name)
+                                if linea.account_id.user_type_id.name == 'Activos Circulantes':
+                                    dic['reten_iva'] += linea.debit
+                                    total['reten_iva'] += linea.debit
 
                         for linea in compra.invoice_line_ids:
                             impuesto_iva = False

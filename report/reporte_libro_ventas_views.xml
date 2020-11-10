@@ -120,6 +120,10 @@
                                         <th class="text-right">Pequeño contribuyente</th>
                                         <th class="text-right">IVA</th>
                                         <th class="text-right">Bruto</th>
+                                        <th class="text-right">Reten IVA</th>
+                                        <th class="text-right">Correlativo interno</th>
+                                        <th class="text-right">País destino</th>
+                                        <th class="text-right">OBSERVACIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,6 +145,12 @@
                                         <!-- <td class="text-right"><span t-esc="linea['bruto']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td> -->
 
                                         <td class="text-right"><span t-esc="linea['total']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
+
+                                        <td class="text-right"><span t-esc="linea['reten_iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="linea['correlativo_interno']"/></td>
+                                        <td class="text-right"><span t-esc="linea['pais_destino']" /></td>
+                                        <td class="text-right"><span t-esc="linea['observaciones']" /></td>
+
                                     </tr>
                                     <t t-set="t" t-value="_get_ventas(data)['total']"/>
                                     <tr>
@@ -161,6 +171,8 @@
                                         <!-- <td class="text-right"><strong><span t-esc="t['bruto']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td> -->
 
                                         <td class="text-right"><strong><span t-esc="t['total']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
+                                        <td class="text-right"><strong><span t-esc="t['reten_iva']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/></strong></td>
+
                                     </tr>
                                     <!-- <tr>
                                         <td></td>
