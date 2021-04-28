@@ -30,9 +30,9 @@ class LibroVentas(models.AbstractModel):
     #             }
     #             for linea in venta.invoice_line_ids:
     #                 if venta.tipo_factura == 'varios':
-    #                     if linea.product_id.type == 'product':
+    #                     if linea.product_id.move_type == 'product':
     #                         dic['venta'] = linea.price_subtotal
-    #                     if linea.product_id.type != 'product':
+    #                     if linea.product_id.move_type != 'product':
     #                         dic['servicio'] =  linea.price_subtotal
     #                 else:
     #                     if venta.tipo_factura == 'venta':
@@ -99,7 +99,7 @@ class LibroVentas(models.AbstractModel):
                         total_tax_currency += line.amount_currency
                         total += line.balance
                         total_currency += line.amount_currency
-                    elif line.account_id.user_type_id.type in ('receivable', 'payable'):
+                    elif line.account_id.user_type_id.move_type in ('receivable', 'payable'):
                         # Residual amount.
                         total_residual += line.amount_residual
                         total_residual_currency += line.amount_residual_currency
@@ -109,7 +109,7 @@ class LibroVentas(models.AbstractModel):
                         total += line.balance
                         total_currency += line.amount_currency
 
-            if move.type == 'entry' or move.is_outbound():
+            if move.move_type == 'entry' or move.is_outbound():
                 sign = 1
             else:
                 sign = -1
@@ -126,7 +126,7 @@ class LibroVentas(models.AbstractModel):
             amount_residual = -sign * (total_residual_currency if len(currencies) == 1 else total_residual)
             amount_untaxed_signed = -total_untaxed
             amount_tax_signed = -total_tax
-            amount_total_signed = abs(total) if move.type == 'entry' else -total
+            amount_total_signed = abs(total) if move.move_type == 'entry' else -total
             amount_residual_signed = total_residual
 
             # logging.warn(move.name)
@@ -158,7 +158,7 @@ class LibroVentas(models.AbstractModel):
             # is_paid = currency and currency.is_zero(move.amount_residual) or not move.amount_residual
 
             # Compute 'invoice_payment_state'.
-            # if move.type == 'entry':
+            # if move.move_type == 'entry':
             #     move.invoice_payment_state = False
             # elif move.state == 'posted' and is_paid:
             #     if move.id in in_payment_set:
@@ -183,7 +183,7 @@ class LibroVentas(models.AbstractModel):
         gastos_no_lista = []
         logging.warn(self.env.company)
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
-        ('type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+        ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
         logging.warn(compra_ids)
@@ -255,17 +255,17 @@ class LibroVentas(models.AbstractModel):
                                         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_subtotal, compra.company_id.currency_id)
 
                                         if compra.tipo_factura == 'varios':
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra'] += monto_convertir
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio'] +=  monto_convertir
                                         elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id :
                                             dic['importacion'] += monto_convertir
 
                                         else:
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra'] += monto_convertir
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio'] +=  monto_convertir
 
 
@@ -281,17 +281,17 @@ class LibroVentas(models.AbstractModel):
                                         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
 
                                         if compra.tipo_factura == 'varios':
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra'] += monto_convertir
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio'] +=  monto_convertir
                                         elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id:
                                             dic['importacion'] += monto_convertir
 
                                         else:
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra_exento'] += monto_convertir
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio_exento'] +=  monto_convertir
 
 
@@ -318,16 +318,16 @@ class LibroVentas(models.AbstractModel):
                                             logging.warn(i)
 
                                         if compra.tipo_factura == 'varios':
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra'] += linea.price_subtotal
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio'] +=  linea.price_subtotal
                                         elif compra.tipo_factura == 'importacion':
                                             dic['importacion'] += linea.price_subtotal
                                         else:
-                                            if linea.product_id.type == 'product':
+                                            if linea.product_id.move_type == 'product':
                                                 dic['compra'] += linea.price_subtotal
-                                            if linea.product_id.type != 'product':
+                                            if linea.product_id.move_type != 'product':
                                                 dic['servicio'] +=  linea.price_subtotal
 
 
@@ -377,9 +377,9 @@ class LibroVentas(models.AbstractModel):
                             #         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_subtotal, compra.company_id.currency_id)
                             #     #
                             #     #     if compra.tipo_factura == 'varios':
-                            #     #         if linea.product_id.type == 'product':
+                            #     #         if linea.product_id.move_type == 'product':
                             #     #             dic['compra'] = monto_convertir
-                            #     #         if linea.product_id.type != 'product':
+                            #     #         if linea.product_id.move_type != 'product':
                             #     #             dic['servicio'] =  monto_convertir
                             #     #     else:
                             #     #         if compra.tipo_factura == 'compra':
@@ -391,9 +391,9 @@ class LibroVentas(models.AbstractModel):
                             #         monto_convertir_iva = compra.currency_id.with_context(date=compra.invoice_date).compute(compra.amount_by_group[0][1], compra.company_id.currency_id)
                             #         dic['iva'] += monto_convertir_iva
                             #         if compra.tipo_factura == 'varios':
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += monto_convertir
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio']+ =  monto_convertir
                             #         elif compra.tipo_factura == 'importacion':
                             #             dic['importacion'] += monto_convertir:
@@ -403,17 +403,17 @@ class LibroVentas(models.AbstractModel):
                             #             #     dic['compra'] = monto_convertir
                             #             # if compra.tipo_factura == 'servicio':
                             #             #     dic['servicio'] = monto_convertir
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += monto_convertir
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio'] +=  monto_convertir
                             #     else:
                             #         dic['iva'] = 0
                             #         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
                             #         if compra.tipo_factura == 'varios':
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra_exento'] += monto_convertir
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio_exento'] +=  monto_convertir
                             #         elif compra.tipo_factura == 'importacion':
                             #             dic['importacion'] += monto_convertir
@@ -424,9 +424,9 @@ class LibroVentas(models.AbstractModel):
                             #             #     dic['compra_exento'] = monto_convertir
                             #             # if compra.tipo_factura == 'servicio':
                             #             #     dic['servicio_exento'] = monto_convertir
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra_exento'] = monto_convertir
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio_exento'] =  monto_convertir
                             #
                             #     total['servicio_exento'] += dic['servicio_exento']
@@ -436,9 +436,9 @@ class LibroVentas(models.AbstractModel):
                             # else:
                             #     if impuesto_iva:
                             #         if compra.tipo_factura == 'varios':
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += linea.price_subtotal
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio'] +=  linea.price_subtotal
                             #         elif compra.tipo_factura == 'importacion':
                             #                 dic['importacion'] += linea.price_subtotal
@@ -447,16 +447,16 @@ class LibroVentas(models.AbstractModel):
                             #             #     dic['compra'] = linea.price_subtotal
                             #             # if compra.tipo_factura == 'servicio':
                             #             #     dic['servicio'] = linea.price_subtotal
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += linea.price_subtotal
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio'] +=  linea.price_subtotal
                             #         dic['iva'] += linea.
                             #     else:
                             #         if compra.tipo_factura == 'varios':
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += linea.price_subtotal
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio'] +=  linea.price_subtotal
                             #         elif compra.tipo_factura == 'importacion':
                             #                 dic['importacion'] += linea.price_subtotal
@@ -465,9 +465,9 @@ class LibroVentas(models.AbstractModel):
                             #             #     dic['compra'] = linea.price_subtotal
                             #             # if compra.tipo_factura == 'servicio':
                             #             #     dic['servicio'] = linea.price_subtotal
-                            #             if linea.product_id.type == 'product':
+                            #             if linea.product_id.move_type == 'product':
                             #                 dic['compra'] += linea.price_subtotal
-                            #             if linea.product_id.type != 'product':
+                            #             if linea.product_id.move_type != 'product':
                             #                 dic['servicio'] +=  linea.price_subtotal
 
                             # total['compra'] += dic['compra']
@@ -480,7 +480,7 @@ class LibroVentas(models.AbstractModel):
                             # total['total'] += dic['total']
                         dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
 
-                        if compra.type in ['in_refund']:
+                        if compra.move_type in ['in_refund']:
                             # dic['total'] = dic['compra'] - dic['servicio'] - dic['compra_exento'] - dic['servicio_exento'] - dic['importacion'] - dic['iva'] - dic['pequenio']
 
                             dic['compra']  = dic['compra'] * -1
