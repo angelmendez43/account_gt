@@ -15,8 +15,8 @@ class Liquidacion(models.Model):
     fecha = fields.Date('Fecha',tracking=True)
     factura_ids = fields.One2many('account_gt.liquidacion_factura','liquidacion_id','Facturas')
     pago_ids = fields.One2many('account_gt.liquidacion_pago','liquidacion_id','Pagos')
-    company_id = fields.Many2one('res.company', 'Company', required=True, default=lambda self: self.env.company)
-    currency_id = fields.Many2one('res.currency','Moneda',default=lambda self: self.env.company.currency_id.id)
+    company_id = fields.Many2one('res.company', 'Company', required=True, default=lambda self: self.env.user.company_id)
+    currency_id = fields.Many2one('res.currency','Moneda',default=lambda self: self.env.user.company_id.currency_id.id)
     diario_id = fields.Many2one('account.journal', 'Diario', required=True,tracking=True)
     cuenta_id = fields.Many2one('account.account', 'Cuenta de desajuste',tracking=True)
     move_id = fields.Many2one('account.move', 'Movimiento',tracking=True)
@@ -28,12 +28,12 @@ class Liquidacion(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
-            seq_date = None
+            # seq_date = None
             if 'company_id' in vals:
                 vals['name'] = self.env['ir.sequence'].with_context(force_company=vals['company_id']).next_by_code(
-                    'account_gt.liquidacion', sequence_date=seq_date) or _('New')
+                    'account_gt.liquidacion' or _('New'))
             else:
-                vals['name'] = self.env['ir.sequence'].next_by_code('account_gt.liquidacion', sequence_date=seq_date) or _('New')
+                vals['name'] = self.env['ir.sequence'].next_by_code('account_gt.liquidacion' or _('New'))
 
         result = super(Liquidacion, self).create(vals)
         return result
@@ -48,11 +48,12 @@ class Liquidacion(models.Model):
 
             total = 0
             if dato.factura_ids:
+                logging.warn("Hey dato factura_ids")
                 moneda_factura = dato.factura_ids[0].currency_id
                 for linea in dato.factura_ids:
                     # logging.warn(f.number)
                     # logging.warn(f.amount_total)
-                    for l in linea.factura_id.line_ids:
+                    for l in linea.factura_id.invoice_line_ids:
                         if l.account_id.reconcile:
                             if not l.reconciled:
                                 total += l.credit - l.debit
@@ -65,6 +66,8 @@ class Liquidacion(models.Model):
 
             if dato.pago_ids:
                 moneda_pago = dato.pago_ids[0].currency_id
+                logging.warn("Hey de nuevo")
+                logging.warn(moneda_pago)
                 for linea in dato.pago_ids:
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
@@ -80,6 +83,9 @@ class Liquidacion(models.Model):
             logging.warn('PASA PAGO')
             logging.warn(lineas)
 
+            logging.warn("HEy aquí Geordie")
+            logging.warn(moneda_pago)
+            logging.warn(moneda_pago.name)
             if (moneda_pago.name=="GTQ" and moneda_factura.name=="GTQ") and moneda_factura.id == moneda_pago.id and round(total) != 0:
                 logging.warn('TOTAL')
                 logging.warn(total)
@@ -171,7 +177,7 @@ class LiquidacionFactura(models.Model):
     _rec_name = "liquidacion_id"
 
     liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion')
-    factura_id = fields.Many2one('account.move','Factura')
+    factura_id = fields.Many2one('account.invoice','Factura')
     currency_id = fields.Many2one('res.currency',string='moneda', related='factura_id.currency_id')
     total = fields.Monetary('Total',related='factura_id.amount_total')
 

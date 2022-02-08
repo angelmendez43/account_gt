@@ -40,11 +40,11 @@ class LibroComprasWizard(models.TransientModel):
 
             hoja.write(0, 0, 'LIBRO DE COMPRAS Y SERVICIOS')
             hoja.write(2, 0, 'NUMERO DE IDENTIFICACION TRIBUTARIA')
-            hoja.write(2, 1, self.env.company.vat)
+            hoja.write(2, 1, self.env.user.company_id.vat)
             hoja.write(3, 0, 'NOMBRE COMERCIAL')
-            hoja.write(3, 1,  self.env.company.name)
+            hoja.write(3, 1,  self.env.user.company_id.name)
             hoja.write(2, 3, 'DOMICILIO FISCAL')
-            hoja.write(2, 4,  self.env.company.street)
+            hoja.write(2, 4,  self.env.user.company_id.street)
             hoja.write(3, 3, 'REGISTRO DEL')
             hoja.write(3, 4, str(w.fecha_inicio) + ' al ' + str(w.fecha_fin))
 

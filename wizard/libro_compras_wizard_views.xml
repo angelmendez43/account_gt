@@ -28,10 +28,11 @@
 
         <act_window id="launch_account_gt_libro_compras"
                     name="Libro de compras"
-                    binding_model="account.account"
                     res_model="account_gt.libro_compras.wizard"
+                    src_model="account.account"
                     view_mode="form"
-                    target="new"/>
+                    target="new"
+                    key2=""/>
 
         <menuitem action="launch_account_gt_libro_compras" id="menu_reporte_libro_compras" parent="account.menu_finance_reports"/>
 

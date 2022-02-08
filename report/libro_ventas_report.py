@@ -181,9 +181,9 @@ class LibroVentas(models.AbstractModel):
     def _get_ventas(self,datos):
         compras_lista = []
         gastos_no_lista = []
-        logging.warn(self.env.company)
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
-        ('type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+        logging.warn(self.env.user.company_id)
+        compra_ids = self.env['account.invoice'].search([('company_id','=',self.env.user.company_id.id),('date_invoice','<=',datos['fecha_fin']),('date_invoice','>=',datos['fecha_inicio']),('state','=','posted'),
+        ('type','in',['out_invoice','out_refund'])],order='date_invoice asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
         logging.warn(compra_ids)
@@ -259,7 +259,7 @@ class LibroVentas(models.AbstractModel):
                                                 dic['compra'] += monto_convertir
                                             if linea.product_id.type != 'product':
                                                 dic['servicio'] +=  monto_convertir
-                                        elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id :
+                                        elif compra.tipo_factura == 'exportacion' or self.env.user.company_id.id != compra.currency_id.id :
                                             dic['importacion'] += monto_convertir
 
                                         else:
@@ -285,7 +285,7 @@ class LibroVentas(models.AbstractModel):
                                                 dic['compra'] += monto_convertir
                                             if linea.product_id.type != 'product':
                                                 dic['servicio'] +=  monto_convertir
-                                        elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id:
+                                        elif compra.tipo_factura == 'exportacion' or self.env.user.company_id.id != compra.currency_id.id:
                                             dic['importacion'] += monto_convertir
 
                                         else:
