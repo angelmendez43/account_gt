@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acces_account_gt,acces.account.gt,account_gt.model_account_gt_liquidacion,account.group_account_invoice,1,1,1,0
+acces_account_gt_liquidacion_factura,acces.account.gt.factura,account_gt.model_account_gt_liquidacion_factura,account.group_account_invoice,1,1,1,0
+acces_account_gt_liquidacion_pago,acces.account.gt.liquidacion.pago,account_gt.model_account_gt_liquidacion_pago,account.group_account_invoice,1,1,1,0

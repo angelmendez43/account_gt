@@ -32,14 +32,14 @@
         </record>
 
 
-        <!-- <act_window id="launch_account_gt_libro_bancos"
+        <act_window id="launch_account_gt_libro_bancos"
                     name="Libro de bancos"
-                    binding_model="account.account"
                     res_model="account_gt.libro_bancos.wizard"
+                    src_model="account.account"
                     view_mode="form"
                     target="new"/>
 
-        <menuitem action="launch_account_gt_libro_bancos" id="menu_reporte_libro_bancos" parent="account.menu_finance_reports"/> -->
+        <menuitem action="launch_account_gt_libro_bancos" id="menu_reporte_libro_bancos" parent="account.menu_finance_reports"/>
 
     </data>
 </odoo>

@@ -24,8 +24,8 @@
 
         <act_window id="launch_account_gt_libro_conciliacion_bancaria"
                     name="Libro conciliacion bancaria"
-                    binding_model="account.account"
                     res_model="account_gt.libro_conciliacion_bancaria.wizard"
+                    src_model="account.account"
                     view_mode="form"
                     target="new"/>
 
