@@ -17,6 +17,7 @@
     'depends': ['account','base'],
 
     'data': [
+        'security/ir.model.access.csv',
         'views/report.xml',
         'views/res_partner_views.xml',
         'views/account_gt_views.xml',
@@ -25,12 +26,14 @@
         'report/reporte_libro_compras_views.xml',
         'report/reporte_libro_ventas_views.xml',
         'report/reporte_libro_bancos_views.xml',
-        'report/reporte_libro_conciliacion_bancaria_views.xml',
+        'report/reporte_libro_diario_views.xml',
+        # 'report/reporte_libro_conciliacion_bancaria_views.xml',
         'wizard/libro_compras_wizard_views.xml',
         'wizard/libro_ventas_wizard_views.xml',
         'wizard/libro_bancos_wizard_views.xml',
-        'wizard/libro_conciliacion_bancaria_wizard_views.xml',
-        'wizard/conciliacion_bancaria_wizard_views.xml',
+        'wizard/libro_diario_wizard_views.xml',
+        # 'wizard/libro_conciliacion_bancaria_wizard_views.xml',
+        # 'wizard/conciliacion_bancaria_wizard_views.xml',
         'data/ir_sequence_data.xml',
     ],
 }

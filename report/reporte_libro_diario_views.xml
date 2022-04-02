@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      
+      <template id="reporte_libro_diario">
+
+        <t t-call="web.html_container">
+
+          <t t-call="web.external_layout">
+
+              <div class="page">
+
+                <center>
+                    <h4>Libro Diario</h4> <br/><br/><br/>
+                </center>
+
+              </div>
+          </t>
+
+        </t>
+
+      </template>
+
+    </data>
+</odoo>
