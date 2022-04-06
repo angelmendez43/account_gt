@@ -5,3 +5,4 @@ class Partner(models.Model):
     _inherit = "res.partner"
 
     pequenio_contribuyente = fields.Boolean('Pequeño contribuyente')
+    

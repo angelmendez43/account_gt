@@ -10,6 +10,12 @@
                 <field name="vat" position="after">
                     <field name="pequenio_contribuyente"/>
                 </field>
+
+                <xpath expr="//field[@name='vat']" position="attributes">
+                  <attribute name="string">NIT</attribute>
+                </xpath>
+
+
             </field>
         </record>
 
