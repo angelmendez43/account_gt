@@ -12,6 +12,7 @@ class LibroVentasWizard(models.TransientModel):
 
     fecha_inicio = fields.Date('Fecha inicio')
     fecha_fin = fields.Date('Fecha fin')
+    diarios_ids = fields.Many2many('account.journal', string='Diarios')
     name = fields.Char('Nombre archivo', size=32)
     archivo = fields.Binary('Archivo', filters='.xls')
 

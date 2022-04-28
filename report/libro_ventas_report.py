@@ -182,7 +182,7 @@ class LibroVentas(models.AbstractModel):
         compras_lista = []
         gastos_no_lista = []
         logging.warn(self.env.company)
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
+        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id), ('journal_id', 'in', datos['diarios_ids']), ('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
         ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
@@ -553,6 +553,7 @@ class LibroVentas(models.AbstractModel):
             'data': data['form'],
             'docs': docs,
             '_get_ventas': self._get_ventas,
+            'company_id': self.env.company,
             # 'lineas': self.lineas,
             # 'direccion': diario.direccion and diario.direccion.street,
         }
