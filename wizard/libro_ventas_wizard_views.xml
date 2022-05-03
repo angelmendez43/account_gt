@@ -10,6 +10,7 @@
                     <group>
                         <field name="fecha_inicio"/>
                         <field name="fecha_fin"/>
+                        <field name="diarios_ids" widget="many2many_tags"/>
                     </group>
                     <group>
                         <field name="name" invisible="1"/>

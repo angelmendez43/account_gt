@@ -82,11 +82,40 @@
                                 </tbody>
                             </table>
                         </div> -->
+
                         <div class="page">
                             <center>
-                                <h4>Libro de ventas y servicios</h4> <br/><br/><br/>
+                                <h4><span t-esc="company_id.name"/>: Libro de ventas y servicios</h4> <br/><br/><br/>
                             </center>
-                            <table class="table table-sm o_main_table">
+
+                            <!-- <div class="row mt32">
+                                <div class="col-xs-4">
+                                    <strong>Número de identificación tributaria:</strong> <span t-field="company_id.vat" align="center"/><br/>
+                                    <strong>Nombre comercial:</strong> <span t-field="company_id.partner_id.name" align="center"/><br/>
+                                </div>
+                                <div class="col-xs-4">
+                                    <strong>Domicilio fiscal:</strong> <span t-esc="direccion_diario or company_id.partner_id.street" align="center"/><br/>
+                                    <strong>Registro del:</strong> <span t-esc="data['fecha_inicio']" t-options='{"widget":"date"}' align="center"/> al: <span t-esc="data['fecha_fin']" t-options='{"widget": "date"}'/><br/>
+                                </div>
+                            </div> -->
+
+                            <table width="100%">
+                                <tr>
+                                    <td><strong>Número de identificación tributaria:</strong></td>
+                                    <td><span t-field="company_id.vat" align="center"/></td>
+                                    <td><strong>Nombre comercial:</strong> </td>
+                                    <td><span t-field="company_id.partner_id.name" align="center"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Domicilio fiscal:</strong></td>
+                                    <td><span t-esc="direccion_diario or company_id.partner_id.street" align="center"/></td>
+                                    <td><strong>Registro del:</strong></td>
+                                    <td><span t-esc="data['fecha_inicio']" t-options='{"widget":"date"}' align="center"/> al: <span t-esc="data['fecha_fin']" t-options='{"widget": "date"}'/></td>
+                                </tr>
+
+                            </table>
+
+                            <!-- <table class="table table-sm o_main_table">
                                 <tbody>
                                     <tr>
                                         <td><strong>Domicilio fiscal: </strong><span t-esc="env.company.partner_id.street"/></td>
@@ -104,7 +133,7 @@
                                         <td><span t-esc="data['fecha_fin']" t-options='{"widget": "date"}'/></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> -->
                             <table class="table table-sm o_main_table">
                                 <thead>
                                     <tr>
