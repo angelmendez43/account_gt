@@ -182,7 +182,7 @@ class LibroVentas(models.AbstractModel):
         compras_lista = []
         gastos_no_lista = []
         logging.warn(self.env.user.company_id)
-        compra_ids = self.env['account.invoice'].search([('company_id','=',self.env.user.company_id.id),('date_invoice','<=',datos['fecha_fin']),('date_invoice','>=',datos['fecha_inicio']),('state','=','posted'),
+        compra_ids = self.env['account.invoice'].search([('company_id','=',self.env.user.company_id.id),('date_invoice','<=',datos['fecha_fin']),('date_invoice','>=',datos['fecha_inicio']),('state','=','paid'),
         ('type','in',['out_invoice','out_refund'])],order='date_invoice asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
