@@ -13,8 +13,8 @@
                             <table class="table table-sm o_main_table">
                                 <tbody>
                                     <tr>
-                                        <td><strong>Domicilio fiscal: </strong><span t-esc="env.company.partner_id.street"/></td>
-                                        <td><strong>Nombre comercial: </strong><span t-field="env.company.partner_id.name"/></td>
+                                        <td><strong>Domicilio fiscal: </strong><span t-esc="env.user.company_id.partner_id.street"/></td>
+                                        <td><strong>Nombre comercial: </strong><span t-field="env.user.company_id.partner_id.name"/></td>
                                     </tr>
                                 </tbody>
                             </table>
