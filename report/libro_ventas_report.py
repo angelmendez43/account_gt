@@ -231,7 +231,7 @@ class LibroVentas(models.AbstractModel):
 
                         reten_iva = self.env['account.move'].search([('ref','=', str(compra.name))])
                         if reten_iva:
-                            for linea in reten_iva.line_ids:
+                            for linea in reten_iva[0].line_ids:
                                 logging.warn(linea.account_id.user_type_id.name)
                                 if linea.account_id.user_type_id.name == 'Activos Circulantes':
                                     dic['reten_iva'] += linea.debit
