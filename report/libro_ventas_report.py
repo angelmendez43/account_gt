@@ -310,7 +310,7 @@ class LibroVentas(models.AbstractModel):
                                     if len(linea.invoice_line_tax_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
-                                        r = linea.invoice_line_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                        r = linea.invoice_line_tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
