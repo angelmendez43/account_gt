@@ -307,7 +307,7 @@ class LibroVentas(models.AbstractModel):
                             else:
                                 logging.warn(linea.product_id.name)
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
-                                    if len(linea.invoice_line_ids) > 0:
+                                    if len(linea.invoice_line_tax_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
                                         r = linea.invoice_line_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
