@@ -143,7 +143,7 @@ class LibroCompras(models.AbstractModel):
         gastos_no_lista = []
         logging.warn("Que es self?")
         logging.warn(self.env.user.company_id)
-        compra_ids = self.env['account.invoice'].search([('company_id','=',self.env.user.company_id.id),('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('type','in',['in_invoice','in_refund'])])
+        compra_ids = self.env['account.invoice'].search([('company_id','=',self.env.user.company_id.id),('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','paid'),('type','in',['in_invoice','in_refund'])])
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0}
         total_gastos_no = 0
         documentos_operados = 0
@@ -158,7 +158,7 @@ class LibroCompras(models.AbstractModel):
                         dic = {
                             'id': compra.id,
                             'fecha': compra.date,
-                            'documento': compra.ref if compra.ref else compra.name,
+                            'documento': compra.reference if compra.reference else compra.name,
                             'proveedor': compra.partner_id.name if compra.partner_id else '',
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
@@ -186,13 +186,13 @@ class LibroCompras(models.AbstractModel):
 
                         for linea in compra.invoice_line_ids:
                             impuesto_iva = False
-                            impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
+                            impuesto_iva = self._get_impuesto_iva(linea.invoice_line_tax_ids)
                             if compra.currency_id.id != compra.company_id.currency_id.id:
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                     if len(linea.tax_ids) > 0:
                                         monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
-                                        r = linea.tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                        r = linea.invoice_line_tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
@@ -254,10 +254,10 @@ class LibroCompras(models.AbstractModel):
                             else:
                                 logging.warn(linea.product_id.name)
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
-                                    if len(linea.tax_ids) > 0:
+                                    if len(linea.invoice_line_tax_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
-                                        r = linea.tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                        r = linea.invoice_line_tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
