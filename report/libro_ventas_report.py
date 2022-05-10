@@ -200,7 +200,7 @@ class LibroVentas(models.AbstractModel):
                         dic = {
                             'id': compra.id,
                             'fecha': compra.date,
-                            'documento': compra.ref if compra.ref else compra.name,
+                            'documento': compra.serie_documento_fel + '-' + compra.numero_documento_fel if compra.serie_documento_fel else compra.name,
                             'proveedor': compra.partner_id.name if compra.partner_id else '',
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
