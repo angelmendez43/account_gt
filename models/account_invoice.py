@@ -20,8 +20,8 @@ class AccountInvoice(models.Model):
     tipo_factura = fields.Selection([('venta','Venta'),('compra', 'Compra o Bien'), ('servicio', 'Servicio'),('varios','Varios'), ('combustible', 'Combustible'),('importacion', 'Importación'),('exportacion','Exportación')],
         string="Tipo de factura")
 
-# class AccountMoveLine(models.Model):
-#     _inherit = 'account.move.line'
-#
-#     conciliacion_bancaria = fields.Boolean("Conciliacion bancaria")
-#     fecha_conciliacion_bancaria = fields.Date("Fecha conciliacion")
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    conciliacion_bancaria = fields.Boolean("Conciliacion bancaria")
+    fecha_conciliacion_bancaria = fields.Date("Fecha conciliacion")
