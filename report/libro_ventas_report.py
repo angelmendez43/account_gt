@@ -239,13 +239,13 @@ class LibroVentas(models.AbstractModel):
 
                         for linea in compra.invoice_line_ids:
                             impuesto_iva = False
-                            impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
+                            impuesto_iva = self._get_impuesto_iva(linea.invoice_line_ids)
                             if compra.currency_id.id != compra.company_id.currency_id.id:
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
-                                    if len(linea.tax_ids) > 0:
+                                    if len(linea.invoice_line_ids) > 0:
                                         monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
-                                        r = linea.tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                        r = linea.invoice_line_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
@@ -307,10 +307,10 @@ class LibroVentas(models.AbstractModel):
                             else:
                                 logging.warn(linea.product_id.name)
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
-                                    if len(linea.tax_ids) > 0:
+                                    if len(linea.invoice_line_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
-                                        r = linea.tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                        r = linea.invoice_line_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
