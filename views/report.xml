@@ -8,7 +8,7 @@
      file="account_gt.reporte_libro_compras"
      name="account_gt.reporte_libro_compras"
      />
-     
+
    <report
      id="action_libro_diario"
      model="account_gt.libro_diario.wizard"
