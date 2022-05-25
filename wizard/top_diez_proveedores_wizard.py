@@ -44,21 +44,28 @@ class ReporteTopDiezWizard(models.TransientModel):
             positivo=0
             positivo_base=0
             for proveedor in proveedores:
-                if proveedor.partner_id.id not in dicc_proveedores:
-                    dicc_proveedores[proveedor.partner_id.id]={
-                    'nombre_proveedor': proveedor.partner_id.name,
-                    'base':0,
-                    'iva':0,
-                    'total':0,
-                    }
-                    contador+=1
-                if proveedor.partner_id.id in dicc_proveedores:
-                    positivo = proveedor.amount_total_signed * -1
-                    positivo_base = proveedor.amount_untaxed_signed * -1
-                    dicc_proveedores[proveedor.partner_id.id]['base']+=positivo_base
-                    dicc_proveedores[proveedor.partner_id.id]['total']+=positivo
-                    iva = dicc_proveedores[proveedor.partner_id.id]['total'] - dicc_proveedores[proveedor.partner_id.id]['base']
-                    dicc_proveedores[proveedor.partner_id.id]['iva']+=iva
+                if proveedor.journal_id.tipo_factura != False:
+                    if proveedor.partner_id.id not in dicc_proveedores:
+                        dicc_proveedores[proveedor.partner_id.id]={
+                        'nombre_proveedor': proveedor.partner_id.name,
+                        'base':0,
+                        'iva':0,
+                        'total':0,
+                        }
+                        contador+=1
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura != 'factura_especial':
+                        positivo = proveedor.amount_total_signed * -1
+                        positivo_base = proveedor.amount_untaxed_signed * -1
+                        dicc_proveedores[proveedor.partner_id.id]['base']+=positivo_base
+                        dicc_proveedores[proveedor.partner_id.id]['total']+=positivo
+                        iva = dicc_proveedores[proveedor.partner_id.id]['total'] - dicc_proveedores[proveedor.partner_id.id]['base']
+                        dicc_proveedores[proveedor.partner_id.id]['iva']+=iva
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura == 'factura_especial':
+                        for lineas_proveedor in proveedor.invoice_line_ids:
+                            total_base += lineas_proveedor.quantity * lineas_proveedor.price_unit;
+                        dicc_proveedores[proveedor.partner_id.id]['base'] = total_base;
+                        dicc_proveedores[proveedor.partner_id.id]['iva'] = total_base - (proveedor.amount_untaxed_signed*-1)
+                        dicc_proveedores[proveedor.partner_id.id]['total'] = dicc_proveedores[proveedor.partner_id.id]['base'] + dicc_proveedores[proveedor.partner_id.id]['iva']
 
             logging.warning('')
             logging.warning('')

@@ -181,7 +181,8 @@ class LibroVentas(models.AbstractModel):
     def _get_ventas(self,datos):
         compras_lista = []
         gastos_no_lista = []
-        logging.warn(self.env.company)
+        logging.warning(self.env.company)
+        logging.warning(datos)
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id), ('journal_id', 'in', datos['diarios_ids']), ('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
         ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
 

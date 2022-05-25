@@ -51,19 +51,21 @@ class LibroComprasWizard(models.TransientModel):
 
 
             hoja.write(5, 0, 'Fecha')
-            hoja.write(5, 1, 'Documento')
-            hoja.write(5, 2, 'NIT')
-            hoja.write(5, 3, 'Proveedor')
-            hoja.write(5, 4, 'Combustible')
-            hoja.write(5, 5, 'Compras')
-            hoja.write(5, 6, 'Exentos')
-            hoja.write(5, 7, 'Servicios')
-            hoja.write(5, 8, 'Servicios exentos')
-            hoja.write(5, 9, 'Importacion')
-            hoja.write(5, 10, 'Pequeño contribuyente')
-            hoja.write(5, 11, 'Activos')
-            hoja.write(5, 12, 'IVA')
-            hoja.write(5, 13, 'Total')
+            hoja.write(5, 1, 'Serie')
+            hoja.write(5, 2, 'Factura')
+            hoja.write(5, 3, 'Documento')
+            hoja.write(5, 4, 'NIT')
+            hoja.write(5, 5, 'Proveedor')
+            hoja.write(5, 6, 'Combustible')
+            hoja.write(5, 7, 'Compras')
+            hoja.write(5, 8, 'Exentos')
+            hoja.write(5, 9, 'Servicios')
+            hoja.write(5, 10, 'Servicios exentos')
+            hoja.write(5, 11, 'Importacion')
+            hoja.write(5, 12, 'Pequeño contribuyente')
+            hoja.write(5, 13, 'Activos')
+            hoja.write(5, 14, 'IVA')
+            hoja.write(5, 15, 'Total')
 
             fila = 6
             iva_proveedor=0
@@ -76,54 +78,56 @@ class LibroComprasWizard(models.TransientModel):
             iva_activo=0
             for compra in res['compras_lista']:
                 hoja.write(fila, 0, compra['fecha'])
-                hoja.write(fila, 1, compra['documento'])
-                hoja.write(fila, 2, compra['nit'])
-                hoja.write(fila, 3, compra['proveedor'])
-                hoja.write(fila, 4, compra['combustible'])
+                hoja.write(fila, 1, compra['serie'])
+                hoja.write(fila, 2, compra['factura'])
+                hoja.write(fila, 3, compra['documento'])
+                hoja.write(fila, 4, compra['nit'])
+                hoja.write(fila, 5, compra['proveedor'])
+                hoja.write(fila, 6, compra['combustible'])
                 if compra['combustible']>0:
                     iva_combustible+=compra['iva']
-                hoja.write(fila, 5, compra['compra'])
+                hoja.write(fila, 7, compra['compra'])
                 if compra['compra']>0:
                     iva_compra+=compra['iva']
-                hoja.write(fila, 6, compra['compra_exento'])
+                hoja.write(fila, 8, compra['compra_exento'])
                 if compra['compra_exento']>0:
                     iva_exento+=compra['iva']
-                hoja.write(fila, 7, compra['servicio'])
+                hoja.write(fila, 9, compra['servicio'])
                 if compra['servicio']>0:
                     iva_servicios+=compra['iva']
-                hoja.write(fila, 8, compra['servicio_exento'])
-                hoja.write(fila, 9, compra['importacion'])
+                hoja.write(fila, 10, compra['servicio_exento'])
+                hoja.write(fila, 11, compra['importacion'])
                 if compra['importacion']>0:
                     iva_importaciones+=compra['iva']
-                hoja.write(fila, 10, compra['pequenio'])
+                hoja.write(fila, 12, compra['pequenio'])
                 if compra['pequenio']>0:
                     iva_pequenio+=compra['iva']
-                hoja.write(fila,11, compra['activo'])
+                hoja.write(fila,13, compra['activo'])
                 if compra['activo']>0:
                     iva_activo+=compra['iva']
 
-                hoja.write(fila, 12, compra['iva'])
-                hoja.write(fila, 13, compra['total'])
+                hoja.write(fila, 14, compra['iva'])
+                hoja.write(fila, 15, compra['total'])
 
                 fila += 1
 
 
-            hoja.write(fila, 4, res['total']['combustible'])
-            hoja.write(fila, 5, res['total']['compra'])
-            hoja.write(fila, 6, res['total']['compra_exento'])
-            hoja.write(fila, 7, res['total']['servicio'])
-            hoja.write(fila, 8, res['total']['servicio_exento'])
-            hoja.write(fila, 9, res['total']['importacion'])
-            hoja.write(fila, 10, res['total']['pequenio'])
-            hoja.write(fila, 11, res['total']['activo'])
-            hoja.write(fila, 12, res['total']['iva'])
-            hoja.write(fila, 13, res['total']['total'])
+            hoja.write(fila, 6, res['total']['combustible'])
+            hoja.write(fila, 7, res['total']['compra'])
+            hoja.write(fila, 8, res['total']['compra_exento'])
+            hoja.write(fila, 9, res['total']['servicio'])
+            hoja.write(fila, 10, res['total']['servicio_exento'])
+            hoja.write(fila, 11, res['total']['importacion'])
+            hoja.write(fila, 12, res['total']['pequenio'])
+            hoja.write(fila, 13, res['total']['activo'])
+            hoja.write(fila, 14, res['total']['iva'])
+            hoja.write(fila, 15, res['total']['total'])
 
             fila += 1
 
 
-            hoja.write(fila, 12, 'Documentos operados:')
-            hoja.write(fila, 13, res['documentos_operados'])
+            hoja.write(fila, 14, 'Documentos operados:')
+            hoja.write(fila, 15, res['documentos_operados'])
 
             fila += 1
             logging.warning(res['gastos_no'])
@@ -207,6 +211,7 @@ class LibroComprasWizard(models.TransientModel):
 
 
             fila+=1
+            base=0
             hoja.write(fila,3,'Total General: ')
             if res['total']['total'] > res['total']['iva']:
                 base = res['total']['total']-res['total']['iva']
@@ -216,6 +221,86 @@ class LibroComprasWizard(models.TransientModel):
             fila+=1
             hoja.write(fila,3,'Total documentos operados: ')
             hoja.write(fila,4,res['documentos_operados'])
+
+
+            fila+=3
+            hoja.write(fila, 0, 'Resumen de 10 proveedores')
+
+            hoja.write(fila, 0, 'Proveedor')
+            hoja.write(fila, 1, 'Base')
+            hoja.write(fila, 2, 'IVA')
+            hoja.write(fila, 3, 'Total')
+
+            proveedores = self.env['account.move'].search([('invoice_date', '>=', w.fecha_inicio), ('invoice_date', '<=', w.fecha_fin), ('move_type', '=', 'in_invoice')])
+            dicc_proveedores={}
+            contador=0
+            positivo=0
+            positivo_base=0
+            total_base=0
+            for proveedor in proveedores:
+                if proveedor.journal_id.tipo_factura != False:
+                    if proveedor.partner_id.id not in dicc_proveedores:
+                        dicc_proveedores[proveedor.partner_id.id]={
+                        'nombre_proveedor': proveedor.partner_id.name,
+                        'base':0,
+                        'iva':0,
+                        'total':0
+                        }
+                        contador+=1
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura != 'factura_especial':
+                        positivo = proveedor.amount_total_signed * -1
+                        positivo_base = proveedor.amount_untaxed_signed * -1
+                        dicc_proveedores[proveedor.partner_id.id]['base']+=positivo_base
+                        dicc_proveedores[proveedor.partner_id.id]['total']+=positivo
+                        iva = dicc_proveedores[proveedor.partner_id.id]['total'] - dicc_proveedores[proveedor.partner_id.id]['base']
+                        dicc_proveedores[proveedor.partner_id.id]['iva']+=iva
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura == 'factura_especial':
+                        for lineas_proveedor in proveedor.invoice_line_ids:
+                            total_base += lineas_proveedor.quantity * lineas_proveedor.price_unit;
+                        dicc_proveedores[proveedor.partner_id.id]['base'] = total_base;
+                        dicc_proveedores[proveedor.partner_id.id]['iva'] = total_base - (proveedor.amount_untaxed_signed*-1)
+                        dicc_proveedores[proveedor.partner_id.id]['total'] = dicc_proveedores[proveedor.partner_id.id]['base'] + dicc_proveedores[proveedor.partner_id.id]['iva'] 
+
+
+
+            logging.warning('')
+            logging.warning('')
+            logging.warning('Diccionario proveedores')
+            logging.warning(dicc_proveedores)
+            logging.warning(len(dicc_proveedores))
+
+            list_total = []
+            posicion = 0
+            reemplazo =0
+            for id in dicc_proveedores:
+                list_total.append(dicc_proveedores[id]['total'])
+
+            for recorrido in range(1, len(list_total)):
+                for posicion in range(len(list_total) - recorrido):
+                    if list_total[posicion] < list_total[posicion + 1]:
+                        temp = list_total[posicion]
+                        list_total[posicion] = list_total[posicion+1]
+                        list_total[posicion+1]= temp
+
+
+            logging.warning(list_total)
+
+            fila+=3
+            contador = 0
+            lista_id=[]
+            for x_monto in list_total:
+                if contador < 10:
+                    for id in dicc_proveedores:
+                        if x_monto == dicc_proveedores[id]['total'] and id not in lista_id:
+                            logging.warning(dicc_proveedores[id]['nombre_proveedor']+' :'+str(x_monto))
+                            hoja.write(fila, 0, dicc_proveedores[id]['nombre_proveedor'])
+                            hoja.write(fila, 1, dicc_proveedores[id]['base'])
+                            hoja.write(fila, 2, dicc_proveedores[id]['iva'])
+                            hoja.write(fila, 3, dicc_proveedores[id]['total'])
+                            fila+=1
+                            lista_id.append(id)
+                contador+=1
+
 
 
             libro.close()
@@ -231,22 +316,3 @@ class LibroComprasWizard(models.TransientModel):
             'type': 'ir.actions.act_window',
             'target': 'new',
         }
-
-
-    # def test(self):
-    #     liquidacion_ids = self.env['account_gt.liquidacion'].search([('company_id','=',self.env.company.id),('name','=','Nuevo')], order="id asc")
-    #     if liquidacion_ids:
-    #         contador = 1
-    #         for l in liquidacion_ids:
-    #             logging.warn(l.id)
-    #             if contador < 10:
-    #                 l.write({'name': 'Liquidacion0000'+str(contador)})
-    #                 contador += 1
-    #             else:
-    #                 l.write({'name': 'Liquidacion000'+str(contador)})
-    #                 contador += 1
-        # for l in factura.invoice_line_ids:
-        #     l.create_analytic_lines()
-        # factura.button_draft()
-        # factura.action_post()
-        # factura._compute_payments_widget_to_reconcile_info()

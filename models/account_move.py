@@ -28,7 +28,11 @@ class AccountMove(models.Model):
             self.tipo_factura = tipo
 
     liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion')
-    tipo_factura = fields.Selection([('venta','Venta'),('compra', 'Compra o Bien'), ('activo', 'Activo'),('servicio', 'Servicio'),('varios','Varios'), ('combustible', 'Combustible'),('importacion', 'Importación'),('exportacion','Exportación')],
+    tipo_factura = fields.Selection([('venta','Venta'),('compra', 'Compra o Bien'),
+    ('activo', 'Activo'), ('servicio', 'Servicio'),
+    ('varios','Varios'), ('combustible', 'Combustible'),
+    ('importacion', 'Importación'),('exportacion','Exportación'),
+    ('factura_especial', 'Factura especial')],
         string="Tipo de factura")
 
 class AccountMoveLine(models.Model):

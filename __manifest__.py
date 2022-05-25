@@ -23,6 +23,8 @@
         'views/account_gt_views.xml',
         'views/account_move_views.xml',
         'views/account_payment_view.xml',
+        'views/product_template_views.xml',
+        'views/account_journal_views.xml',
         'report/reporte_libro_compras_views.xml',
         'report/reporte_libro_ventas_views.xml',
         'report/reporte_libro_bancos_views.xml',

@@ -30,7 +30,7 @@ class LibroVentasWizard(models.TransientModel):
             dict['fecha_inicio'] = w.fecha_inicio
             dict['fecha_fin'] = w.fecha_fin
             # dict['impuesto_id'] = [w.impuesto_id.id, w.impuesto_id.name]
-            # dict['diarios_id'] =[x.id for x in w.diarios_id]
+            dict['diarios_ids'] =w.diarios_ids.ids
 
             res = self.env['report.account_gt.reporte_libro_ventas']._get_ventas(dict)
 
