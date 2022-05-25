@@ -196,11 +196,11 @@ class LibroVentas(models.AbstractModel):
                     if 'RECIB' not in compra.journal_id.code:
                         # logging.warn('TIPO CAMBIO')
                         # logging.warn(self._get_conversion(compra))
-
+                        formato_fecha = compra.date.strftime('%d/%m/%Y')
                         documentos_operados += 1
                         dic = {
                             'id': compra.id,
-                            'fecha': compra.date,
+                            'fecha': formato_fecha,
                             'documento': compra.ref if compra.ref else compra.name,
                             'proveedor': compra.partner_id.name if compra.partner_id else '',
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
