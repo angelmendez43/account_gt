@@ -84,17 +84,15 @@ class LibroVentasWizard(models.TransientModel):
                 hoja.write(fila, 13, compra['pais_destino'])
                 hoja.write(fila, 14, compra['observaciones'])
 
-
                 fila += 1
 
-
-            hoja.write(fila, 5, res['total']['compra'])
-            hoja.write(fila, 6, res['total']['compra_exento'])
-            hoja.write(fila, 7, res['total']['servicio'])
-            hoja.write(fila, 8, res['total']['servicio_exento'])
-            hoja.write(fila, 9, res['total']['importacion'])
-            hoja.write(fila, 10, res['total']['iva'])
-            hoja.write(fila, 12, res['total']['total'])
+            hoja.write(fila, 4, res['total']['compra'])
+            hoja.write(fila, 5, res['total']['compra_exento'])
+            hoja.write(fila, 6, res['total']['servicio'])
+            hoja.write(fila, 7, res['total']['servicio_exento'])
+            hoja.write(fila, 8, res['total']['importacion'])
+            hoja.write(fila, 9, res['total']['iva'])
+            hoja.write(fila, 10, res['total']['total'])
             hoja.write(fila, 11, res['total']['reten_iva'])
 
             fila += 1
