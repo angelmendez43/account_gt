@@ -46,7 +46,9 @@ class LibroComprasWizard(models.TransientModel):
             hoja.write(2, 3, 'DOMICILIO FISCAL')
             hoja.write(2, 4,  self.env.company.street)
             hoja.write(3, 3, 'REGISTRO DEL')
-            hoja.write(3, 4, str(w.fecha_inicio) + ' al ' + str(w.fecha_fin))
+            formato_fecha_inicio = w.fecha_inicio.strftime('%d/%m/%Y')
+            formato_fecha_fin = w.fecha_fin.strftime('%d/%m/%Y')
+            hoja.write(3, 4, formato_fecha_inicio + ' al ' + formato_fecha_fin)
 
 
 
@@ -225,18 +227,19 @@ class LibroComprasWizard(models.TransientModel):
 
             fila+=3
             hoja.write(fila, 0, 'Resumen de 10 proveedores')
-
+            fila+=1
             hoja.write(fila, 0, 'Proveedor')
             hoja.write(fila, 1, 'Base')
             hoja.write(fila, 2, 'IVA')
             hoja.write(fila, 3, 'Total')
 
-            proveedores = self.env['account.move'].search([('invoice_date', '>=', w.fecha_inicio), ('invoice_date', '<=', w.fecha_fin), ('move_type', '=', 'in_invoice')])
+            proveedores = self.env['account.move'].search([('date', '>=', w.fecha_inicio), ('date', '<=', w.fecha_fin), ('move_type', '=', 'in_invoice')])
             dicc_proveedores={}
-            contador=0
-            positivo=0
-            positivo_base=0
-            total_base=0
+            contador = 0
+            positivo = 0
+            positivo_base = 0
+            total_base = 0
+            iva_linea = 0
             for proveedor in proveedores:
                 if proveedor.journal_id.tipo_factura != False:
                     if proveedor.partner_id.id not in dicc_proveedores:
@@ -247,19 +250,49 @@ class LibroComprasWizard(models.TransientModel):
                         'total':0
                         }
                         contador+=1
-                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura != 'factura_especial':
+#                     logging.warning('Cuantos impuestos hay?')
+#                     logging.warning(len(proveedor.invoice_line_ids.tax_ids))
+                    iva = 0
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.journal_id.tipo_factura != 'FESP':
+                        logging.warning(proveedor.partner_id.name)
                         positivo = proveedor.amount_total_signed * -1
+                        logging.warning(positivo)
                         positivo_base = proveedor.amount_untaxed_signed * -1
+                        logging.warning(positivo_base)
                         dicc_proveedores[proveedor.partner_id.id]['base']+=positivo_base
                         dicc_proveedores[proveedor.partner_id.id]['total']+=positivo
-                        iva = dicc_proveedores[proveedor.partner_id.id]['total'] - dicc_proveedores[proveedor.partner_id.id]['base']
+#                         iva = dicc_proveedores[proveedor.partner_id.id]['total'] - dicc_proveedores[proveedor.partner_id.id]['base']
+                        logging.warning('len(proveedor.invoice_line_ids.tax_ids)')
+                        logging.warning(len(proveedor.invoice_line_ids.tax_ids))
+                        if len(proveedor.invoice_line_ids.tax_ids) > 0:
+                            iva = positivo - positivo_base
                         dicc_proveedores[proveedor.partner_id.id]['iva']+=iva
-                    if proveedor.partner_id.id in dicc_proveedores and proveedor.tipo_factura == 'factura_especial':
+
+
+                    if proveedor.partner_id.id in dicc_proveedores and proveedor.journal_id.tipo_factura == 'FESP':
+                        total_base_linea=0
+                        iva_linea=0
+                        total_base = 0
+                        total_fe = 0
+                        iva_total = 0
                         for lineas_proveedor in proveedor.invoice_line_ids:
-                            total_base += lineas_proveedor.quantity * lineas_proveedor.price_unit;
-                        dicc_proveedores[proveedor.partner_id.id]['base'] = total_base;
-                        dicc_proveedores[proveedor.partner_id.id]['iva'] = total_base - (proveedor.amount_untaxed_signed*-1)
-                        dicc_proveedores[proveedor.partner_id.id]['total'] = dicc_proveedores[proveedor.partner_id.id]['base'] + dicc_proveedores[proveedor.partner_id.id]['iva'] 
+                            logging.warning('')
+                            total_base += lineas_proveedor.price_subtotal
+                            total_fe += lineas_proveedor.quantity * lineas_proveedor.price_unit
+                        iva_total = total_fe - total_base
+                        dicc_proveedores[proveedor.partner_id.id]['base']+= total_base
+                        dicc_proveedores[proveedor.partner_id.id]['total']+=total_fe
+                        dicc_proveedores[proveedor.partner_id.id]['iva']+=iva_total
+#                             if lineas_proveedor.product_id.es_activo:
+#                                 total_base_linea = lineas_proveedor.quantity * lineas_proveedor.price_unit;
+#                                 iva_linea = total_base_linea - lineas_proveedor.price_subtotal
+#                             if lineas_proveedor.product_id.detailed_type == 'service':
+#                                 total_base_linea = lineas_proveedor.quantity * lineas_proveedor.price_unit;
+#                                 iva_linea = total_base_linea - lineas_proveedor.price_subtotal
+#                         dicc_proveedores[proveedor.partner_id.id]['base'] += total_base_linea;
+#                         dicc_proveedores[proveedor.partner_id.id]['iva'] += iva_linea
+# #                         total_base - (proveedor.amount_untaxed_signed*-1)
+#                         dicc_proveedores[proveedor.partner_id.id]['total'] = dicc_proveedores[proveedor.partner_id.id]['base'] + dicc_proveedores[proveedor.partner_id.id]['iva']
 
 
 
@@ -294,9 +327,21 @@ class LibroComprasWizard(models.TransientModel):
                         if x_monto == dicc_proveedores[id]['total'] and id not in lista_id:
                             logging.warning(dicc_proveedores[id]['nombre_proveedor']+' :'+str(x_monto))
                             hoja.write(fila, 0, dicc_proveedores[id]['nombre_proveedor'])
-                            hoja.write(fila, 1, dicc_proveedores[id]['base'])
-                            hoja.write(fila, 2, dicc_proveedores[id]['iva'])
-                            hoja.write(fila, 3, dicc_proveedores[id]['total'])
+                            if dicc_proveedores[id]['base'] < 0:
+                                dicc_proveedores[id]['base'] = dicc_proveedores[id]['base'] * -1
+                                hoja.write(fila, 1, dicc_proveedores[id]['base'])
+                            else:
+                                hoja.write(fila, 1, dicc_proveedores[id]['base'])
+                            if dicc_proveedores[id]['iva'] < 0:
+                                dicc_proveedores[id]['iva'] = dicc_proveedores[id]['iva'] * -1
+                                hoja.write(fila, 2, dicc_proveedores[id]['iva'])
+                            else:
+                                hoja.write(fila, 2, dicc_proveedores[id]['iva'])
+                            if dicc_proveedores[id]['total'] < 0:
+                                dicc_proveedores[id]['total'] = dicc_proveedores[id]['total'] * -1
+                                hoja.write(fila, 3, dicc_proveedores[id]['total'])
+                            else:
+                                hoja.write(fila, 3, dicc_proveedores[id]['total'])
                             fila+=1
                             lista_id.append(id)
                 contador+=1
