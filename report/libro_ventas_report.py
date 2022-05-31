@@ -181,28 +181,47 @@ class LibroVentas(models.AbstractModel):
     def _get_ventas(self,datos):
         compras_lista = []
         gastos_no_lista = []
+        logging.warning('Funcion get ventas libro diario')
         logging.warning(self.env.company)
         logging.warning(datos)
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id), ('journal_id', 'in', datos['diarios_ids']), ('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),
-        ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+        estados = ['cancel', 'posted']
+        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id), ('journal_id', 'in', datos['diarios_ids']), ('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),
+('state','in', estados),
+        ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc, name asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
-        logging.warn(compra_ids)
+        logging.warning(compra_ids)
+        logging.warning('')
+        logging.warning('')
         total_gastos_no = 0
         documentos_operados = 0
         if compra_ids:
 
-                for compra in compra_ids:
-                    if 'RECIB' not in compra.journal_id.code:
+                for compra in compra_ids :
+                    logging.warning('Varias veces')
+                    logging.warning(compra.move_type)
+                    if 'RECIB' not in compra.journal_id.code and (compra.fel_serie and compra.fel_numero) or compra.ref:
+                        logging.warning('Ingreso ::::')
+                        correlativo_interno = 0
+                        nombre_proveedor = 'ANULADA'
+                        rectificativa = False
                         # logging.warn('TIPO CAMBIO')
                         # logging.warn(self._get_conversion(compra))
                         formato_fecha = compra.date.strftime('%d/%m/%Y')
                         documentos_operados += 1
+                        if compra.state != 'cancel':
+                            correlativo_interno = compra.id
+                            nombre_proveedor = compra.partner_id.name
+                        if compra.move_type == 'out_refund':
+                            rectificativa = True
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
                             'documento': compra.ref if compra.ref else compra.name,
-                            'proveedor': compra.partner_id.name if compra.partner_id else '',
+                            'serie': compra.fel_serie if compra.fel_serie else '',
+                            'numero_factura': compra.fel_numero if compra.fel_numero else '',
+                            'tipo_doc': compra.journal_id.tipo_factura if compra.journal_id.tipo_factura else '',
+                            'proveedor': nombre_proveedor,
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
                             'compra_exento':0,
@@ -214,9 +233,10 @@ class LibroVentas(models.AbstractModel):
                             'bruto': 0,
                             'total': 0,
                             'reten_iva': 0,
-                            'correlativo_interno': compra.id,
+                            'correlativo_interno': correlativo_interno,
                             'pais_destino': compra.company_id.country_id.name,
                             'observaciones': compra.name,
+                            'rectificativa': rectificativa
                         }
                         # if compra.currency_id.id != compra.company_id.currency_id.id:
                             # if len(compra.amount_by_group) > 0:
@@ -231,7 +251,7 @@ class LibroVentas(models.AbstractModel):
                             #     dic['total'] = self._get_conversion(compra)['total']
 
                         reten_iva = self.env['account.move'].search([('ref','=', str(compra.name))])
-                        if reten_iva:
+                        if reten_iva and compra.state != 'cancel':
                             for linea in reten_iva.line_ids:
                                 logging.warn(linea.account_id.user_type_id.name)
                                 if linea.account_id.user_type_id.name == 'Activos Circulantes':
@@ -241,7 +261,7 @@ class LibroVentas(models.AbstractModel):
                         for linea in compra.invoice_line_ids:
                             impuesto_iva = False
                             impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
-                            if compra.currency_id.id != compra.company_id.currency_id.id:
+                            if compra.currency_id.id != compra.company_id.currency_id.id and compra.state != 'cancel':
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                     if len(linea.tax_ids) > 0:
                                         monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
@@ -271,11 +291,11 @@ class LibroVentas(models.AbstractModel):
 
 
 
-                                        if compra.partner_id.pequenio_contribuyente:
-                                            dic['compra'] = 0
-                                            dic['servicio'] = 0
-                                            dic['importacion'] = 0
-                                            dic['pequenio'] += monto_convertir
+#                                         if compra.partner_id.pequenio_contribuyente:
+#                                             dic['compra'] = 0
+#                                             dic['servicio'] = 0
+#                                             dic['importacion'] = 0
+#                                             dic['pequenio'] += monto_convertir
 
                                         # dic['total']
                                     else:
@@ -297,17 +317,17 @@ class LibroVentas(models.AbstractModel):
 
 
 
-                                        if compra.partner_id.pequenio_contribuyente:
-                                            dic['compra'] = 0
-                                            dic['servicio'] = 0
-                                            dic['importacion'] = 0
-                                            dic['compra_exento'] = 0
-                                            dic['servicio_exento'] = 0
-                                            dic['pequenio'] += monto_convertir
+#                                         if compra.partner_id.pequenio_contribuyente:
+#                                             dic['compra'] = 0
+#                                             dic['servicio'] = 0
+#                                             dic['importacion'] = 0
+#                                             dic['compra_exento'] = 0
+#                                             dic['servicio_exento'] = 0
+#                                             dic['pequenio'] += monto_convertir
 
                             else:
-                                logging.warn(linea.product_id.name)
-                                if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
+#                                 logging.warn(linea.product_id.name)
+                                if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name)) and compra.state != 'cancel'):
                                     if len(linea.tax_ids) > 0:
                                         # monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
@@ -332,13 +352,13 @@ class LibroVentas(models.AbstractModel):
                                                 dic['servicio'] +=  linea.price_subtotal
 
 
-                                        if compra.partner_id.pequenio_contribuyente:
-                                            dic['compra'] = 0
-                                            dic['servicio'] = 0
-                                            dic['importacion'] = 0
-                                            dic['compra_exento'] = 0
-                                            dic['servicio_exento'] = 0
-                                            dic['pequenio'] += linea.price_total
+#                                         if compra.partner_id.pequenio_contribuyente:
+#                                             dic['compra'] = 0
+#                                             dic['servicio'] = 0
+#                                             dic['importacion'] = 0
+#                                             dic['compra_exento'] = 0
+#                                             dic['servicio_exento'] = 0
+#                                             dic['pequenio'] += linea.price_total
 
 
                                     else:
@@ -348,13 +368,13 @@ class LibroVentas(models.AbstractModel):
                                             dic['servicio_exento'] +=  linea.price_total
 
 
-                                        if compra.partner_id.pequenio_contribuyente:
-                                            dic['compra'] = 0
-                                            dic['servicio'] = 0
-                                            dic['importacion'] = 0
-                                            dic['compra_exento'] = 0
-                                            dic['servicio_exento'] = 0
-                                            dic['pequenio'] += linea.price_total
+#                                         if compra.partner_id.pequenio_contribuyente:
+#                                             dic['compra'] = 0
+#                                             dic['servicio'] = 0
+#                                             dic['importacion'] = 0
+#                                             dic['compra_exento'] = 0
+#                                             dic['servicio_exento'] = 0
+#                                             dic['pequenio'] += linea.price_total
 
 
                                 # dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
@@ -479,7 +499,11 @@ class LibroVentas(models.AbstractModel):
                             # total['pequenio'] += dic['pequenio']
                             # total['iva'] += dic['iva']
                             # total['total'] += dic['total']
+#                         if dic['rectificativa']==False:
                         dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+
+#                         if dic['rectificativa']:
+#                             dic['total'] = dic['compra'] - dic['servicio'] - dic['compra_exento'] - dic['servicio_exento'] - dic['importacion'] - dic['iva'] - dic['pequenio']
 
                         if compra.move_type in ['in_refund']:
                             # dic['total'] = dic['compra'] - dic['servicio'] - dic['compra_exento'] - dic['servicio_exento'] - dic['importacion'] - dic['iva'] - dic['pequenio']
@@ -512,15 +536,26 @@ class LibroVentas(models.AbstractModel):
                             # total['total'] += dic['total']
                         else:
                             # dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+                            if dic['rectificativa'] == False:
+                                total['compra'] += dic['compra']
+                                total['compra_exento'] += dic['compra_exento']
+                                total['servicio'] += dic['servicio']
+                                total['servicio_exento'] += dic['servicio_exento']
+                                total['importacion'] += dic['importacion']
+                                total['pequenio'] += dic['pequenio']
+                                total['iva'] += dic['iva']
+                                total['total'] += dic['total']
+                            if dic['rectificativa']:
+                                total['compra'] -= dic['compra']
+                                total['compra_exento'] -= dic['compra_exento']
+                                total['servicio'] -= dic['servicio']
+                                total['servicio_exento'] -= dic['servicio_exento']
+                                total['importacion'] -= dic['importacion']
+                                total['pequenio'] -= dic['pequenio']
+                                total['iva'] -= dic['iva']
+                                total['total'] -= dic['total']
 
-                            total['compra'] += dic['compra']
-                            total['compra_exento'] += dic['compra_exento']
-                            total['servicio'] += dic['servicio']
-                            total['servicio_exento'] += dic['servicio_exento']
-                            total['importacion'] += dic['importacion']
-                            total['pequenio'] += dic['pequenio']
-                            total['iva'] += dic['iva']
-                            total['total'] += dic['total']
+
                         compras_lista.append(dic)
                     else:
                         # GASTOS NO DEDUCIBLES
@@ -535,7 +570,10 @@ class LibroVentas(models.AbstractModel):
                         total_gastos_no += compra.amount_total
                         gastos_no_lista.append(dic)
 
-        # logging.warn(compras_lista)
+        logging.warning('')
+        logging.warning('')
+        logging.warning('Compra lista')
+        logging.warning(compras_lista)
         return {'compras_lista': compras_lista,'total': total,'documentos_operados':documentos_operados,'gastos_no': gastos_no_lista,'total_gastos_no': total_gastos_no}
 
     @api.model

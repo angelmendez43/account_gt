@@ -39,61 +39,103 @@ class LibroVentasWizard(models.TransientModel):
             hoja = libro.add_worksheet('Reporte ventas')
 
             hoja.write(0, 0, 'LIBRO DE VENTAS Y SERVICIOS')
+            nombre_libro = ''
+            if w.diarios_ids:
+                nombre_libro= w.diarios_ids[0].fel_nombre_comercial
+            hoja.write(1, 4, nombre_libro)
             hoja.write(2, 0, 'NUMERO DE IDENTIFICACION TRIBUTARIA')
             hoja.write(2, 1, self.env.company.vat)
             hoja.write(3, 0, 'NOMBRE COMERCIAL')
             hoja.write(3, 1,  self.env.company.name)
-            hoja.write(2, 3, 'DOMICILIO FISCAL')
-            hoja.write(2, 4,  self.env.company.street)
+#             hoja.write(2, 3, 'DOMICILIO FISCAL')
+#             hoja.write(2, 4,  self.env.company.street)
             hoja.write(3, 3, 'REGISTRO DEL')
             hoja.write(3, 4, str(w.fecha_inicio) + ' al ' + str(w.fecha_fin))
 
 
 
             hoja.write(5, 0, 'Fecha')
-            hoja.write(5, 1, 'Documento')
-            hoja.write(5, 2, 'NIT')
-            hoja.write(5, 3, 'Cliente')
-            hoja.write(5, 4, 'Bien')
-            hoja.write(5, 5, 'Ventas exentas')
-            hoja.write(5, 6, 'Servicios')
-            hoja.write(5, 7, 'Servicios exentos')
-            hoja.write(5, 8, 'Importacion')
-            hoja.write(5, 9, 'IVA')
-            hoja.write(5, 10, 'Bruto')
-            hoja.write(5, 11, 'Reten IVA')
-            hoja.write(5, 12, 'Correlativo interno')
-            hoja.write(5, 13, 'País destino')
-            hoja.write(5, 14, 'OBSERVACIONES')
+#             hoja.write(5, 1, 'Documento')
+            hoja.write(5, 1, 'Serie')
+            hoja.write(5, 2, 'Numero de factura')
+            hoja.write(5, 3, 'Tipo de documento')
+            hoja.write(5, 4, 'NIT')
+            hoja.write(5, 5, 'Cliente')
+            hoja.write(5, 6, 'Bien')
+            hoja.write(5, 7, 'Ventas exentas')
+            hoja.write(5, 8, 'Servicios')
+            hoja.write(5, 9, 'Servicios exentos')
+            hoja.write(5, 10, 'Exportación')
+            hoja.write(5, 11, 'IVA')
+            hoja.write(5, 12, 'Total')
+            hoja.write(5, 13, 'Reten IVA')
+            hoja.write(5, 14, 'Correlativo interno')
+            hoja.write(5, 15, 'País destino')
+            hoja.write(5, 16, 'Correlativo interno')
 
             fila = 6
             for compra in res['compras_lista']:
                 hoja.write(fila, 0, compra['fecha'])
-                hoja.write(fila, 1, compra['documento'])
-                hoja.write(fila, 2, compra['nit'])
-                hoja.write(fila, 3, compra['proveedor'])
-                hoja.write(fila, 4, compra['compra'])
-                hoja.write(fila, 5, compra['compra_exento'])
-                hoja.write(fila, 6, compra['servicio'])
-                hoja.write(fila, 7, compra['servicio_exento'])
-                hoja.write(fila, 8, compra['importacion'])
-                hoja.write(fila, 9, compra['iva'])
-                hoja.write(fila, 10, compra['total'])
-                hoja.write(fila, 11, compra['reten_iva'])
-                hoja.write(fila, 12, compra['correlativo_interno'])
-                hoja.write(fila, 13, compra['pais_destino'])
-                hoja.write(fila, 14, compra['observaciones'])
+#                 hoja.write(fila, 1, compra['documento'])
+                hoja.write(fila, 1, compra['serie'])
+                hoja.write(fila, 2, compra['numero_factura'])
+                hoja.write(fila, 3, compra['tipo_doc'])
+                hoja.write(fila, 4, compra['nit'])
+                hoja.write(fila, 5, compra['proveedor'])
+                hoja.write(fila, 6, compra['compra'])
+                hoja.write(fila, 7, compra['compra_exento'])
+                hoja.write(fila, 8, compra['servicio'])
+                hoja.write(fila, 9, compra['servicio_exento'])
+                hoja.write(fila, 10, compra['importacion'])
+                hoja.write(fila, 11, compra['iva'])
+                hoja.write(fila, 12, compra['total'])
+                hoja.write(fila, 13, compra['reten_iva'])
+                hoja.write(fila, 14, compra['correlativo_interno'])
+                hoja.write(fila, 15, compra['pais_destino'])
+                hoja.write(fila, 16, compra['observaciones'])
 
                 fila += 1
-
-            hoja.write(fila, 4, res['total']['compra'])
-            hoja.write(fila, 5, res['total']['compra_exento'])
-            hoja.write(fila, 6, res['total']['servicio'])
-            hoja.write(fila, 7, res['total']['servicio_exento'])
-            hoja.write(fila, 8, res['total']['importacion'])
-            hoja.write(fila, 9, res['total']['iva'])
-            hoja.write(fila, 10, res['total']['total'])
-            hoja.write(fila, 11, res['total']['reten_iva'])
+            hoja.write(fila, 5, 'Total')
+            if res['total']['compra'] < 0:
+                res['total']['compra'] = (res['total']['compra'] *-1)
+                hoja.write(fila, 6, res['total']['compra'])
+            else:
+                hoja.write(fila, 6, res['total']['compra'])
+            if res['total']['compra_exento'] < 0:
+                res['total']['compra_exento'] = (res['total']['compra_exento'] * -1)
+                hoja.write(fila, 7, res['total']['compra_exento'])
+            else:
+                hoja.write(fila, 7, res['total']['compra_exento'])
+            if res['total']['servicio'] < 0:
+                res['total']['servicio'] = (res['total']['servicio']*-1)
+                hoja.write(fila, 8, res['total']['servicio'])
+            else:
+                hoja.write(fila, 8, res['total']['servicio'])
+            if res['total']['servicio_exento'] < 0:
+                res['total']['servicio_exento'] = (res['total']['servicio_exento'] * -1)
+                hoja.write(fila, 9, res['total']['servicio_exento'])
+            else:
+                hoja.write(fila, 9, res['total']['servicio_exento'])
+            if res['total']['importacion'] < 0:
+                res['total']['importacion'] = res['total']['importacion'] * -1
+                hoja.write(fila, 10, res['total']['importacion'])
+            else:
+                hoja.write(fila, 10, res['total']['importacion'])
+            if res['total']['iva'] < 0:
+                res['total']['iva'] = res['total']['iva'] * -1
+                hoja.write(fila, 11, res['total']['iva'])
+            else:
+                hoja.write(fila, 11, res['total']['iva'])
+            if res['total']['total'] < 0:
+                res['total']['total'] = res['total']['total'] * -1
+                hoja.write(fila, 12, res['total']['total'])
+            else:
+                hoja.write(fila, 12, res['total']['total'])
+            if res['total']['reten_iva'] < 0:
+                res['total']['reten_iva'] = res['total']['reten_iva'] * -1
+                hoja.write(fila, 13, res['total']['reten_iva'])
+            else:
+                hoja.write(fila, 13, res['total']['reten_iva'])
 
             fila += 1
 
