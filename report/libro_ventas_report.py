@@ -187,7 +187,7 @@ class LibroVentas(models.AbstractModel):
         estados = ['cancel', 'posted']
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id), ('journal_id', 'in', datos['diarios_ids']), ('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),
 ('state','in', estados),
-        ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+        ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc, name asc')
 
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
         logging.warning(compra_ids)

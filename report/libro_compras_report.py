@@ -81,14 +81,6 @@ class LibroCompras(models.AbstractModel):
             amount_total_signed = abs(total) if move.move_type == 'entry' else -total
             amount_residual_signed = total_residual
 
-            # logging.warning(amount_untaxed)
-            # logging.warn(amount_tax)
-            # logging.warn(amount_total)
-            # logging.warn(amount_residual)
-            # logging.warn(amount_untaxed_signed)
-            # logging.warn(amount_total_signed)
-            # logging.warn(amount_residual_signed)
-
 
             if amount_residual_signed < 0:
                 # logging.warn('IF')
@@ -99,8 +91,7 @@ class LibroCompras(models.AbstractModel):
             else:
                 conversion['impuesto'] = (amount_tax_signed)
                 conversion['total'] = amount_residual_signed
-#             logging.warning(move.name)
-#             logging.warning(conversion)
+
 
         return conversion
 
@@ -111,14 +102,14 @@ class LibroCompras(models.AbstractModel):
             for linea in tax_ids:
                 if 'IVA' in linea.name:
                     impuesto_iva = True
-#                     logging.warning('si hay iva')
+
         return impuesto_iva
 
     def _get_compras(self,datos):
         compras_lista = []
         gastos_no_lista = []
-        logging.warning(self.env.company)
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('move_type','in',['in_invoice','in_refund'])])
+#         logging.warning(self.env.company)
+        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),('move_type','in',['in_invoice','in_refund'])] ,order='invoice_date asc')
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0, 'combustible':0, 'activo':0,'iva':0,'total':0}
         total_gastos_no = 0
         documentos_operados = 0
@@ -126,8 +117,8 @@ class LibroCompras(models.AbstractModel):
 
                 for compra in compra_ids:
                     if compra.journal_id.tipo_factura != False:
-                        formato_fecha = compra.date.strftime('%d/%m/%Y')
-
+                        formato_fecha = compra.invoice_date.strftime('%d/%m/%Y')
+                        rectificativa=False
                         factura = ''
                         documento = ''
                         doc_ref = ''
@@ -137,6 +128,9 @@ class LibroCompras(models.AbstractModel):
                         documentos_operados += 1
                         if compra.journal_id:
                             doc_ref = compra.journal_id.tipo_factura
+                        if compra.move_type == 'in_refund':
+                            rectificativa=True
+
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
@@ -154,16 +148,39 @@ class LibroCompras(models.AbstractModel):
                             'combustible':0,
                             'activo':0,
                             'iva': 0,
-                            'total': 0
+                            'total': 0,
+                            'rectificativa':rectificativa
                         }
 
+#        Si la factura es nota de credito si es consumible y activo es igual a false
 
-                        if compra.tipo_factura == 'combustible':
-                            dic['combustible']+=(compra.amount_untaxed_signed*-1)
-                            iva = (compra.amount_total_signed*-1)+ compra.amount_untaxed_signed
-                            dic['iva']+= iva
+                        if dic['rectificativa']:
+                            producto_compra = 0
+                            producto_servicio = 0
+                            producto_activo = 0
+                            iva_general = 0
+                            for linea in compra.invoice_line_ids:
+                                if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
+                                    producto_compra += linea.price_subtotal
+                                    iva_general += linea.price_total - linea.price_subtotal
+                                if linea.product_id.detailed_type == 'service' and linea.product_id.es_activo == False:
+                                    producto_servicio += linea.price_subtotal
+                                    iva_general += linea.price_total - linea.price_subtotal
+                                if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo:
+                                    producto_activo += linea.price_subtotal
+                                    iva_general += linea.price_total - linea.price_subtotal
 
-                        if compra.tipo_factura == 'activo' and compra.tipo_factura != 'factura_especial':
+                            dic['compra']=producto_compra
+                            dic['activo']=producto_activo
+                            dic['servicio']=producto_servicio
+                            dic['iva']=iva_general
+
+#                         if compra.tipo_factura == 'combustible':
+#                             dic['combustible']+=(compra.amount_untaxed_signed*-1)
+#                             iva = (compra.amount_total_signed*-1)+ compra.amount_untaxed_signed
+#                             dic['iva']+= iva
+
+                        if compra.tipo_factura == 'activo' and compra.journal_id.tipo_factura != 'FESP':
                             dic['activo']+=(compra.amount_untaxed_signed*-1)
                             iva = (compra.amount_total_signed*-1)+ compra.amount_untaxed_signed
                             dic['iva']+= iva
@@ -179,46 +196,34 @@ class LibroCompras(models.AbstractModel):
                             total_fe=0
                             subtotal_fe=0
                             for lineas in compra.invoice_line_ids:
+
                                 total_fe += lineas.quantity * lineas.price_unit
                                 if lineas.product_id.es_activo and lineas.product_id.detailed_type == 'consu' or lineas.product_id.es_activo == False and lineas.product_id.detailed_type == 'consu':
-#                                     total_factura_especial += lineas.quantity * lineas.price_unit
+
                                     total_exento += lineas.price_subtotal
                                     subtotal_fe += total_exento
                                 if lineas.product_id.detailed_type == 'service' and lineas.product_id.es_activo == False:
-#                                     total_servicio += lineas.quantity * lineas.price_unit
+
                                     total_servicio += lineas.price_subtotal
                                     subtotal_fe += total_servicio
-#                                 if lineas.product_id.es_activo and lineas.product_id.detailed_type == 'consu' and len(lineas.tax_ids) == 1 or lineas.product_id.es_activo == False and lineas.product_id.detailed_type == 'consu' and len(lineas.tax_ids) == 1:
-#                                     total_exento += lineas.price_subtotal
-#                                     iva += lineas.price_total - total_exento
-#                                     fctura_distinta = True
-
-#                                 if lineas.product_id.detailed_type == 'service' and lineas.product_id.es_activo == False and len(lineas.tax_ids) == 1:
-#                                     total_servicio += lineas.price_subtotal
-#                                     iva += lineas.price_total - total_servicio
-#                                     fctura_distinta = True
 
                             iva_fe = total_fe - subtotal_fe
 
                             dic['compra_exento'] = total_exento
-                            logging.warning('total_fe')
-                            logging.warning(total_fe)
-                            logging.warning('subtotal_fe')
-                            logging.warning(subtotal_fe)
                             dic['servicio'] = total_servicio
                             dic['iva'] = iva_fe
-#                             if fctura_distinta == False:
-#                                 iva = (dic['compra_exento']+dic['servicio'])-(compra.amount_untaxed_signed*-1)
-#                             if iva < 0:
-#                                 iva = iva * -1
-#                             dic['iva'] = iva
+#                         compra.tipo_factura = 'combustible' and
+                        if compra.journal_id.tipo_factura != 'FESP' and compra.journal_id.tipo_factura == 'FACT':
 
-#                             fctura_distinta = False
-
-                        if compra.tipo_factura != 'combustible' and compra.tipo_factura != 'factura_especial' and compra.journal_id.tipo_factura == 'FACT':
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
                                 impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
+                                if compra.id == 581:
+                                    logging.warning('compra.tipo_factura == 1')
+                                    logging.warning(compra.tipo_factura)
+                                    logging.warning(linea.product_id.detailed_type)
+                                    logging.warning('')
+                                    logging.warning('')
                                 if compra.currency_id.id != compra.company_id.currency_id.id:
                                     if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                         if len(linea.tax_ids) > 0:
@@ -230,7 +235,6 @@ class LibroCompras(models.AbstractModel):
                                             for i in r['taxes']:
                                                 if 'IVA' in i['name']:
                                                     dic['iva'] += i['amount']
-#                                                 logging.warning(i)
 
                                             monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_subtotal, compra.company_id.currency_id)
 
@@ -286,6 +290,7 @@ class LibroCompras(models.AbstractModel):
 
                                 else:
                                     total_act=0
+
                                     if linea.product_id:
                                         if len(linea.tax_ids) > 0:
 
@@ -294,15 +299,40 @@ class LibroCompras(models.AbstractModel):
                                             for i in r['taxes']:
                                                 if 'IVA' in i['name']:
                                                     dic['iva'] += i['amount']
-#                                                 logging.warning(i)
-
+                                            if compra.id == 581:
+                                                logging.warning('compra.tipo_factura id 581')
+                                                logging.warning(compra.tipo_factura)
+                                                logging.warning(linea.product_id.detailed_type)
+                                                logging.warning('')
+                                                logging.warning('')
                                             if compra.tipo_factura == 'varios':
-                                                if linea.product_id.type == 'product':
+
+                                                if linea.product_id.detailed_type == 'product':
                                                     dic['compra'] += linea.price_subtotal
-                                                if linea.product_id.type != 'product':
+                                                if linea.product_id.detailed_type != 'product':
                                                     dic['servicio'] +=  linea.price_subtotal
                                             elif compra.tipo_factura == 'importacion':
+
                                                 dic['importacion'] += linea.price_subtotal
+#                                               if compra.tipo_factura == 'combustible':
+                                            elif compra.tipo_factura == 'combustible' and linea.product_id.detailed_type == 'service' :
+
+                                                precio = ( linea.price_unit * (1-(linea.discount or 0.0)/100.0) )
+                                                precios = linea.tax_ids.compute_all(precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+                                                logging.warning('PRECIOS========')
+                                                logging.warning(precios)
+                                                iva_cobrar = 0
+                                                idp_super = 0
+                                                for impuesto in precios['taxes']:
+                                                    if impuesto['name'] ==  'IVA por Cobrar':
+                                                        iva_cobrar += impuesto['amount']
+                                                    if impuesto['name'] ==  'IDP Super':
+                                                        idp_super += impuesto['amount']
+                                                dic['combustible']+=(compra.amount_untaxed_signed*-1)
+#                                                 iva = (compra.amount_total_signed*-1)+ compra.amount_untaxed_signed
+                                                dic['iva'] = iva_cobrar
+                                                dic['compra_exento'] = idp_super
+#                                                 dic['iva']+= iva
                                             else:
                                                 iva_prod=0
                                                 if linea.product_id.es_activo:
@@ -311,13 +341,13 @@ class LibroCompras(models.AbstractModel):
                                                     iva_prod += total_act - linea.price_subtotal
                                                     dic['iva'] = iva_prod
                                                 else:
-                                                    if linea.product_id.type == 'product':
-#                                                         logging.warning("Que producto es ")
-#                                                         logging.warning(linea.product_id.name)
+                                                    if linea.product_id.detailed_type == 'product' :
                                                         dic['compra'] += linea.price_subtotal
-                                                    if linea.product_id.type != 'product':
+                                                    if linea.product_id.detailed_type != 'product' and linea.product_id.detailed_type != 'consu':
                                                         dic['servicio'] +=  linea.price_subtotal
+                                                    if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
 
+                                                        dic['compra'] +=  linea.price_subtotal
 
                                             if compra.partner_id.pequenio_contribuyente:
                                                 dic['compra'] = 0
@@ -448,12 +478,12 @@ class LibroCompras(models.AbstractModel):
                         dicc_resumen_total[6]['total_iva_exento']+=lista['iva']
                         dicc_resumen_total[6]['total_exento']+=lista['total']
 
-        logging.warning('')
-        logging.warning('')
-        logging.warning('Compras lista')
-        logging.warning(compras_lista)
-        logging.warning('')
-        logging.warning('')
+#         logging.warning('')
+#         logging.warning('')
+#         logging.warning('Compras lista')
+#         logging.warning(compras_lista)
+#         logging.warning('')
+#         logging.warning('')
 
         return {'compras_lista': compras_lista,'total': total,'documentos_operados':documentos_operados,'resumen_total':dicc_resumen_total,'gastos_no': gastos_no_lista,'total_gastos_no': total_gastos_no}
 
