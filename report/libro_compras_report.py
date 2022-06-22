@@ -123,8 +123,15 @@ class LibroCompras(models.AbstractModel):
                         documento = ''
                         doc_ref = ''
                         if compra.ref:
-                            factura = compra.ref.split('-')[0]
-                            documento = compra.ref.split('-')[1]
+                            if '-' in compra.ref:
+                                factura = compra.ref.split('-')[0]
+                                documento = compra.ref.split('-')[1]
+                            elif '/' in compra.ref:
+                                factura = compra.ref.split('/')[0]
+                                documento = compra.ref.split('/')[1]
+                            else:
+                                factura = ''
+                                documento = ''
                         documentos_operados += 1
                         if compra.journal_id:
                             doc_ref = compra.journal_id.tipo_factura
@@ -159,6 +166,8 @@ class LibroCompras(models.AbstractModel):
                             producto_servicio = 0
                             producto_activo = 0
                             iva_general = 0
+                            logging.warning('Vamos a buscar la factura NCRE')
+                            logging.warning(compra.name)
                             for linea in compra.invoice_line_ids:
                                 if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
                                     producto_compra += linea.price_subtotal
@@ -174,6 +183,10 @@ class LibroCompras(models.AbstractModel):
                             dic['activo']=producto_activo
                             dic['servicio']=producto_servicio
                             dic['iva']=iva_general
+
+                            logging.warning(dic)
+                            logging.warning('')
+                            logging.warning('')
 
 #                         if compra.tipo_factura == 'combustible':
 #                             dic['combustible']+=(compra.amount_untaxed_signed*-1)
@@ -218,12 +231,6 @@ class LibroCompras(models.AbstractModel):
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
                                 impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
-                                if compra.id == 581:
-                                    logging.warning('compra.tipo_factura == 1')
-                                    logging.warning(compra.tipo_factura)
-                                    logging.warning(linea.product_id.detailed_type)
-                                    logging.warning('')
-                                    logging.warning('')
                                 if compra.currency_id.id != compra.company_id.currency_id.id:
                                     if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                         if len(linea.tax_ids) > 0:
@@ -299,12 +306,6 @@ class LibroCompras(models.AbstractModel):
                                             for i in r['taxes']:
                                                 if 'IVA' in i['name']:
                                                     dic['iva'] += i['amount']
-                                            if compra.id == 581:
-                                                logging.warning('compra.tipo_factura id 581')
-                                                logging.warning(compra.tipo_factura)
-                                                logging.warning(linea.product_id.detailed_type)
-                                                logging.warning('')
-                                                logging.warning('')
                                             if compra.tipo_factura == 'varios':
 
                                                 if linea.product_id.detailed_type == 'product':
@@ -374,11 +375,13 @@ class LibroCompras(models.AbstractModel):
                                                 dic['pequenio'] += linea.price_total
 
 
-                        dic['total'] = dic['activo'] + dic['combustible'] + dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+
 
                         if compra.move_type in ['in_refund']:
-
+                            logging.warning('Vamos a buscar la factura NCRE')
+                            logging.warning(compra.name)
                             dic['compra']  = dic['compra'] * -1
+                            logging.warning(dic['compra'])
                             dic['compra_exento'] = dic['compra_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
                             dic['servicio_exento'] = dic['servicio_exento'] * -1
@@ -387,19 +390,22 @@ class LibroCompras(models.AbstractModel):
                             dic['iva'] = dic['iva'] * -1
                             dic['total'] = dic['total'] * -1
 
-                        else:
 
-                            total['compra'] += dic['compra']
-                            total['compra_exento'] += dic['compra_exento']
-                            total['servicio'] += dic['servicio']
-                            total['servicio_exento'] += dic['servicio_exento']
-                            total['importacion'] += dic['importacion']
-                            total['pequenio'] += dic['pequenio']
-                            total['combustible'] += dic['combustible']
-                            total['activo'] += dic['activo']
-                            total['iva'] += dic['iva']
-                            total['total'] += dic['total']
+
+                        total['compra'] += dic['compra']
+                        logging.warning('total[compra]')
+                        logging.warning(total['compra'])
+                        total['compra_exento'] += dic['compra_exento']
+                        total['servicio'] += dic['servicio']
+                        total['servicio_exento'] += dic['servicio_exento']
+                        total['importacion'] += dic['importacion']
+                        total['pequenio'] += dic['pequenio']
+                        total['combustible'] += dic['combustible']
+                        total['activo'] += dic['activo']
+                        total['iva'] += dic['iva']
+                        total['total'] += dic['total']
                         compras_lista.append(dic)
+                        dic['total'] = dic['activo'] + dic['combustible'] + dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
                     else:
                         # GASTOS NO DEDUCIBLES
                         dic = {

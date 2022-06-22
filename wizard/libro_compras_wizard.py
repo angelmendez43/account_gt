@@ -88,57 +88,57 @@ class LibroComprasWizard(models.TransientModel):
 
                 if compra['combustible']:
                     iva_combustible+=compra['iva']
-                if compra['combustible']<0:
-                    compra['combustible'] = compra['combustible'] * -1
+#                 if compra['combustible']<0:
+#                     compra['combustible'] = compra['combustible'] * -1
                 hoja.write(fila, 6, compra['combustible'])
 
                 if compra['compra']:
                     iva_compra+=compra['iva']
-                if compra['compra']<0:
-                    compra['compra']= compra['compra'] * -1
+#                 if compra['compra']<0:
+#                     compra['compra']= compra['compra'] * -1
                 hoja.write(fila, 7, compra['compra'])
 
                 if compra['compra_exento']:
                     iva_exento+=compra['iva']
-                if compra['compra_exento']<0:
-                    compra['compra_exento'] = compra['compra_exento'] * -1
+#                 if compra['compra_exento']<0:
+#                     compra['compra_exento'] = compra['compra_exento'] * -1
                 hoja.write(fila, 8, compra['compra_exento'])
 
                 if compra['servicio']:
                     iva_servicios+=compra['iva']
-                if compra['servicio']<0:
-                    compra['servicio'] = compra['servicio'] * -1
+#                 if compra['servicio']<0:
+#                     compra['servicio'] = compra['servicio'] * -1
                 hoja.write(fila, 9, compra['servicio'])
 
-                if compra['servicio_exento']<0:
-                    compra['servicio_exento'] = compra['servicio_exento'] * -1
+#                 if compra['servicio_exento']<0:
+#                     compra['servicio_exento'] = compra['servicio_exento'] * -1
                 hoja.write(fila, 10, compra['servicio_exento'])
 
                 if compra['importacion']:
                     iva_importaciones+=compra['iva']
-                if compra['importacion']<0:
-                    compra['importacion'] = compra['importacion'] * -1
+#                 if compra['importacion']<0:
+#                     compra['importacion'] = compra['importacion'] * -1
                 hoja.write(fila, 11, compra['importacion'])
 
                 if compra['pequenio']:
                     iva_pequenio+=compra['iva']
-                if compra['pequenio'] < 0:
-                    compra['pequenio'] = compra['pequenio'] * -1
+#                 if compra['pequenio'] < 0:
+#                     compra['pequenio'] = compra['pequenio'] * -1
                 hoja.write(fila, 12, compra['pequenio'])
 
 
                 if compra['activo']:
                     iva_activo+=compra['iva']
-                if compra['activo'] < 0:
-                    compra['activo'] = compra['activo'] * -1
+#                 if compra['activo'] < 0:
+#                     compra['activo'] = compra['activo'] * -1
                 hoja.write(fila,13, compra['activo'])
 
-                if compra['iva']<0:
-                    compra['iva'] = compra['iva'] * -1
+#                 if compra['iva']<0:
+#                     compra['iva'] = compra['iva'] * -1
                 hoja.write(fila, 14, compra['iva'])
 
-                if compra['total'] < 0:
-                    compra['total'] = compra['total'] * -1
+#                 if compra['total'] < 0:
+#                     compra['total'] = compra['total'] * -1
                 hoja.write(fila, 15, compra['total'])
 
                 fila += 1
