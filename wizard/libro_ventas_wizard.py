@@ -98,46 +98,46 @@ class LibroVentasWizard(models.TransientModel):
 
                 fila += 1
             hoja.write(fila, 5, 'Total')
-            if res['total']['compra'] < 0:
-                res['total']['compra'] = (res['total']['compra'] *-1)
-                hoja.write(fila, 7, res['total']['compra'])
-            else:
-                hoja.write(fila, 7, res['total']['compra'])
-            if res['total']['compra_exento'] < 0:
-                res['total']['compra_exento'] = (res['total']['compra_exento'] * -1)
-                hoja.write(fila, 8, res['total']['compra_exento'])
-            else:
-                hoja.write(fila, 8, res['total']['compra_exento'])
-            if res['total']['servicio'] < 0:
-                res['total']['servicio'] = (res['total']['servicio']*-1)
-                hoja.write(fila, 9, res['total']['servicio'])
-            else:
-                hoja.write(fila, 9, res['total']['servicio'])
-            if res['total']['servicio_exento'] < 0:
-                res['total']['servicio_exento'] = (res['total']['servicio_exento'] * -1)
-                hoja.write(fila, 10, res['total']['servicio_exento'])
-            else:
-                hoja.write(fila, 10, res['total']['servicio_exento'])
-            if res['total']['importacion'] < 0:
-                res['total']['importacion'] = res['total']['importacion'] * -1
-                hoja.write(fila, 11, res['total']['importacion'])
-            else:
-                hoja.write(fila, 11, res['total']['importacion'])
-            if res['total']['iva'] < 0:
-                res['total']['iva'] = res['total']['iva'] * -1
-                hoja.write(fila, 12, res['total']['iva'])
-            else:
-                hoja.write(fila, 12, res['total']['iva'])
-            if res['total']['total'] < 0:
-                res['total']['total'] = res['total']['total'] * -1
-                hoja.write(fila, 13, res['total']['total'])
-            else:
-                hoja.write(fila, 13, res['total']['total'])
-            if res['total']['reten_iva'] < 0:
-                res['total']['reten_iva'] = res['total']['reten_iva'] * -1
-                hoja.write(fila, 14, res['total']['reten_iva'])
-            else:
-                hoja.write(fila, 14, res['total']['reten_iva'])
+#             if res['total']['compra'] < 0:
+#                 res['total']['compra'] = (res['total']['compra'] *-1)
+#                 hoja.write(fila, 7, res['total']['compra'])
+#             else:
+            hoja.write(fila, 7, res['total']['compra'])
+#             if res['total']['compra_exento'] < 0:
+#                 res['total']['compra_exento'] = (res['total']['compra_exento'] * -1)
+#                 hoja.write(fila, 8, res['total']['compra_exento'])
+#             else:
+            hoja.write(fila, 8, res['total']['compra_exento'])
+#             if res['total']['servicio'] < 0:
+#                 res['total']['servicio'] = (res['total']['servicio']*-1)
+#                 hoja.write(fila, 9, res['total']['servicio'])
+#             else:
+            hoja.write(fila, 9, res['total']['servicio'])
+#             if res['total']['servicio_exento'] < 0:
+#                 res['total']['servicio_exento'] = (res['total']['servicio_exento'] * -1)
+#                 hoja.write(fila, 10, res['total']['servicio_exento'])
+#             else:
+            hoja.write(fila, 10, res['total']['servicio_exento'])
+#             if res['total']['importacion'] < 0:
+#                 res['total']['importacion'] = res['total']['importacion'] * -1
+#                 hoja.write(fila, 11, res['total']['importacion'])
+#             else:
+            hoja.write(fila, 11, res['total']['importacion'])
+#             if res['total']['iva'] < 0:
+#                 res['total']['iva'] = res['total']['iva'] * -1
+#                 hoja.write(fila, 12, res['total']['iva'])
+#             else:
+            hoja.write(fila, 12, res['total']['iva'])
+#             if res['total']['total'] < 0:
+#                 res['total']['total'] = res['total']['total'] * -1
+#                 hoja.write(fila, 13, res['total']['total'])
+#             else:
+            hoja.write(fila, 13, res['total']['total'])
+#             if res['total']['reten_iva'] < 0:
+#                 res['total']['reten_iva'] = res['total']['reten_iva'] * -1
+#                 hoja.write(fila, 14, res['total']['reten_iva'])
+#             else:
+            hoja.write(fila, 14, res['total']['reten_iva'])
 
             fila += 1
 
