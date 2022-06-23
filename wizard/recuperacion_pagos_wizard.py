@@ -5,6 +5,8 @@ import xlsxwriter
 import base64
 import io
 import logging
+from datetime import datetime
+import datetime
 
 class RecuperacionPagosWizard(models.TransientModel):
     _name = 'account_gt.recuperacion_pagos.wizard'
@@ -57,13 +59,28 @@ class RecuperacionPagosWizard(models.TransientModel):
                 hoja.write(fila, 0, fecha_pago)
                 hoja.write(fila, 1, pago.name)
                 hoja.write(fila, 2, pago.journal_id.name)
-                hoja.write(fila, 3, pago.descripcion)
+                if pago.descripcion:
+                    hoja.write(fila, 3, pago.descripcion)
                 hoja.write(fila, 4, pago.amount)
                 if pago.reconciled_invoices_count:
-                    logging.warning('Si hay factura :o')
-                    logging.warning(pago.reconciled_invoices_count)
-
-
+                    fel_serie_fel_numero = ''
+                    for factura in pago.reconciled_invoice_ids:
+                        # logging.warning('Que es factura?')
+                        # logging.warning(factura)
+                        if factura.fel_serie and factura.fel_numero:
+                            fel_serie_fel_numero = str(factura.fel_serie)+'-'+str(factura.fel_numero)
+                        fecha_factura = factura.invoice_date.strftime('%d/%m/%Y')
+                        hoja.write(fila, 7, fel_serie_fel_numero)
+                        hoja.write(fila, 8, fecha_factura)
+                        hoja.write(fila, 9, factura.partner_id.name)
+                        hoja.write(fila, 10, factura.partner_id.vat)
+                        hoja.write(fila, 11, factura.journal_id.name)
+                        dias_recuperacion = pago.date - factura.invoice_date
+                        # logging.warning('Cuantos días?')
+                        # logging.warning("Que pago es?"+'   '+pago.name+' '+str(pago.date))
+                        # logging.warning("Que factura es?"+'   '+factura.name+' '+str(factura.invoice_date))
+                        # logging.warning(dias_recuperacion)
+                        hoja.write(fila, 12, dias_recuperacion)
                 fila+=1
             libro.close()
             datos = base64.b64encode(f.getvalue())
