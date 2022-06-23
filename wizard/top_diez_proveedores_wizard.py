@@ -38,7 +38,7 @@ class ReporteTopDiezWizard(models.TransientModel):
             hoja.write(2, 2, 'IVA')
             hoja.write(2, 3, 'Total')
 
-            proveedores = self.env['account.move'].search([('invoice_date', '>=', w.fecha_inicio), ('invoice_date', '<=', w.fecha_fin), ('move_type', '=', 'in_invoice')])
+            proveedores = self.env['account.move'].search([('invoice_date', '>=', w.fecha_inicio), ('invoice_date', '<=', w.fecha_fin), ('move_type', '=', 'in_invoice'), ('state', '=', 'posted')])
             dicc_proveedores={}
             contador=0
             positivo=0
