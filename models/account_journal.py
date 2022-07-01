@@ -15,3 +15,12 @@ class AccountJournal(models.Model):
     _description = " Agregando campo extra "
 
     tipo_factura = fields.Selection([('FACT', 'FACT'), ('FCAM', 'FCAM'), ('FPEQ', 'FPEQ'), ('FCAP', 'FCAP'), ('FESP', 'FESP'), ('NABN', 'NABN'), ('RDON', 'RDON'), ('RECI', 'RECI'), ('NDEB', 'NDEB'), ('NCRE', 'NCRE')], 'Tipo de Documento FEL', copy=False)
+#     lineas_ids = fields.One2many('account.journal.lineas_extras','linea_id', 'Lineas')
+#
+# class AccountJournalLineas(models.Model):
+#     _name = "account.journal.lineas_extras"
+#     _description = "Agregando algunas cosas extras"
+#
+#      linea_id = fields.Many2one('account.journal', 'Linea')
+#      empleados = fields.Many2one('res.users', string='Usuarios')
+#      porcentaje = fields.Float('Porcentaje')

@@ -200,7 +200,7 @@ class LibroVentas(models.AbstractModel):
                 for compra in compra_ids :
                     logging.warning('Varias veces')
                     logging.warning(compra.move_type)
-                    if 'RECIB' not in compra.journal_id.code and (compra.fel_serie and compra.fel_numero) or compra.ref:
+                    if 'RECIB' not in compra.journal_id.code:
                         logging.warning('Ingreso ::::')
                         correlativo_interno = 0
                         nombre_proveedor = 'ANULADA'
