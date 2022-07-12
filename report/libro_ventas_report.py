@@ -8,51 +8,6 @@ class LibroVentas(models.AbstractModel):
     _name = 'report.account_gt.reporte_libro_ventas'
 
 
-    # def _get_ventas(self,datos):
-    #     ventas_lista = []
-    #     venta_ids = self.env['account.move'].search([('date','<=',datos['fecha_fin']),('date','>=',datos['fecha_inicio']),('state','=','posted'),('type','in',['out_invoice','out_refund'])])
-    #     total = {'venta':0,'servicio':0,'exportacion':0,'iva':0,'total':0}
-    #     documentos_operados = 0
-    #     if venta_ids:
-    #         for venta in venta_ids:
-    #             documentos_operados += 1
-    #             dic = {
-    #                 'id': venta.id,
-    #                 'fecha': venta.date,
-    #                 'documento': venta.ref if venta.ref else venta.name,
-    #                 'cliente': venta.partner_id.name if venta.partner_id else '',
-    #                 'nit': venta.partner_id.vat if venta.partner_id.vat else '',
-    #                 'venta': 0,
-    #                 'servicio': 0,
-    #                 'exportacion': 0,
-    #                 'iva': venta.amount_by_group[0][1],
-    #                 'total': venta.amount_total
-    #             }
-    #             for linea in venta.invoice_line_ids:
-    #                 if venta.tipo_factura == 'varios':
-    #                     if linea.product_id.type == 'product':
-    #                         dic['venta'] = linea.price_subtotal
-    #                     if linea.product_id.type != 'product':
-    #                         dic['servicio'] =  linea.price_subtotal
-    #                 else:
-    #                     if venta.tipo_factura == 'venta':
-    #                         dic['venta'] = linea.price_subtotal
-    #                     if venta.tipo_factura == 'servicio':
-    #                         dic['servicio'] = linea.price_subtotal
-    #                     if venta.tipo_factura == 'exportacion':
-    #                         dic['exportacion'] = linea.price_subtotal
-    #
-    #                 total['venta'] += dic['venta']
-    #                 total['servicio'] += dic['servicio']
-    #                 total['exportacion'] += dic['exportacion']
-    #                 total['iva'] += dic['iva']
-    #                 total['total'] += dic['total']
-    #
-    #             ventas_lista.append(dic)
-    #     logging.warn(ventas_lista)
-    #     return {'ventas_lista': ventas_lista,'total': total, 'documentos_operados': documentos_operados}
-
-
     def _get_conversion(self,move_id):
         conversion = {'impuesto': 0,'total':0 }
         total_sin_impuesto = 0
@@ -154,19 +109,6 @@ class LibroVentas(models.AbstractModel):
             logging.warn(conversion)
 
         return conversion
-            # currency = len(currencies) == 1 and currencies.pop() or move.company_id.currency_id
-            # is_paid = currency and currency.is_zero(move.amount_residual) or not move.amount_residual
-
-            # Compute 'invoice_payment_state'.
-            # if move.move_type == 'entry':
-            #     move.invoice_payment_state = False
-            # elif move.state == 'posted' and is_paid:
-            #     if move.id in in_payment_set:
-            #         move.invoice_payment_state = 'in_payment'
-            #     else:
-            #         move.invoice_payment_state = 'paid'
-            # else:
-            #     move.invoice_payment_state = 'not_paid'
 
 
     def _get_impuesto_iva(self,tax_ids):
@@ -200,7 +142,7 @@ class LibroVentas(models.AbstractModel):
                 for compra in compra_ids :
                     logging.warning('Varias veces')
                     logging.warning(compra.move_type)
-                    if 'RECIB' not in compra.journal_id.code:
+                    if 'RECIB' not in compra.journal_id.code and (compra.fel_serie and compra.fel_numero) or compra.ref:
                         logging.warning('Ingreso ::::')
                         correlativo_interno = 0
                         nombre_proveedor = 'ANULADA'
@@ -239,17 +181,6 @@ class LibroVentas(models.AbstractModel):
                             'observaciones': compra.name,
                             'rectificativa': rectificativa
                         }
-                        # if compra.currency_id.id != compra.company_id.currency_id.id:
-                            # if len(compra.amount_by_group) > 0:
-                            #     monto_convertir_iva = compra.currency_id.with_context(date=compra.invoice_date).compute(compra.amount_by_group[0][1], compra.company_id.currency_id)
-                            #     monto_convertir_total = compra.currency_id.with_context(date=compra.invoice_date).compute(compra.amount_total, compra.company_id.currency_id)
-                            #
-                            #     dic['iva'] = 0.00
-                            #     dic['total'] = self._get_conversion(compra)['total']
-                            # else:
-                            #     monto_convertir_total = compra.currency_id.with_context(date=compra.invoice_date).compute(compra.amount_total, compra.company_id.currency_id)
-                            #     dic['iva'] = 0.00
-                            #     dic['total'] = self._get_conversion(compra)['total']
 
                         reten_iva = self.env['account.move'].search([('ref','=', str(compra.name))])
                         if reten_iva and compra.state != 'cancel':
@@ -265,7 +196,12 @@ class LibroVentas(models.AbstractModel):
                             if compra.currency_id.id != compra.company_id.currency_id.id and compra.state != 'cancel':
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name))):
                                     if len(linea.tax_ids) > 0:
-                                        monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
+
+                                        precio_unitario = linea.price_unit
+                                        if linea.discount > 0:
+                                            precio_unitario = linea.price_unit - (linea.price_unit*(linea.discount/100))
+
+                                        monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(precio_unitario, compra.company_id.currency_id)
 
                                         r = linea.tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
@@ -312,12 +248,25 @@ class LibroVentas(models.AbstractModel):
 
                                 if ((linea.product_id) and (('COMISION POR SERVICIOS' not in linea.product_id.name) or ('COMISIONES BANCARIAS' not in linea.product_id.name) or ('Servicios y Comisiones' not in linea.product_id.name)) and compra.state != 'cancel'):
                                     if len(linea.tax_ids) > 0:
-                                        r = linea.tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
+
+                                        precio_unitario = linea.price_unit
+                                        if linea.discount > 0:
+                                            precio_unitario = linea.price_unit - (linea.price_unit*(linea.discount/100))
+
+                                        r = linea.tax_ids.compute_all(precio_unitario, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 
                                         for i in r['taxes']:
                                             if 'IVA' in i['name']:
+                                                logging.warning('')
+                                                logging.warning('')
+                                                logging.warning(compra.name)
+                                                logging.warning('La parte del IVA')
+                                                logging.warning(i['amount'])
                                                 dic['iva'] += i['amount']
-                                            logging.warn(i)
+                                            logging.warning('')
+                                            logging.warning('')
+                                            logging.warning('Lo que es I')
+                                            logging.warning(i)
 
                                         if compra.tipo_factura == 'varios':
                                             if linea.product_id.type == 'product':
@@ -352,8 +301,6 @@ class LibroVentas(models.AbstractModel):
                             dic['iva'] = dic['iva'] * -1
                             dic['total'] = dic['total'] * -1
 
-#                         else:
-#                             if dic['rectificativa'] == False:
                         total['compra'] += dic['compra']
                         total['compra_exento'] += dic['compra_exento']
                         total['servicio'] += dic['servicio']
@@ -362,15 +309,6 @@ class LibroVentas(models.AbstractModel):
                         total['pequenio'] += dic['pequenio']
                         total['iva'] += dic['iva']
                         total['total'] += dic['total']
-#                             if dic['rectificativa']:
-#                                 total['compra'] -= dic['compra']
-#                                 total['compra_exento'] -= dic['compra_exento']
-#                                 total['servicio'] -= dic['servicio']
-#                                 total['servicio_exento'] -= dic['servicio_exento']
-#                                 total['importacion'] -= dic['importacion']
-#                                 total['pequenio'] -= dic['pequenio']
-#                                 total['iva'] -= dic['iva']
-#                                 total['total'] -= dic['total']
 
 
                         compras_lista.append(dic)
@@ -398,11 +336,6 @@ class LibroVentas(models.AbstractModel):
         model = self.env.context.get('active_model')
         docs = self.env[model].browse(self.env.context.get('active_ids', []))
 
-        # if len(data['form']['diarios_id']) == 0:
-        #     raise UserError("Por favor ingrese al menos un diario.")
-
-        # diario = self.env['account.journal'].browse(data['form']['diarios_id'][0])
-
         return {
             'doc_ids': self.ids,
             'doc_model': model,
@@ -410,8 +343,7 @@ class LibroVentas(models.AbstractModel):
             'docs': docs,
             '_get_ventas': self._get_ventas,
             'company_id': self.env.company,
-            # 'lineas': self.lineas,
-            # 'direccion': diario.direccion and diario.direccion.street,
+            
         }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
