@@ -198,6 +198,21 @@ class LibroCompras(models.AbstractModel):
                             iva = (compra.amount_total_signed*-1)+ compra.amount_untaxed_signed
                             dic['iva']+= iva
 
+
+                        if compra.journal_id.tipo_factura == 'DUCA':
+                            servicio_duca=0
+                            iva_duca=0
+                            for linea_duca in compra.invoice_line_ids:
+                                if linea_duca.tax_ids:
+                                    if linea_duca.product_id.detailed_type == 'service' or linea_duca.product_id.detailed_type == 'consu':
+                                        servicio_duca += linea_duca.price_subtotal
+                                        iva_duca += linea_duca.price_total - linea_duca.price_subtotal
+                            dic['importacion']=servicio_duca
+                            dic['iva']= iva_duca
+
+
+
+
                         total_factura_especial=0
                         total_servicio=0
                         fctura_distinta = False
@@ -227,7 +242,8 @@ class LibroCompras(models.AbstractModel):
                             dic['iva'] = iva_fe
 #                         compra.tipo_factura = 'combustible' and
                         if compra.journal_id.tipo_factura != 'FESP' and compra.journal_id.tipo_factura == 'FACT':
-
+                            logging.warning('hay una factura de tipo DUCA?')
+                            logging.warning(compra.journal_id.tipo_factura)
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
                                 impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
