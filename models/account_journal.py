@@ -14,7 +14,17 @@ class AccountJournal(models.Model):
     _inherit = "account.journal"
     _description = " Agregando campo extra "
 
-    tipo_factura = fields.Selection([('FACT', 'FACT'), ('FCAM', 'FCAM'), ('FPEQ', 'FPEQ'), ('FCAP', 'FCAP'), ('FESP', 'FESP'), ('NABN', 'NABN'), ('RDON', 'RDON'), ('RECI', 'RECI'), ('NDEB', 'NDEB'), ('NCRE', 'NCRE')], 'Tipo de Documento FEL', copy=False)
+    tipo_factura = fields.Selection([('FACT', 'FACT'),
+    ('FCAM', 'FCAM'),
+    ('FPEQ', 'FPEQ'),
+    ('FCAP', 'FCAP'),
+    ('FESP', 'FESP'),
+    ('NABN', 'NABN'),
+    ('RDON', 'RDON'),
+    ('RECI', 'RECI'),
+    ('NDEB', 'NDEB'),
+    ('NCRE', 'NCRE'),
+    ('DUCA', 'DUCA')], 'Tipo de Documento FEL', copy=False)
 #     lineas_ids = fields.One2many('account.journal.lineas_extras','linea_id', 'Lineas')
 #
 # class AccountJournalLineas(models.Model):
