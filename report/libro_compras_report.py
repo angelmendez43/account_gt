@@ -83,9 +83,6 @@ class LibroCompras(models.AbstractModel):
 
 
             if amount_residual_signed < 0:
-                # logging.warn('IF')
-                # logging.warn(amount_residual_signed)
-                # logging.warn(amount_tax_signed)
                 conversion['impuesto'] = (amount_tax_signed *-1)
                 conversion['total'] = amount_residual_signed * -1
             else:
@@ -108,7 +105,7 @@ class LibroCompras(models.AbstractModel):
     def _get_compras(self,datos):
         compras_lista = []
         gastos_no_lista = []
-#         logging.warning(self.env.company)
+
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),('move_type','in',['in_invoice','in_refund'])] ,order='invoice_date asc')
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0, 'combustible':0, 'activo':0,'iva':0,'total':0}
         total_gastos_no = 0
@@ -166,8 +163,6 @@ class LibroCompras(models.AbstractModel):
                             producto_servicio = 0
                             producto_activo = 0
                             iva_general = 0
-                            logging.warning('Vamos a buscar la factura NCRE')
-                            logging.warning(compra.name)
                             for linea in compra.invoice_line_ids:
                                 if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
                                     producto_compra += linea.price_subtotal
@@ -183,10 +178,6 @@ class LibroCompras(models.AbstractModel):
                             dic['activo']=producto_activo
                             dic['servicio']=producto_servicio
                             dic['iva']=iva_general
-
-                            logging.warning(dic)
-                            logging.warning('')
-                            logging.warning('')
 
 #                         if compra.tipo_factura == 'combustible':
 #                             dic['combustible']+=(compra.amount_untaxed_signed*-1)
@@ -242,8 +233,6 @@ class LibroCompras(models.AbstractModel):
                             dic['iva'] = iva_fe
 #                         compra.tipo_factura = 'combustible' and
                         if compra.journal_id.tipo_factura != 'FESP' and compra.journal_id.tipo_factura == 'FACT':
-                            logging.warning('hay una factura de tipo DUCA?')
-                            logging.warning(compra.journal_id.tipo_factura)
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
                                 impuesto_iva = self._get_impuesto_iva(linea.tax_ids)
@@ -336,8 +325,6 @@ class LibroCompras(models.AbstractModel):
 
                                                 precio = ( linea.price_unit * (1-(linea.discount or 0.0)/100.0) )
                                                 precios = linea.tax_ids.compute_all(precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
-                                                logging.warning('PRECIOS========')
-                                                logging.warning(precios)
                                                 iva_cobrar = 0
                                                 idp_super = 0
                                                 for impuesto in precios['taxes']:
@@ -394,10 +381,7 @@ class LibroCompras(models.AbstractModel):
 
 
                         if compra.move_type in ['in_refund']:
-                            logging.warning('Vamos a buscar la factura NCRE')
-                            logging.warning(compra.name)
                             dic['compra']  = dic['compra'] * -1
-                            logging.warning(dic['compra'])
                             dic['compra_exento'] = dic['compra_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
                             dic['servicio_exento'] = dic['servicio_exento'] * -1
@@ -409,8 +393,6 @@ class LibroCompras(models.AbstractModel):
 
 
                         total['compra'] += dic['compra']
-                        logging.warning('total[compra]')
-                        logging.warning(total['compra'])
                         total['compra_exento'] += dic['compra_exento']
                         total['servicio'] += dic['servicio']
                         total['servicio_exento'] += dic['servicio_exento']
@@ -419,9 +401,10 @@ class LibroCompras(models.AbstractModel):
                         total['combustible'] += dic['combustible']
                         total['activo'] += dic['activo']
                         total['iva'] += dic['iva']
-                        total['total'] += dic['total']
                         compras_lista.append(dic)
                         dic['total'] = dic['activo'] + dic['combustible'] + dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+                        total['total'] += dic['total']
+
                     else:
                         # GASTOS NO DEDUCIBLES
                         dic = {
@@ -500,12 +483,6 @@ class LibroCompras(models.AbstractModel):
                         dicc_resumen_total[6]['total_iva_exento']+=lista['iva']
                         dicc_resumen_total[6]['total_exento']+=lista['total']
 
-#         logging.warning('')
-#         logging.warning('')
-#         logging.warning('Compras lista')
-#         logging.warning(compras_lista)
-#         logging.warning('')
-#         logging.warning('')
 
         return {'compras_lista': compras_lista,'total': total,'documentos_operados':documentos_operados,'resumen_total':dicc_resumen_total,'gastos_no': gastos_no_lista,'total_gastos_no': total_gastos_no}
 
