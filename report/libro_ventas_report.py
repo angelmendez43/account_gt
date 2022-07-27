@@ -343,7 +343,7 @@ class LibroVentas(models.AbstractModel):
             'docs': docs,
             '_get_ventas': self._get_ventas,
             'company_id': self.env.company,
-            
+
         }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
