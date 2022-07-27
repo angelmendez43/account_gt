@@ -105,7 +105,7 @@ class LibroCompras(models.AbstractModel):
     def _get_compras(self,datos):
         compras_lista = []
         gastos_no_lista = []
-
+        logging.warning('Bienvenido a la funcion de libro compras')
         compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),('move_type','in',['in_invoice','in_refund'])] ,order='invoice_date asc')
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0, 'combustible':0, 'activo':0,'iva':0,'total':0}
         total_gastos_no = 0
@@ -193,12 +193,16 @@ class LibroCompras(models.AbstractModel):
                         if compra.journal_id.tipo_factura == 'DUCA':
                             servicio_duca=0
                             iva_duca=0
+                            duca_exentos=0
                             for linea_duca in compra.invoice_line_ids:
                                 if linea_duca.tax_ids:
                                     if linea_duca.product_id.detailed_type == 'service' or linea_duca.product_id.detailed_type == 'consu':
                                         servicio_duca += linea_duca.price_subtotal
                                         iva_duca += linea_duca.price_total - linea_duca.price_subtotal
+                                elif 'DAI' in linea_duca.product_id.name:
+                                    duca_exentos += linea_duca.price_total
                             dic['importacion']=servicio_duca
+                            dic['compra_exento']=duca_exentos
                             dic['iva']= iva_duca
 
 
