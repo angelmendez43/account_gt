@@ -225,7 +225,7 @@ class LibroCompras(models.AbstractModel):
 
                                     total_exento += lineas.price_subtotal
                                     subtotal_fe += total_exento
-                                if lineas.product_id.detailed_type == 'service' and lineas.product_id.es_activo == False:
+                                if (lineas.product_id.detailed_type in ['service','product']) and lineas.product_id.es_activo == False:
 
                                     total_servicio += lineas.price_subtotal
                                     subtotal_fe += total_servicio
