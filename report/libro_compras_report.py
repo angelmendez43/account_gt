@@ -106,7 +106,12 @@ class LibroCompras(models.AbstractModel):
         compras_lista = []
         gastos_no_lista = []
         logging.warning('Bienvenido a la funcion de libro compras')
-        compra_ids = self.env['account.move'].search([('company_id','=',self.env.company.id),('invoice_date','<=',datos['fecha_fin']),('invoice_date','>=',datos['fecha_inicio']),('state','=','posted'),('move_type','in',['in_invoice','in_refund'])] ,order='invoice_date asc')
+        compra_ids = self.env['account.move'].search([
+        ('company_id','=',self.env.company.id),
+        ('date','<=',datos['fecha_fin']),
+        ('date','>=',datos['fecha_inicio']),
+        ('state','=','posted'),
+        ('move_type','in',['in_invoice','in_refund'])] ,order='date asc')
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0, 'combustible':0, 'activo':0,'iva':0,'total':0}
         total_gastos_no = 0
         documentos_operados = 0
