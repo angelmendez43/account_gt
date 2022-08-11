@@ -111,7 +111,7 @@ class LibroCompras(models.AbstractModel):
         ('date','<=',datos['fecha_fin']),
         ('date','>=',datos['fecha_inicio']),
         ('state','=','posted'),
-        ('move_type','in',['in_invoice','in_refund'])] ,order='date asc')
+        ('move_type','in',['in_invoice','in_refund'])] ,order='invoice_date asc')
         total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0, 'combustible':0, 'activo':0,'iva':0,'total':0}
         total_gastos_no = 0
         documentos_operados = 0
