@@ -156,12 +156,18 @@ class LibroVentas(models.AbstractModel):
                             nombre_proveedor = 'Publicada'
                         if compra.move_type == 'out_refund':
                             rectificativa = True
+                        fel_serie = ''
+                        fel_numero = ''
+                        if self.env['account.move'].fields_get('fel_serie'):
+                            fel_serie = compra.fel_serie
+                        if self.env['account.move'].fields_get('fel_numero'):
+                            fel_numero = compra.fel_numero
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
                             'documento': compra.ref if compra.ref else compra.name,
-                            'serie': compra.fel_serie if compra.fel_serie else '',
-                            'numero_factura': compra.fel_numero if compra.fel_numero else '',
+                            'serie': fel_serie,
+                            'numero_factura': fel_numero,
                             'tipo_doc': compra.journal_id.tipo_factura if compra.journal_id.tipo_factura else '',
                             'proveedor': compra.partner_id.name,
                             'estado_factura': nombre_proveedor,
