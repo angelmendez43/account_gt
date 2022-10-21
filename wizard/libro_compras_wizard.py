@@ -304,7 +304,6 @@ class LibroComprasWizard(models.TransientModel):
                         total_fe = 0
                         iva_total = 0
                         for lineas_proveedor in proveedor.invoice_line_ids:
-                            logging.warning('')
                             total_base += lineas_proveedor.price_subtotal
                             total_fe += lineas_proveedor.quantity * lineas_proveedor.price_unit
                         iva_total = total_fe - total_base
