@@ -164,10 +164,10 @@ class LibroVentas(models.AbstractModel):
                             fel_numero = compra.fel_numero
                         
                         if compra.payment_reference:
-                            if '-' in compra.ref:
+                            if '-' in compra.payment_reference:
                                 fel_serie = compra.payment_reference.split('-')[0]
                                 fel_numero = compra.payment_reference.split('-')[1]
-                            elif ' ' in compra.ref:
+                            elif ' ' in compra.payment_reference:
                                 fel_serie = compra.payment_reference.split()[0]
                                 fel_numero = compra.payment_reference.split()[1]
                             else:
