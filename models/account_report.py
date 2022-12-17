@@ -23,7 +23,7 @@ import logging
 
 class AccountReport(models.AbstractModel):
     _inherit = 'account.report'
-    
+
     def get_xlsx(self, options, response=None):
         res = super(AccountReport, self).get_xlsx(options, response)
         logging.warning(options)
@@ -42,13 +42,13 @@ class AccountReport(models.AbstractModel):
         date_fom = False
         date_to = False
         if 'date' in options and ('date_from' and 'date_to' in options['date']):
-            date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y") 
+            date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y")
             date_to = datetime.datetime.strptime(options['date']['date_to'], "%Y-%m-%d").strftime("%d/%m/%Y")
         res['report']['date_from_gt'] = date_from
         res['report']['date_to_gt'] = date_to
         res['report']['nit_gt'] = self.env.company.vat
-        return res     
-        
+        return res
+
     def get_new_xslx(self, options, reponse):
         self = self.with_context(self._set_context(options))
         output = io.BytesIO()
@@ -57,12 +57,12 @@ class AccountReport(models.AbstractModel):
             'strings_to_formulas': False,
         })
         logging.warning('get_new_xslx imporgesa')
-        
+
         date_fom = False
         date_to = False
         if 'date' in options and ('date_from' and 'date_to' in options['date']):
-            date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y") 
-            date_to = datetime.datetime.strptime(options['date']['date_to'], "%Y-%m-%d").strftime("%d/%m/%Y") 
+            date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y")
+            date_to = datetime.datetime.strptime(options['date']['date_to'], "%Y-%m-%d").strftime("%d/%m/%Y")
         sheet = workbook.add_worksheet(self._get_report_name()[:31])
 
         date_default_col1_style = workbook.add_format({'font_name': 'Arial', 'font_size': 12, 'font_color': '#666666', 'indent': 2, 'num_format': 'yyyy-mm-dd'})
@@ -81,10 +81,10 @@ class AccountReport(models.AbstractModel):
 
         #Set the first column width to 50
         sheet.set_column(0, 0, 50)
-        
+
         merge_format = workbook.add_format({
             'bold': 1,
-            
+
             'align': 'center',
             'valign': 'vcenter',
             })
@@ -93,7 +93,7 @@ class AccountReport(models.AbstractModel):
         sheet.merge_range('A3:H3', "LIBRO MAYOR",merge_format)
         sheet.merge_range('A4:H4', "PERIODO DEL "+str(date_from)+" AL " +str(date_to),merge_format)
         sheet.merge_range('A5:H5', "CIFRAS EXPRESADAS EN QUETZALES",merge_format)
-        
+
         y_offset = 6
         headers, lines = self.with_context(no_format=True, print_mode=True, prefetch_fields=False)._get_table(options)
 
@@ -109,7 +109,7 @@ class AccountReport(models.AbstractModel):
                 logging.warning(column)
                 if column['name'] == '':
                     logging.warning('SI ES VACIO')
-                    column['name'] = 'CUENTA' 
+                    column['name'] = 'CUENTA'
                 if colspan == 1:
                     if column_name_formated == '':
                         column_name_formated = "CUENTA"

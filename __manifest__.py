@@ -12,12 +12,13 @@
     'website': "",
 
     'category': 'Uncategorized',
-    'version': '0.2',
+    'version': '0.1',
 
     'depends': ['account','account_reports','base'],
 
     'data': [
         'security/ir.model.access.csv',
+        'report/report_views.xml',
         'views/report.xml',
         'views/res_partner_views.xml',
         'views/account_gt_views.xml',
@@ -40,4 +41,7 @@
         # 'wizard/conciliacion_bancaria_wizard_views.xml',
         'data/ir_sequence_data.xml',
     ],
+    'assets': {
+
+        }    
 }

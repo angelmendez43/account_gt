@@ -2,7 +2,7 @@
 <odoo>
 <data>
 
-
+    
 <template id="account_reports.main_template">
     <div class='o_account_reports_body'>
         <div id="warnings_div">
@@ -14,7 +14,7 @@
 
             <div class="o_account_reports_header">
 
-                <t t-if="report.get('name') == 'Libro mayor' ">
+                <t t-if="report.get('name') == 'Libro mayor' "> 
                     <div class="print_only">
                         <h2>
                                 <center>
@@ -27,14 +27,14 @@
                         </h2>
                     </div>
                 </t>
-                <t t-else="">
+                <t t-else="">    
 
                         <div class="print_only"><h2>TEST TITULO</h2></div>
                         <t t-call="account_reports.filter_info_template"/>
 
-                </t>
-
-
+                </t>                  
+                
+                
             </div>
             <div class="o_account_reports_summary"/>
             <div class="table-responsive">
@@ -50,7 +50,7 @@
             <div class="js_account_report_footnotes"/>
         </div>
     </div>
-</template>
-
+</template>    
+    
 </data>
 </odoo>
