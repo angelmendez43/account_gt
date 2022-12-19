@@ -162,17 +162,6 @@ class LibroVentas(models.AbstractModel):
                             fel_serie = compra.fel_serie
                         if self.env['account.move'].fields_get('fel_numero'):
                             fel_numero = compra.fel_numero
-                        
-                        if compra.payment_reference:
-                            if '-' in compra.payment_reference:
-                                fel_serie = compra.payment_reference.split('-')[0]
-                                fel_numero = compra.payment_reference.split('-')[1]
-                            elif ' ' in compra.payment_reference:
-                                fel_serie = compra.payment_reference.split()[0]
-                                fel_numero = compra.payment_reference.split()[1]
-                            else:
-                                fel_serie = ''
-                                fel_numero = ''    
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,

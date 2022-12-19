@@ -2,6 +2,8 @@
 <odoo>
     <data>
 
+        <menuitem id="menu_reporte_libros_gt" name="Libros de Guatemala" parent="account.menu_finance_reports" sequence="4"/>
+        
         <record model="ir.ui.view" id="account_gt_libro_compras_form_view">
             <field name="name">account_gt.libro_compras.wizard</field>
             <field name="model">account_gt.libro_compras.wizard</field>
@@ -33,7 +35,7 @@
                     view_mode="form"
                     target="new"/>
 
-        <menuitem action="launch_account_gt_libro_compras" id="menu_reporte_libro_compras" parent="account.menu_finance_reports"/>
+        <menuitem action="launch_account_gt_libro_compras" id="menu_reporte_libro_compras" parent="account_gt.menu_reporte_libros_gt"/>
 
     </data>
 </odoo>

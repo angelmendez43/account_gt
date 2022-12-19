@@ -33,7 +33,7 @@
                     view_mode="form"
                     target="new"/>
 
-        <menuitem action="launch_account_gt_libro_ventas" id="menu_reporte_libro_ventas" parent="account.menu_finance_reports"/>
+        <menuitem action="launch_account_gt_libro_ventas" id="menu_reporte_libro_ventas" parent="account_gt.menu_reporte_libros_gt"/>
 
     </data>
 </odoo>

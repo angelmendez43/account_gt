@@ -135,8 +135,8 @@ class LibroCompras(models.AbstractModel):
                                 factura = ''
                                 documento = ''
                         if documento == '' and compra.journal_id.tipo_factura == 'FESP' and compra.fel_numero:
-                            documento = compra.fel_numero
-
+                                documento = compra.fel_numero
+                            
                         documentos_operados += 1
                         if compra.journal_id:
                             doc_ref = compra.journal_id.tipo_factura
@@ -222,8 +222,13 @@ class LibroCompras(models.AbstractModel):
                         total_exento=0
                         iva_fe = 0
                         if compra.journal_id.tipo_factura == 'FESP':
-                            if compra.id == 8157:
-                                logging.warning('Si se esta ingresando :/')
+                            logging.warning('Hiiiiiii')
+                            logging.warning(compra.name)
+                            logging.warning(compra.id)
+                            logging.warning(compra.fel_serie)
+                            logging.warning(compra.tax_totals_json)
+                            logging.warning(dic)
+                            logging.warning('')
                             if compra.id == dic['id']:
                                 if self.env['account.move'].fields_get('fel_serie'):
                                     dic['serie']=compra.fel_serie
@@ -233,7 +238,9 @@ class LibroCompras(models.AbstractModel):
                             subtotal_fe=0
                             for lineas in compra.invoice_line_ids:
                                 r = lineas.tax_ids.compute_all(lineas.price_unit, currency=compra.currency_id, quantity=lineas.quantity, product=lineas.product_id, partner=compra.partner_id)
-
+                                if compra.id == 6435:
+                                    logging.warning('R-----------------')
+                                    logging.warning(r)
                                 total_fe += lineas.quantity * lineas.price_unit
                                 if lineas.product_id.es_activo and lineas.product_id.detailed_type == 'consu' or lineas.product_id.es_activo == False and lineas.product_id.detailed_type == 'consu':
 
@@ -243,14 +250,14 @@ class LibroCompras(models.AbstractModel):
 
                                     total_servicio += lineas.price_subtotal
                                     subtotal_fe = total_servicio
-
+                            
                             iva_fe = total_fe - subtotal_fe
 
-                            dic['compra'] = total_exento
+                            dic['compra_exento'] = total_exento
                             dic['servicio'] = total_servicio
                             dic['iva'] = iva_fe
 #                         compra.tipo_factura = 'combustible' and
-
+                            
                         if compra.journal_id.tipo_factura != 'FESP' and compra.journal_id.tipo_factura == 'FACT':
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
@@ -262,7 +269,9 @@ class LibroCompras(models.AbstractModel):
                                             monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_unit, compra.company_id.currency_id)
 
                                             r = linea.tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
-
+                                            if compra.id == 7167:
+                                                logging.warning('Que es r?')
+                                                logging.warning(r)
                                             for i in r['taxes']:
                                                 if 'IVA' in i['name']:
                                                     dic['iva'] += i['amount']
@@ -292,7 +301,7 @@ class LibroCompras(models.AbstractModel):
                                                 dic['pequenio'] += monto_convertir
 
                                             # dic['total']
-
+                                            
                                         else:
                                             monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
 
@@ -331,7 +340,10 @@ class LibroCompras(models.AbstractModel):
                                             for i in r['taxes']:
                                                 if 'IVA' in i['name']:
                                                     dic['iva'] += i['amount']
-
+                                            logging.warning('Tal vez else')
+                                            if compra.id == 6435:
+                                                logging.warning('Factura buscada')
+                                                logging.warning(r)
                                             if compra.tipo_factura == 'varios':
 
                                                 if linea.product_id.detailed_type == 'product':
@@ -343,18 +355,19 @@ class LibroCompras(models.AbstractModel):
                                                 dic['importacion'] += linea.price_subtotal
 #                                               if compra.tipo_factura == 'combustible':
                                             elif compra.tipo_factura == 'combustible' and linea.product_id.detailed_type == 'consu':
-
-                                                #crea un diccionario
+                                                
+                                                #crea un diccionario 
                                                 datos_json = json.loads(compra.tax_totals_json)
                                                 if 'amount_untaxed' in datos_json:
                                                     dic['combustible']=datos_json['amount_untaxed']
-
+                                                
                                                 for linea_contable in compra.line_ids:
                                                     if 5 in linea_contable.account_id.user_type_id.get_external_id():
+                                                        logging.warning('Ingresando en alguna parteeeee')    
                                                         dic['iva'] = linea_contable.debit
                                                         x = datos_json['amount_total'] - dic['iva']
                                                         dic['compra_exento'] = x - dic['combustible']
-
+                                                    
 #                                                 precio = ( linea.price_unit * (1-(linea.discount or 0.0)/100.0) )
 #                                                 precios = linea.tax_ids.compute_all(precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 #                                                 iva_cobrar = 0
@@ -449,7 +462,7 @@ class LibroCompras(models.AbstractModel):
                         }
                         total_gastos_no += compra.amount_total
                         gastos_no_lista.append(dic)
-
+        
         dicc_resumen_total={
             0:{
                 'total_iva_combustible':0,
@@ -515,6 +528,9 @@ class LibroCompras(models.AbstractModel):
                         dicc_resumen_total[6]['total_iva_exento']+=lista['iva']
                         dicc_resumen_total[6]['total_exento']+=lista['total']
 
+        if dic['id'] == 6435:
+            logging.warning('Prestar atención ')
+            logging.warning(dic)
         return {'compras_lista': compras_lista,'total': total,'documentos_operados':documentos_operados,'resumen_total':dicc_resumen_total,'gastos_no': gastos_no_lista,'total_gastos_no': total_gastos_no}
 
     @api.model

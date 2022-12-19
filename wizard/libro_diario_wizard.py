@@ -12,10 +12,14 @@ class LibroDiarioWizard(models.TransientModel):
 
     fecha_inicio = fields.Date('Fecha inicio: ')
     fecha_fin = fields.Date('Fecha final: ')
+    diario_ids = fields.Many2many('account.journal',string="Diarios")
+    consolidado = fields.Boolean('Consolidado')
     name = fields.Char('Nombre archivo: ', size=32)
     archivo = fields.Binary('Archivo ', filters='.xls')
 
     def print_report(self):
+        logging.warning('self.read()[0]')
+        logging.warning(self.read()[0])
         data = {
             'ids':[],
             'model': 'account_gt.libro_diario.wizard',

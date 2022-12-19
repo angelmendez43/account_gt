@@ -10,6 +10,8 @@
                 <group>
                     <field name="fecha_inicio"/>
                     <field name="fecha_fin"/>
+                    <field name="consolidado"/>
+                    <field name="diario_ids" widget="many2many_tags"/>
                 </group>
                 <group>
                     <field name="name" invisible="1"/>
@@ -25,6 +27,14 @@
         </field>
     </record>
 
+        <act_window id="launch_account_gt_libro_diario"
+                    name="Libro diario"
+                    binding_model="account.account"
+                    res_model="account_gt.libro_diario.wizard"
+                    view_mode="form"
+                    target="new"/>
+
+        <menuitem action="launch_account_gt_libro_diario" id="menu_reporte_libro_diario" parent="account_gt.menu_reporte_libros_gt" sequence="10"/>
 
 
   </data>
