@@ -11,7 +11,7 @@ class LibroDiario(models.AbstractModel):
         logging.warning('Hello my friend')
         return True
 
-    def _get_data(self, fecha_inicio, fecha_fin, diario_ids, consolidado):
+    def _get_data(self, fecha_inicio, fecha_fin, diario_ids, consolidado, movimientos_destino):
         if consolidado == False:
             data = {}
             logging.warning(fecha_inicio)
@@ -19,12 +19,24 @@ class LibroDiario(models.AbstractModel):
             logging.warning(diario_ids)
             logging.warning('consolidado')
             logging.warning(consolidado)
+            estados = []
+            if movimientos_destino == 'posted':
+                estados = ("posted")
+            else:
+                estados = ('draft','posted','cancel')
             diario_str = ','.join([str(x) for x in diario_ids])
-            self.env.cr.execute(
-                'SELECT am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
-                    ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id)' \
-                    ' where am.date >= %s and am.date <= %s and am.journal_id in ('+ diario_str + ') '\
-                    ' GROUP BY am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin))
+            if movimientos_destino == 'posted':
+                self.env.cr.execute(
+                    'SELECT am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
+                        ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id) join account_move m on (m.id = am.move_id)' \
+                        ' where am.date >= %s and am.date <= %s and m.state = %s and am.journal_id in ('+ diario_str + ') '\
+                        ' GROUP BY am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin, 'posted'))
+            else:
+                self.env.cr.execute(
+                    'SELECT am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
+                        ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id) join account_move m on (m.id = am.move_id)' \
+                        ' where am.date >= %s and am.date <= %s and m.state in %s and am.journal_id in ('+ diario_str + ') '\
+                        ' GROUP BY am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin, estados))                
             for m in self.env.cr.dictfetchall():
                 if m['diario_id'] not in data :
                     data[m['diario_id']] = {'diario': m['nombre_diario'], 'total_debe': 0, 'total_haber': 0 ,'asientos': {}}
@@ -46,7 +58,7 @@ class LibroDiario(models.AbstractModel):
             data = False
         return data
 
-    def _get_data_consolidado(self, fecha_inicio, fecha_fin, diario_ids, consolidado):
+    def _get_data_consolidado(self, fecha_inicio, fecha_fin, diario_ids, consolidado, movimientos_destino):
 
         if consolidado == True:
             data = {}
@@ -55,12 +67,26 @@ class LibroDiario(models.AbstractModel):
             logging.warning(diario_ids)
             logging.warning('consolidado')
             logging.warning(consolidado)
+            estados = []
+            if movimientos_destino == 'posted':
+                estados = ("posted")
+            else:
+                estados = ('draft','posted','cancel')
+                
             diario_str = ','.join([str(x) for x in diario_ids])
-            self.env.cr.execute(
-                'SELECT am.account_id as cuenta_movimiento_id, am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
-                    ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id)' \
-                    ' where am.date >= %s and am.date <= %s and am.journal_id in ('+ diario_str + ') '\
-                    ' GROUP BY am.account_id, am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin))
+            estado_str = ','.join([str(x) for x in estados])
+            if movimientos_destino == 'posted':
+                self.env.cr.execute(
+                    'SELECT am.account_id as cuenta_movimiento_id, am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
+                        ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id) join account_move m on (m.id = am.move_id)' \
+                        ' where am.date >= %s and am.date <= %s and m.state = %s and am.journal_id in ('+ diario_str + ') '\
+                        ' GROUP BY am.account_id, am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin, 'posted'))
+            else:
+                self.env.cr.execute(
+                    'SELECT am.account_id as cuenta_movimiento_id, am.move_id,am.date as fecha, am.move_name as nombre_movimiento, a.code as codigo, a.name as nombre_cuenta, aj.name as nombre_diario, am.journal_id as diario_id, am.name as descripcion,sum(debit) as debe, sum(credit) as haber' \
+                        ' from account_move_line am join account_account a on(am.account_id = a.id) join account_journal aj on(aj.id = am.journal_id) join account_move m on (m.id = am.move_id)' \
+                        ' where am.date >= %s and am.date <= %s and m.state in %s and am.journal_id in ('+ diario_str + ') '\
+                        ' GROUP BY am.account_id, am.move_id, am.name, aj.name, a.code, a.name, am.date, am.move_name, am.journal_id ORDER BY aj.name, a.code, am.date', (fecha_inicio,fecha_fin, estados))                
             for m in self.env.cr.dictfetchall():
                 logging.warning('FECHA')
                 logging.warning(m['fecha'])
@@ -163,3 +189,4 @@ class LibroDiario(models.AbstractModel):
             'get_data_consolidado': self._get_data_consolidado,
             'company': self.env.company,
         }
+
