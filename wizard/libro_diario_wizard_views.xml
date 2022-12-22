@@ -10,6 +10,7 @@
                 <group>
                     <field name="fecha_inicio"/>
                     <field name="fecha_fin"/>
+                    <field name="movimientos_destino" widget="radio"/>
                     <field name="consolidado"/>
                     <field name="diario_ids" widget="many2many_tags"/>
                 </group>
