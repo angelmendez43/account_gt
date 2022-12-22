@@ -23,8 +23,8 @@
                 </div>
                 <br/>
 
-                <t t-set="reporte_data" t-value="get_data(data['fecha_inicio'], data['fecha_fin'], data['diario_ids'], data['consolidado'] )"/>
-                <t t-set="reporte_data_consolidado" t-value="get_data_consolidado(data['fecha_inicio'], data['fecha_fin'], data['diario_ids'], data['consolidado'] )"/>
+                <t t-set="reporte_data" t-value="get_data(data['fecha_inicio'], data['fecha_fin'], data['diario_ids'], data['consolidado'], data['movimientos_destino'])"/>
+                <t t-set="reporte_data_consolidado" t-value="get_data_consolidado(data['fecha_inicio'], data['fecha_fin'], data['diario_ids'], data['consolidado'], data['movimientos_destino'] )"/>
 
                     <style type="text/css">
 
@@ -219,3 +219,4 @@
 
     </data>
 </odoo>
+
