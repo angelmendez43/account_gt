@@ -16,6 +16,10 @@ class LibroDiarioWizard(models.TransientModel):
     consolidado = fields.Boolean('Consolidado')
     name = fields.Char('Nombre archivo: ', size=32)
     archivo = fields.Binary('Archivo ', filters='.xls')
+    movimientos_destino = fields.Selection([('posted', 'Todos los asientos validados'),
+                                ('all', 'Todos los asientos'),
+                                ], string='Movimientos destino', required=True, default='posted')
+
 
     def print_report(self):
         logging.warning('self.read()[0]')
