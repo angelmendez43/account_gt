@@ -24,3 +24,29 @@ class AccountGeneralLedgerReport(models.AbstractModel):
             if c['name'] == 'Crédito':
                 c['name'] = 'Haber'
         return res
+    
+    def _get_query_amls_select_clause(self):
+        select_str = super(AccountGeneralLedgerReport, self)._get_query_amls_select_clause()
+        select_str += '''
+            ,account_payment.descripcion
+        '''
+        return select_str
+        
+        
+    def _get_query_amls_from_clause(self):
+        from_str = super(AccountGeneralLedgerReport, self)._get_query_amls_from_clause()
+        from_str += """
+            LEFT JOIN account_payment account_payment ON account_payment.id = account_move_line.payment_id \
+        """
+        return from_str
+    
+    @api.model
+    def _get_aml_line(self, options, account, aml, cumulated_balance):
+        logging.warning('_get_aml_line super')
+        logging.warning(options)
+        logging.warning(aml)
+        res = super(AccountGeneralLedgerReport, self)._get_aml_line(options, account, aml, cumulated_balance)
+        if aml['payment_id'] and 'columns' in res and len(res['columns']) > 1:
+            res['columns'][1]['name'] += ", "+ aml['descripcion']
+        logging.warning(res)
+        return res
