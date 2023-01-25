@@ -42,11 +42,8 @@ class AccountGeneralLedgerReport(models.AbstractModel):
     
     @api.model
     def _get_aml_line(self, options, account, aml, cumulated_balance):
-        logging.warning('_get_aml_line super')
-        logging.warning(options)
-        logging.warning(aml)
         res = super(AccountGeneralLedgerReport, self)._get_aml_line(options, account, aml, cumulated_balance)
         if aml['payment_id'] and 'columns' in res and len(res['columns']) > 1:
-            res['columns'][1]['name'] += ", "+ aml['descripcion']
-        logging.warning(res)
+            if 'name' in res['columns'][1] and res['columns'][1]['name'] and aml['descripcion']:
+                res['columns'][1]['name'] += ", "+ aml['descripcion']
         return res
