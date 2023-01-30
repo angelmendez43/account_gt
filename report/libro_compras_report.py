@@ -118,7 +118,7 @@ class LibroCompras(models.AbstractModel):
         documentos_operados = 0
         if compra_ids:
                 for compra in compra_ids:
-                    if compra.journal_id.tipo_factura != False:
+                    if compra.journal_id.tipo_factura != False and compra.journal_id.tipo_factura != "RECI":
                         formato_fecha = compra.invoice_date.strftime('%d/%m/%Y')
                         rectificativa=False
                         factura = ''
