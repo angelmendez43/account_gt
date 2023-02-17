@@ -6,5 +6,5 @@ from . import res_partner
 from . import account_gt
 from . import product_template
 from . import account_journal
-from . import account_report
+#from . import account_report
 #from . import account_general_ledger
