@@ -26,7 +26,7 @@
         'views/account_payment_view.xml',
         'views/product_template_views.xml',
         'views/account_journal_views.xml',
-        'views/report_financial.xml',
+        #'views/report_financial.xml',
         'report/reporte_libro_compras_views.xml',
         'report/reporte_libro_ventas_views.xml',
         'report/reporte_libro_bancos_views.xml',
