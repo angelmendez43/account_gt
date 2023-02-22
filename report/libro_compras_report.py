@@ -124,24 +124,19 @@ class LibroCompras(models.AbstractModel):
                         factura = ''
                         documento = ''
                         doc_ref = ''
-                        if compra.ref:
-                            if '-' in compra.ref:
-                                factura = compra.ref.split('-')[0]
-                                documento = compra.ref.split('-')[1]
-                            elif '/' in compra.ref:
-                                factura = compra.ref.split('/')[0]
-                                documento = compra.ref.split('/')[1]
-                            else:
-                                modulo_fel = self.env['ir.module.module'].search([('name', '=', 'infilefel')])
-                                if modulo_fel and modulo_fel.state == 'installed':
-                                    factura = compra.fel_serie
-                                    documento = compra.fel_numero
-                                else:
-                                    factura = ''
-                                    documento = ''
-                        if documento == '' and compra.journal_id.tipo_factura == 'FESP' and compra.fel_numero:
-                                documento = compra.fel_numero
-                            
+                        modulo_fel = self.env['ir.module.module'].search([('name', '=', 'infilefel')])
+                        if modulo_fel and modulo_fel.state == 'installed':
+                            factura = compra.fel_serie
+                            documento = compra.fel_numero                     
+                        else:          
+                            if compra.ref:
+                                if '-' in compra.ref:
+                                    factura = compra.ref.split('-')[0]
+                                    documento = compra.ref.split('-')[1]
+                                elif '/' in compra.ref:
+                                    factura = compra.ref.split('/')[0]
+                                    documento = compra.ref.split('/')[1]
+
                         documentos_operados += 1
                         if compra.journal_id:
                             doc_ref = compra.journal_id.tipo_factura
