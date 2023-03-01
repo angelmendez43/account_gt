@@ -165,14 +165,14 @@ class LibroVentas(models.AbstractModel):
                         if fel_serie == False and fel_numero == False:
                             if compra.payment_reference:
                                 if '-' in compra.payment_reference:
-                                    fel_serie = compra.ref.split('-')[0]
-                                    fel_numero = compra.ref.split('-')[1]
+                                    fel_serie = compra.payment_reference.split('-')[0]
+                                    fel_numero = compra.payment_reference.split('-')[1]
                                 elif '/' in compra.payment_reference:
-                                    fel_serie = compra.ref.split('/')[0]
-                                    fel_numero = compra.ref.split('/')[1]
+                                    fel_serie = compra.payment_reference.split('/')[0]
+                                    fel_numero = compra.payment_reference.split('/')[1]
                                 elif ' ' in compra.payment_reference:
-                                    fel_serie = compra.ref.split(' ')[0]
-                                    fel_numero = compra.ref.split(' ')[1]
+                                    fel_serie = compra.payment_reference.split(' ')[0]
+                                    fel_numero = compra.payment_reference.split(' ')[1]
                                 else:
                                     fel_serie = ""
                                     fel_numero = ""
