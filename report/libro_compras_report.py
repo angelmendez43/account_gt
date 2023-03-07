@@ -143,14 +143,17 @@ class LibroCompras(models.AbstractModel):
                             doc_ref = compra.journal_id.tipo_factura
                         if compra.move_type == 'in_refund':
                             rectificativa=True
-
+                            
+                        partner_name = compra.partner_id.name if compra.partner_id else ''
+                        if compra.state == "cancel" and compra.company_id.anulado_libro_compras:
+                            partner_name = "ANULADO"
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
                             'serie': factura,
                             'factura': documento,
                             'documento': doc_ref,
-                            'proveedor': compra.partner_id.name if compra.partner_id else '',
+                            'proveedor': partner_name,
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
                             'compra_exento':0,
