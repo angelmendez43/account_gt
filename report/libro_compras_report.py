@@ -128,15 +128,15 @@ class LibroCompras(models.AbstractModel):
                         if modulo_fel and modulo_fel.state == 'installed':
                             factura = compra.fel_serie
                             documento = compra.fel_numero                     
-                        
-                        if factura == False and documento == False:
-                            if compra.ref:
-                                if '-' in compra.ref:
-                                    factura = compra.ref.split('-')[0]
-                                    documento = compra.ref.split('-')[1]
-                                elif '/' in compra.ref:
-                                    factura = compra.ref.split('/')[0]
-                                    documento = compra.ref.split('/')[1]
+                        else:
+                            if factura == False and documento == False:
+                                if compra.ref:
+                                    if '-' in compra.ref:
+                                        factura = compra.ref.split('-')[0]
+                                        documento = compra.ref.split('-')[1]
+                                    elif '/' in compra.ref:
+                                        factura = compra.ref.split('/')[0]
+                                        documento = compra.ref.split('/')[1]
 
                         documentos_operados += 1
                         if compra.journal_id:
