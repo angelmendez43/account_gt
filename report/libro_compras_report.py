@@ -363,7 +363,7 @@ class LibroCompras(models.AbstractModel):
                                                     dic['combustible']=datos_json['amount_untaxed']
                                                 
                                                 for linea_contable in compra.line_ids:
-                                                    if 5 in linea_contable.account_id.user_type_id.get_external_id():
+                                                    if 5 in linea_contable.account_id.user_type_id.get_external_id() and linea_contable.name == "IVA por Cobrar":
                                                         logging.warning('Ingresando en alguna parteeeee')    
                                                         dic['iva'] = linea_contable.debit
                                                         x = datos_json['amount_total'] - dic['iva']
