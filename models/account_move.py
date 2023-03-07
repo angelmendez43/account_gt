@@ -40,3 +40,8 @@ class AccountMoveLine(models.Model):
 
     conciliacion_bancaria = fields.Boolean("Conciliacion bancaria")
     fecha_conciliacion_bancaria = fields.Date("Fecha conciliacion")
+
+class ResCompany(models.Model):
+    _inherit = "res.company"
+
+    anulado_libro_compras = fields.Boolean('Anulado libro compras')
