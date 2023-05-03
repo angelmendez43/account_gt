@@ -3,7 +3,11 @@ from odoo.modules import get_module_resource
 from odoo.exceptions import ValidationError
 from odoo.exceptions import UserError, AccessError
 import logging
-
+class AccountACcount(models.Model):
+    _inherit = "account.account"
+    
+    retencion_iva = fields.Boolean('Retencion iva')
+    
 class Liquidacion(models.Model):
     _name = "account_gt.liquidacion"
     _inherit = ['mail.thread', 'mail.activity.mixin']
