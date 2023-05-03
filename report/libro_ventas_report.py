@@ -207,7 +207,7 @@ class LibroVentas(models.AbstractModel):
                         if reten_iva and compra.state != 'cancel':
                             for linea in reten_iva.line_ids:
                                 logging.warn(linea.account_id.user_type_id.name)
-                                if linea.account_id.user_type_id.name == 'Activos Circulantes':
+                                if linea.account_id.user_type_id.name == 'Activos Circulantes' and linea.account_id.retencion_iva:
                                     dic['reten_iva'] += linea.debit
                                     total['reten_iva'] += linea.debit
 
