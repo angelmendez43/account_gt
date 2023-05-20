@@ -58,7 +58,7 @@ class AccountReport(models.AbstractModel):
         })
         logging.warning('get_new_xslx imporgesa')
 
-        date_fom = False
+        date_from = False
         date_to = False
         if 'date' in options and ('date_from' and 'date_to' in options['date']):
             date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y")
