@@ -131,7 +131,7 @@ class LibroVentas(models.AbstractModel):
 ('state','in', estados),
         ('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc, name asc')
 
-        total = {'compra':0,'compra_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
+        total = {'compra':0,'compra_exento':0,'farmacia_exento':0,'servicio':0,'servicio_exento':0,'importacion':0,'pequenio':0,'iva':0,'total':0,'reten_iva': 0}
         logging.warning(compra_ids)
         logging.warning('')
         logging.warning('')
@@ -176,7 +176,7 @@ class LibroVentas(models.AbstractModel):
                                 else:
                                     fel_serie = ""
                                     fel_numero = ""
-                                    
+
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
@@ -189,6 +189,7 @@ class LibroVentas(models.AbstractModel):
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
                             'compra_exento':0,
+                            'farmacia_exento': 0,
                             'servicio': 0,
                             'servicio_exento': 0,
                             'importacion': 0,
@@ -207,7 +208,7 @@ class LibroVentas(models.AbstractModel):
                         if reten_iva and compra.state != 'cancel':
                             for linea in reten_iva.line_ids:
                                 logging.warn(linea.account_id.user_type_id.name)
-                                if linea.account_id.user_type_id.name == 'Activos Circulantes' and linea.account_id.retencion_iva:
+                                if linea.account_id.uso == "retencion_iva":
                                     dic['reten_iva'] += linea.debit
                                     total['reten_iva'] += linea.debit
 
@@ -260,7 +261,10 @@ class LibroVentas(models.AbstractModel):
 
                                         else:
                                             if linea.product_id.type == 'product':
-                                                dic['compra_exento'] += monto_convertir
+                                                if linea.product_id.farmacia_exento:
+                                                    dic['farmacia_exento'] += monto_convertir
+                                                else:
+                                                    dic['compra_exento'] += monto_convertir
                                             if linea.product_id.type != 'product':
                                                 dic['servicio_exento'] +=  monto_convertir
 
@@ -305,16 +309,20 @@ class LibroVentas(models.AbstractModel):
 
                                     else:
                                         if linea.product_id.type == 'product':
-                                            dic['compra_exento'] += linea.price_total
+                                            if linea.product_id.farmacia_exento:
+                                                dic['farmacia_exento'] += linea.price_total
+                                            else:
+                                                dic['compra_exento'] += linea.price_total
                                         if linea.product_id.type != 'product':
                                             dic['servicio_exento'] +=  linea.price_total
 
 
-                        dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
+                        dic['total'] = dic['compra'] + dic['servicio'] + dic['compra_exento'] + dic['farmacia_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
 
                         if compra.move_type in ['out_refund']:
                             dic['compra']  = dic['compra'] * -1
                             dic['compra_exento'] = dic['compra_exento'] * -1
+                            dic['farmacia_exento'] = dic['farmacia_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
                             dic['servicio_exento'] = dic['servicio_exento'] * -1
                             dic['importacion'] = dic['importacion'] * -1
@@ -324,6 +332,7 @@ class LibroVentas(models.AbstractModel):
 
                         total['compra'] += dic['compra']
                         total['compra_exento'] += dic['compra_exento']
+                        total['farmacia_exento'] += dic['farmacia_exento']
                         total['servicio'] += dic['servicio']
                         total['servicio_exento'] += dic['servicio_exento']
                         total['importacion'] += dic['importacion']

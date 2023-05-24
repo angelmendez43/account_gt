@@ -6,9 +6,16 @@ import logging
 
 class AccountACcount(models.Model):
     _inherit = "account.account"
-    
-    retencion_iva = fields.Boolean('Retencion iva')
-    
+
+    combustible = fields.Boolean('Combustible')
+    retencion_iva = fields.Boolean('Iva retencion')
+    uso = fields.Selection([('exento','Exento'),('compra_bien','Compra / bien'),('impuesto_petroleo','Impuesto de petroleo'),('combustible','Combustible'),('retencion_iva','Retencion IVA'),('iva','IVA')],'Uso')
+
+class ResCompany(models.Model):
+    _inherit = "res.company"
+
+    columna_farmacia_exento_ventas = fields.Boolean('Columna farmacia exento')
+
 class Liquidacion(models.Model):
     _name = "account_gt.liquidacion"
     _inherit = ['mail.thread', 'mail.activity.mixin']

@@ -127,7 +127,7 @@ class LibroCompras(models.AbstractModel):
                         modulo_fel = self.env['ir.module.module'].search([('name', '=', 'infilefel')])
                         if modulo_fel and modulo_fel.state == 'installed':
                             factura = compra.fel_serie
-                            documento = compra.fel_numero                     
+                            documento = compra.fel_numero
                         else:
                             if factura == False and documento == False:
                                 if compra.ref:
@@ -143,17 +143,14 @@ class LibroCompras(models.AbstractModel):
                             doc_ref = compra.journal_id.tipo_factura
                         if compra.move_type == 'in_refund':
                             rectificativa=True
-                            
-                        partner_name = compra.partner_id.name if compra.partner_id else ''
-                        if compra.state == "cancel" and compra.company_id.anulado_libro_compras:
-                            partner_name = "ANULADO"
+
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
                             'serie': factura,
                             'factura': documento,
                             'documento': doc_ref,
-                            'proveedor': partner_name,
+                            'proveedor': compra.partner_id.name if compra.partner_id else '',
                             'nit': compra.partner_id.vat if compra.partner_id.vat else '',
                             'compra': 0,
                             'compra_exento':0,
@@ -254,14 +251,14 @@ class LibroCompras(models.AbstractModel):
 
                                     total_servicio += lineas.price_subtotal
                                     subtotal_fe = total_servicio
-                            
+
                             iva_fe = total_fe - subtotal_fe
 
                             dic['compra_exento'] = total_exento
                             dic['servicio'] = total_servicio
                             dic['iva'] = iva_fe
 #                         compra.tipo_factura = 'combustible' and
-                            
+
                         if compra.journal_id.tipo_factura != 'FESP' and compra.journal_id.tipo_factura == 'FACT':
                             for linea in compra.invoice_line_ids:
                                 impuesto_iva = False
@@ -305,7 +302,7 @@ class LibroCompras(models.AbstractModel):
                                                 dic['pequenio'] += monto_convertir
 
                                             # dic['total']
-                                            
+
                                         else:
                                             monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
 
@@ -340,9 +337,11 @@ class LibroCompras(models.AbstractModel):
                                         if len(linea.tax_ids) > 0:
 
                                             r = linea.tax_ids.compute_all(linea.price_unit, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
-
+                                            if compra.id == 26519:
+                                                logging.warning('la compra 26519')
+                                                logging.warning(r)
                                             for i in r['taxes']:
-                                                if 'IVA' in i['name']:
+                                                if 'IVA' in i['name'] or i['name'] == 'IVA por Cobrar':
                                                     dic['iva'] += i['amount']
                                             logging.warning('Tal vez else')
                                             if compra.id == 6435:
@@ -359,19 +358,30 @@ class LibroCompras(models.AbstractModel):
                                                 dic['importacion'] += linea.price_subtotal
 #                                               if compra.tipo_factura == 'combustible':
                                             elif compra.tipo_factura == 'combustible' and linea.product_id.detailed_type == 'consu':
-                                                
-                                                #crea un diccionario 
+
+                                                #crea un diccionario
                                                 datos_json = json.loads(compra.tax_totals_json)
                                                 if 'amount_untaxed' in datos_json:
-                                                    dic['combustible']=datos_json['amount_untaxed']
-                                                
+                                                    #dic['combustible']=datos_json['amount_untaxed']
+                                                    logging.warning('ss')
                                                 for linea_contable in compra.line_ids:
-                                                    if 5 in linea_contable.account_id.user_type_id.get_external_id() and linea_contable.name == "IVA por Cobrar":
-                                                        logging.warning('Ingresando en alguna parteeeee')    
+                                                    if linea_contable.account_id.uso == 'combustible':
+                                                        logging.warning('Ingresando en alguna parteeeee')
+                                                        dic['combustible'] = linea_contable.debit
+                                                    if linea_contable.account_id.uso == 'impuesto_petroleo':
+                                                        dic['compra_exento'] = linea_contable.debit
+                                                    if linea_contable.account_id.uso == "iva":
                                                         dic['iva'] = linea_contable.debit
-                                                        x = datos_json['amount_total'] - dic['iva']
-                                                        dic['compra_exento'] = x - dic['combustible']
-                                                    
+                                                    if linea_contable.account_id.uso == "compra_bien":
+                                                        dic['compra'] = linea_contable.debit
+                                                           #______________________
+                                                        #x = datos_json['amount_total'] - dic['iva']
+                                                        #if compra.id == 26519:
+                                                        #    logging.warning('tax acanto')
+                                                        #    logging.warning(linea_contable.debit)
+                                                        #    logging.warning(datos_json['amount_total'] - dic['iva'])
+                                                        #dic['compra_exento'] = x - dic['combustible']
+                                                            #______________________________
 #                                                 precio = ( linea.price_unit * (1-(linea.discount or 0.0)/100.0) )
 #                                                 precios = linea.tax_ids.compute_all(precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
 #                                                 iva_cobrar = 0
@@ -387,6 +397,7 @@ class LibroCompras(models.AbstractModel):
 #                                                 dic['compra_exento'] = idp_super
 # #                                                 dic['iva']+= iva
                                             else:
+                                                logging.warning('primer log')
                                                 iva_prod=0
                                                 if linea.product_id.es_activo:
                                                     dic['activo'] += linea.price_subtotal
@@ -394,11 +405,28 @@ class LibroCompras(models.AbstractModel):
                                                     iva_prod += total_act - linea.price_subtotal
                                                     dic['iva'] = iva_prod
                                                 else:
-                                                    if linea.product_id.detailed_type == 'product' :
+
+                                                    if linea.product_id.detailed_type == 'product':
                                                         dic['compra'] += linea.price_subtotal
                                                     if linea.product_id.detailed_type != 'product' and linea.product_id.detailed_type != 'consu':
+                                                        logging.warning('puede ser exento')
+                                                        existe_gasto_exento = False
+                                                        for linea_contable in compra.line_ids:
+                                                            if linea_contable.account_id.uso == 'exento':
+                                                                dic['compra_exento'] = linea_contable.debit
+                                                                logging.warning('exento')
+                                                                logging.warning(linea_contable.debit)
+                                                                existe_gasto_exento = True
+
                                                         dic['servicio'] +=  linea.price_subtotal
                                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
+
+                                                        existe_gasto_exento = False
+                                                        for linea_contable in compra.line_ids:
+                                                            logging.warning(linea_contable.account_id.uso)
+                                                            if linea_contable.account_id.uso == 'exento':
+                                                                dic['compra_exento'] = linea_contable.debit
+                                                                existe_gasto_exento = True
 
                                                         dic['compra'] +=  linea.price_subtotal
 
@@ -466,7 +494,7 @@ class LibroCompras(models.AbstractModel):
                         }
                         total_gastos_no += compra.amount_total
                         gastos_no_lista.append(dic)
-        
+
         dicc_resumen_total={
             0:{
                 'total_iva_combustible':0,

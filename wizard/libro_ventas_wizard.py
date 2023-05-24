@@ -64,20 +64,29 @@ class LibroVentasWizard(models.TransientModel):
             hoja.write(5, 6, 'Estado de la factura')
             hoja.write(5, 7, 'Bien')
             hoja.write(5, 8, 'Ventas exentas')
-            hoja.write(5, 9, 'Servicios')
-            hoja.write(5, 10, 'Servicios exentos')
-            hoja.write(5, 11, 'Exportación')
-            hoja.write(5, 12, 'IVA')
-            hoja.write(5, 13, 'Total')
-            hoja.write(5, 14, 'Reten IVA')
-#             hoja.write(5, 15, 'Correlativo interno')
-            hoja.write(5, 15, 'País destino')
-            hoja.write(5, 16, 'Correlativo interno')
+            if self.env.company.columna_farmacia_exento_ventas:
+                hoja.write(5, 9, 'Farmacia exento')
+                hoja.write(5, 10, 'Servicios')
+                hoja.write(5, 11, 'Servicios exentos')
+                hoja.write(5, 12, 'Exportación')
+                hoja.write(5, 13, 'IVA')
+                hoja.write(5, 14, 'Total')
+                hoja.write(5, 15, 'Reten IVA')
+                hoja.write(5, 16, 'País destino')
+                hoja.write(5, 17, 'Correlativo interno')
+            else:
+                hoja.write(5, 9, 'Servicios')
+                hoja.write(5, 10, 'Servicios exentos')
+                hoja.write(5, 11, 'Exportación')
+                hoja.write(5, 12, 'IVA')
+                hoja.write(5, 13, 'Total')
+                hoja.write(5, 14, 'Reten IVA')
+                hoja.write(5, 15, 'País destino')
+                hoja.write(5, 16, 'Correlativo interno')
 
             fila = 6
             for compra in res['compras_lista']:
                 hoja.write(fila, 0, compra['fecha'])
-#                 hoja.write(fila, 1, compra['documento'])
                 hoja.write(fila, 1, compra['serie'])
                 hoja.write(fila, 2, compra['numero_factura'])
                 hoja.write(fila, 3, compra['tipo_doc'])
@@ -86,13 +95,23 @@ class LibroVentasWizard(models.TransientModel):
                 hoja.write(fila, 6, compra['estado_factura'])
                 hoja.write(fila, 7, compra['compra'])
                 hoja.write(fila, 8, compra['compra_exento'])
+                if self.env.company.columna_farmacia_exento_ventas:
+                    hoja.write(fila, 9, compra['farmacia_exento'])
+                    hoja.write(fila, 10, compra['servicio'])
+                    hoja.write(fila, 11, compra['servicio_exento'])
+                    hoja.write(fila, 12, compra['importacion'])
+                    hoja.write(fila, 13, compra['iva'])
+                    hoja.write(fila, 14, compra['total'])
+                    hoja.write(fila, 15, compra['reten_iva'])
+                    hoja.write(fila, 16, compra['pais_destino'])
+                    hoja.write(fila, 17, compra['observaciones'])
+                else:
                 hoja.write(fila, 9, compra['servicio'])
                 hoja.write(fila, 10, compra['servicio_exento'])
                 hoja.write(fila, 11, compra['importacion'])
                 hoja.write(fila, 12, compra['iva'])
                 hoja.write(fila, 13, compra['total'])
                 hoja.write(fila, 14, compra['reten_iva'])
-#                 hoja.write(fila, 15, compra['correlativo_interno'])
                 hoja.write(fila, 15, compra['pais_destino'])
                 hoja.write(fila, 16, compra['observaciones'])
 
@@ -108,36 +127,21 @@ class LibroVentasWizard(models.TransientModel):
 #                 hoja.write(fila, 8, res['total']['compra_exento'])
 #             else:
             hoja.write(fila, 8, res['total']['compra_exento'])
-#             if res['total']['servicio'] < 0:
-#                 res['total']['servicio'] = (res['total']['servicio']*-1)
-#                 hoja.write(fila, 9, res['total']['servicio'])
-#             else:
-            hoja.write(fila, 9, res['total']['servicio'])
-#             if res['total']['servicio_exento'] < 0:
-#                 res['total']['servicio_exento'] = (res['total']['servicio_exento'] * -1)
-#                 hoja.write(fila, 10, res['total']['servicio_exento'])
-#             else:
-            hoja.write(fila, 10, res['total']['servicio_exento'])
-#             if res['total']['importacion'] < 0:
-#                 res['total']['importacion'] = res['total']['importacion'] * -1
-#                 hoja.write(fila, 11, res['total']['importacion'])
-#             else:
-            hoja.write(fila, 11, res['total']['importacion'])
-#             if res['total']['iva'] < 0:
-#                 res['total']['iva'] = res['total']['iva'] * -1
-#                 hoja.write(fila, 12, res['total']['iva'])
-#             else:
-            hoja.write(fila, 12, res['total']['iva'])
-#             if res['total']['total'] < 0:
-#                 res['total']['total'] = res['total']['total'] * -1
-#                 hoja.write(fila, 13, res['total']['total'])
-#             else:
-            hoja.write(fila, 13, res['total']['total'])
-#             if res['total']['reten_iva'] < 0:
-#                 res['total']['reten_iva'] = res['total']['reten_iva'] * -1
-#                 hoja.write(fila, 14, res['total']['reten_iva'])
-#             else:
-            hoja.write(fila, 14, res['total']['reten_iva'])
+            if self.env.company.columna_farmacia_exento_ventas:
+                hoja.write(fila, 9, res['total']['compra_exento'])
+                hoja.write(fila, 10, res['total']['servicio'])
+                hoja.write(fila, 11, res['total']['servicio_exento'])
+                hoja.write(fila, 12, res['total']['importacion'])
+                hoja.write(fila, 13, res['total']['iva'])
+                hoja.write(fila, 14, res['total']['total'])
+                hoja.write(fila, 15, res['total']['reten_iva'])
+            else:
+                hoja.write(fila, 9, res['total']['servicio'])
+                hoja.write(fila, 10, res['total']['servicio_exento'])
+                hoja.write(fila, 11, res['total']['importacion'])
+                hoja.write(fila, 12, res['total']['iva'])
+                hoja.write(fila, 13, res['total']['total'])
+                hoja.write(fila, 14, res['total']['reten_iva'])
 
             fila += 1
 
