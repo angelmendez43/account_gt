@@ -60,14 +60,15 @@ class LibroComprasWizard(models.TransientModel):
             hoja.write(5, 5, 'Proveedor')
             hoja.write(5, 6, 'Combustible')
             hoja.write(5, 7, 'Compras')
-            hoja.write(5, 8, 'Exentos')
-            hoja.write(5, 9, 'Servicios')
-            hoja.write(5, 10, 'Servicios exentos')
-            hoja.write(5, 11, 'Importacion')
-            hoja.write(5, 12, 'Pequeño contribuyente')
-            hoja.write(5, 13, 'Activos')
-            hoja.write(5, 14, 'IVA')
-            hoja.write(5, 15, 'Total')
+            hoja.write(5, 8, 'Farmacia exento')
+            hoja.write(5, 9, 'Exentos')
+            hoja.write(5, 10, 'Servicios')
+            hoja.write(5, 11, 'Servicios exentos')
+            hoja.write(5, 12, 'Importacion')
+            hoja.write(5, 13, 'Pequeño contribuyente')
+            hoja.write(5, 14, 'Activos')
+            hoja.write(5, 15, 'IVA')
+            hoja.write(5, 16, 'Total')
 
             fila = 6
             iva_proveedor=0
@@ -98,62 +99,67 @@ class LibroComprasWizard(models.TransientModel):
 #                     compra['compra']= compra['compra'] * -1
                 hoja.write(fila, 7, compra['compra'])
 
+#                 if compra['compra_exento']<0:
+#                     compra['compra_exento'] = compra['compra_exento'] * -1
+                hoja.write(fila, 8, compra['farmacia_exento'])
+                
                 if compra['compra_exento']:
                     iva_exento+=compra['iva']
 #                 if compra['compra_exento']<0:
 #                     compra['compra_exento'] = compra['compra_exento'] * -1
-                hoja.write(fila, 8, compra['compra_exento'])
+                hoja.write(fila, 9, compra['compra_exento'])
 
                 if compra['servicio']:
                     iva_servicios+=compra['iva']
 #                 if compra['servicio']<0:
 #                     compra['servicio'] = compra['servicio'] * -1
-                hoja.write(fila, 9, compra['servicio'])
+                hoja.write(fila, 10, compra['servicio'])
 
 #                 if compra['servicio_exento']<0:
 #                     compra['servicio_exento'] = compra['servicio_exento'] * -1
-                hoja.write(fila, 10, compra['servicio_exento'])
+                hoja.write(fila, 11, compra['servicio_exento'])
 
                 if compra['importacion']:
                     iva_importaciones+=compra['iva']
 #                 if compra['importacion']<0:
 #                     compra['importacion'] = compra['importacion'] * -1
-                hoja.write(fila, 11, compra['importacion'])
+                hoja.write(fila, 12, compra['importacion'])
 
                 if compra['pequenio']:
                     iva_pequenio+=compra['iva']
 #                 if compra['pequenio'] < 0:
 #                     compra['pequenio'] = compra['pequenio'] * -1
-                hoja.write(fila, 12, compra['pequenio'])
+                hoja.write(fila, 13, compra['pequenio'])
 
 
                 if compra['activo']:
                     iva_activo+=compra['iva']
 #                 if compra['activo'] < 0:
 #                     compra['activo'] = compra['activo'] * -1
-                hoja.write(fila,13, compra['activo'])
+                hoja.write(fila,14, compra['activo'])
 
 #                 if compra['iva']<0:
 #                     compra['iva'] = compra['iva'] * -1
-                hoja.write(fila, 14, compra['iva'])
+                hoja.write(fila, 15, compra['iva'])
 
 #                 if compra['total'] < 0:
 #                     compra['total'] = compra['total'] * -1
-                hoja.write(fila, 15, compra['total'])
+                hoja.write(fila, 16, compra['total'])
 
                 fila += 1
 
             hoja.write(fila, 5, 'TOTAL')
             hoja.write(fila, 6, res['total']['combustible'])
             hoja.write(fila, 7, res['total']['compra'])
-            hoja.write(fila, 8, res['total']['compra_exento'])
-            hoja.write(fila, 9, res['total']['servicio'])
-            hoja.write(fila, 10, res['total']['servicio_exento'])
-            hoja.write(fila, 11, res['total']['importacion'])
-            hoja.write(fila, 12, res['total']['pequenio'])
-            hoja.write(fila, 13, res['total']['activo'])
-            hoja.write(fila, 14, res['total']['iva'])
-            hoja.write(fila, 15, res['total']['total'])
+            hoja.write(fila, 8, res['total']['farmacia_exento'])
+            hoja.write(fila, 9, res['total']['compra_exento'])
+            hoja.write(fila, 10, res['total']['servicio'])
+            hoja.write(fila, 11, res['total']['servicio_exento'])
+            hoja.write(fila, 12, res['total']['importacion'])
+            hoja.write(fila, 13, res['total']['pequenio'])
+            hoja.write(fila, 14, res['total']['activo'])
+            hoja.write(fila, 15, res['total']['iva'])
+            hoja.write(fila, 16, res['total']['total'])
 
             fila += 1
 
