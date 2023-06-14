@@ -422,7 +422,7 @@ class LibroCompras(models.AbstractModel):
                                             if linea.product_id.type == 'product' and linea.product_id.farmacia_exento==False:
                                                 dic['compra_exento'] += linea.price_total
                                             if linea.product_id.type == 'product' and linea.product_id.farmacia_exento==True:
-                                                dic['compra_exento'] += linea.farmacia_exento
+                                                dic['compra_exento'] += linea.price_total
                                             if linea.product_id.type != 'product':
                                                 dic['servicio_exento'] +=  linea.price_total
 
