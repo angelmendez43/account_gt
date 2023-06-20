@@ -34,7 +34,23 @@ class AccountMove(models.Model):
     ('importacion', 'Importación'),('exportacion','Exportación'),
     ('factura_especial', 'Factura especial')],
         string="Tipo de factura")
-
+    nombre_consignatario_destinatario = fields.Char('Nombre consignatario o destinatario')
+    direccion_consignatario_destinatario = fields.Char('Dirección consignatario o destinatario')
+    codigo_consignatario_destinatario = fields.Char('Código consignatario o destinatario')
+    nombre_comprador = fields.Char('Nombre comprador')
+    direccion_comprador = fields.Char('Dirección comprador')
+    codigo_comprador = fields.Char('Código comprador')
+    otra_referencia = fields.Char('Otra referencia')
+    incoterm_exp = fields.Selection([('EXW','EXW'),('FCA', 'FCA'),
+    ('FAS', 'FAS'), ('FOB', 'FOB'),
+    ('CFR','CFR'), ('CIF', 'CIF'),
+    ('CPT', 'CPT'),('CIP','CIP'),
+    ('DDP','DDP'),('DAP','DAP'),
+    ('DPU','DPU'),('ZZZ','ZZZ')],
+        string="Intocerm exportación")    
+    nombre_exportador = fields.Char('Nombre exportador')
+    codigo_exportador = fields.Char('Código exportador')
+    
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
