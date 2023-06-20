@@ -36,7 +36,10 @@ class AccountMove(models.Model):
         string="Tipo de factura")
     nombre_consignatario_destinatario = fields.Char('Nombre consignatario o destinatario')
     direccion_consignatario_destinatario = fields.Char('Dirección consignatario o destinatario')
+    consignatario_destinatario_id = fields.Many2one('res.partner', string="Consignatario o Destinatario")
     codigo_consignatario_destinatario = fields.Char('Código consignatario o destinatario')
+    comprador_id = fields.Many2one('res.partner', string="Comprador")
+    exportador_id = fields.Many2one('res.partner', string="Exportador")
     nombre_comprador = fields.Char('Nombre comprador')
     direccion_comprador = fields.Char('Dirección comprador')
     codigo_comprador = fields.Char('Código comprador')
@@ -51,6 +54,12 @@ class AccountMove(models.Model):
     nombre_exportador = fields.Char('Nombre exportador')
     codigo_exportador = fields.Char('Código exportador')
     
+    @api.onchange('consignatario_destinatario_id')
+    def _onchange_consignatario_destinatario_id(self):
+        if self.consignatario_destinatario_id:
+            self.comprador_id = self.partner_id.id
+            self.exportador_id = self.partner_id.id
+            
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
