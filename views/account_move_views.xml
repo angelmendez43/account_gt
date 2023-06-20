@@ -14,18 +14,13 @@
                 <page name="other_info" position="after">
                     <page name="datos_fexp" string="Datos Factura exportación">
                         <group>
-                            <field name="nombre_consignatario_destinatario"/>
-                            <field name="direccion_consignatario_destinatario"/>
-                            <field name="codigo_consignatario_destinatario"/>
-                            <field name="nombre_comprador"/>
-                            <field name="direccion_comprador"/>
+                            <field name="consignatario_destinatario_id"/>
+                            <field name="comprador_id"/>
+                            <field name="exportador_id"/>
                         </group>   
                         <group>
-                            <field name="codigo_comprador"/>
                             <field name="otra_referencia"/>
                             <field name="incoterm_exp"/>
-                            <field name="nombre_exportador"/>
-                            <field name="codigo_exportador"/>
                         </group>  
                     </page>    
                 </page>
