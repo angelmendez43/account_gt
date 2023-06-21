@@ -101,13 +101,13 @@ class LibroComprasWizard(models.TransientModel):
                     iva_combustible+=compra['iva']
                 
                 if compra['compra']:
-                    iva_compra+=compra['iva']
+                    iva_compra+=compra['iva_compra']
 
                 if compra['compra_exento']:
                     iva_exento+=compra['iva']
                 
                 if compra['servicio']:
-                    iva_servicios+=compra['iva']
+                    iva_servicios+=compra['iva_servicio']
 
                 if compra['importacion']:
                     iva_importaciones+=compra['iva']
