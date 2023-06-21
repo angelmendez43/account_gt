@@ -420,6 +420,8 @@ class LibroCompras(models.AbstractModel):
                                                         for i in r['taxes']:
                                                             if 'IVA' in i['name']:
                                                                 dic['iva_compra'] += i['amount']
+                                                            if ('turismo' in i['name']) or ('TURISMO' in i['name']) or ('Turismo' in i['name']):
+                                                                dic['compra_exento'] += i['amount']
                                                                 
                                             if compra.partner_id.pequenio_contribuyente:
                                                 dic['compra'] = 0
