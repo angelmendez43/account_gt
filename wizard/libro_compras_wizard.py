@@ -129,7 +129,8 @@ class LibroComprasWizard(models.TransientModel):
                     hoja.write(fila, 13, compra['pequenio'])
                     hoja.write(fila, 14, compra['activo'])
                     hoja.write(fila, 15, compra['iva'])
-                    hoja.write(fila, 16, compra['total'])                   
+                    hoja.write(fila, 16, compra['total'])  
+                    hoja.write(fila, 17, compra['iva_compra'])
                 else:                   
                     hoja.write(fila, 8, compra['compra_exento'])
                     hoja.write(fila, 9, compra['servicio'])
