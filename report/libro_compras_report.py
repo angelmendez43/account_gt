@@ -416,9 +416,11 @@ class LibroCompras(models.AbstractModel):
                                                             if 'IVA' in i['name']:
                                                                 dic['iva_servicio'] += i['amount']                                                        
                                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
-
                                                         dic['compra'] +=  linea.price_subtotal
-
+                                                        for i in r['taxes']:
+                                                            if 'IVA' in i['name']:
+                                                                dic['iva_compra'] += i['amount']
+                                                                
                                             if compra.partner_id.pequenio_contribuyente:
                                                 dic['compra'] = 0
                                                 dic['servicio'] = 0
