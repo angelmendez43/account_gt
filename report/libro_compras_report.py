@@ -419,10 +419,11 @@ class LibroCompras(models.AbstractModel):
 
 
                                         else:
+                                            logging.warning('el que necesito')
                                             if linea.product_id.type == 'product' and linea.product_id.farmacia_exento==False:
                                                 dic['compra_exento'] += linea.price_total
                                             if linea.product_id.type == 'product' and linea.product_id.farmacia_exento==True:
-                                                dic['compra_exento'] += linea.price_total
+                                                dic['farmacia_exento'] += linea.price_total
                                             if linea.product_id.type != 'product':
                                                 dic['servicio_exento'] +=  linea.price_total
 
@@ -505,6 +506,10 @@ class LibroCompras(models.AbstractModel):
             6:{
                 'total_iva_exento':0,
                 'total_exento':0
+            },
+            7:{
+                'total_iva_exento':0,
+                'total_farmacia_exento':0
             }
         }
 
@@ -541,6 +546,10 @@ class LibroCompras(models.AbstractModel):
                     if lista['compra_exento']>0:
                         dicc_resumen_total[6]['total_iva_exento']+=lista['iva']
                         dicc_resumen_total[6]['total_exento']+=lista['total']
+                if id_compra == 'farmacia_exento':
+                    if lista['farmacia_exento']>0:
+                        dicc_resumen_total[7]['total_iva_exento']+=lista['iva']
+                        dicc_resumen_total[7]['total_farmacia_exento']+=lista['total']                        
 
         if dic['id'] == 6435:
             logging.warning('Prestar atención ')
