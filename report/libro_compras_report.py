@@ -414,14 +414,15 @@ class LibroCompras(models.AbstractModel):
                                                         dic['servicio'] +=  linea.price_subtotal
                                                         for i in r['taxes']:
                                                             if 'IVA' in i['name']:
-                                                                dic['iva_servicio'] += i['amount']                                                        
+                                                                dic['iva_servicio'] += i['amount']
+                                                            if ('turismo' in i['name']) or ('TURISMO' in i['name']) or ('Turismo' in i['name']):
+                                                                dic['compra_exento'] += i['amount']
                                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
                                                         dic['compra'] +=  linea.price_subtotal
                                                         for i in r['taxes']:
                                                             if 'IVA' in i['name']:
                                                                 dic['iva_compra'] += i['amount']
-                                                            if ('turismo' in i['name']) or ('TURISMO' in i['name']) or ('Turismo' in i['name']):
-                                                                dic['compra_exento'] += i['amount']
+
                                                                 
                                             if compra.partner_id.pequenio_contribuyente:
                                                 dic['compra'] = 0
