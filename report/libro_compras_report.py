@@ -122,6 +122,8 @@ class LibroCompras(models.AbstractModel):
                  'combustible':0,
                  'activo':0,
                  'iva':0,
+                 'iva_compra':0,
+                 'iva_servicio':0,
                  'total':0}
         total_gastos_no = 0
         documentos_operados = 0
@@ -171,6 +173,8 @@ class LibroCompras(models.AbstractModel):
                             'combustible':0,
                             'activo':0,
                             'iva': 0,
+                            'iva_compra': 0,
+                            'iva_servicio': 0,
                             'total': 0,
                             'rectificativa':rectificativa
                         }
@@ -403,8 +407,14 @@ class LibroCompras(models.AbstractModel):
                                                 else:
                                                     if linea.product_id.detailed_type == 'product' :
                                                         dic['compra'] += linea.price_subtotal
+                                                        for i in r['taxes']:
+                                                            if 'IVA' in i['name']:
+                                                                dic['iva_compra'] += i['amount']
                                                     if linea.product_id.detailed_type != 'product' and linea.product_id.detailed_type != 'consu':
                                                         dic['servicio'] +=  linea.price_subtotal
+                                                        for i in r['taxes']:
+                                                            if 'IVA' in i['name']:
+                                                                dic['iva_servicio'] += i['amount']                                                        
                                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
 
                                                         dic['compra'] +=  linea.price_subtotal
@@ -460,7 +470,10 @@ class LibroCompras(models.AbstractModel):
                         total['pequenio'] += dic['pequenio']
                         total['combustible'] += dic['combustible']
                         total['activo'] += dic['activo']
+                        #total['iva'] += dic['iva']
                         total['iva'] += dic['iva']
+                        total['iva_compra'] += dic['iva_compra']
+                        total['iva_servicio'] += dic['iva_servicio']
                         compras_lista.append(dic)
                         dic['total'] = dic['activo'] + dic['combustible'] + dic['compra'] +dic['farmacia_exento'] + dic['servicio'] + dic['compra_exento'] + dic['servicio_exento'] + dic['importacion'] + dic['iva'] + dic['pequenio']
                         total['total'] += dic['total']
@@ -512,7 +525,8 @@ class LibroCompras(models.AbstractModel):
                 'total_farmacia_exento':0
             }
         }
-
+        logging.warning('compras listas')
+        logging.warning(compras_lista)
         for lista in compras_lista:
             total_combustible=0
             total_compras=0
@@ -524,11 +538,11 @@ class LibroCompras(models.AbstractModel):
                         dicc_resumen_total[0]['total_combustible']+=lista['total']
                 if id_compra == 'compra':
                     if lista['compra']>0:
-                        dicc_resumen_total[1]['total_iva_compras']+=lista['iva']
+                        dicc_resumen_total[1]['total_iva_compras']+=lista['iva_compra']
                         dicc_resumen_total[1]['total_compras']+=lista['total']
                 if id_compra == 'servicio':
                     if lista['servicio']>0:
-                        dicc_resumen_total[2]['total_iva_servicio']+=lista['iva']
+                        dicc_resumen_total[2]['total_iva_servicio']+=lista['iva_servicio']
                         dicc_resumen_total[2]['total_servicio']+=lista['total']
                 if id_compra == 'pequenio':
                     if lista['pequenio']>0:
