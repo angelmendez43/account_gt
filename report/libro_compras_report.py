@@ -181,21 +181,29 @@ class LibroCompras(models.AbstractModel):
 
 #        Si la factura es nota de credito si es consumible y activo es igual a false
 
-                        if dic['rectificativa']:
+                        if compra.journal_id.tipo_factura == "NCRE":
+                            logging.warning('es nota de credito')
                             producto_compra = 0
                             producto_servicio = 0
                             producto_activo = 0
                             iva_general = 0
+                            farmacia_exento = 0
                             for linea in compra.invoice_line_ids:
-                                if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
-                                    producto_compra += linea.price_subtotal
-                                    iva_general += linea.price_total - linea.price_subtotal
-                                if linea.product_id.detailed_type == 'service' and linea.product_id.es_activo == False:
-                                    producto_servicio += linea.price_subtotal
-                                    iva_general += linea.price_total - linea.price_subtotal
-                                if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo:
-                                    producto_activo += linea.price_subtotal
-                                    iva_general += linea.price_total - linea.price_subtotal
+                                if linea.product_id.farmacia_exento:
+                                    if linea.product_id.detailed_type in ['product','service']:
+                                        farmacia_exento += linea.price_subtotal
+                                else:
+                                    if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
+                                        producto_compra += linea.price_subtotal
+                                        iva_general += linea.price_total - linea.price_subtotal
+                                    if linea.product_id.detailed_type == 'service' and linea.product_id.es_activo == False:
+                                        producto_servicio += linea.price_subtotal
+                                        iva_general += linea.price_total - linea.price_subtotal
+                                    if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo:
+                                        producto_activo += linea.price_subtotal
+                                        iva_general += linea.price_total - linea.price_subtotal
+                                    if linea.product_id.detailed_type == 'product':
+                                        farmacia_exento += linea.price_subtotal
 
                             dic['compra']=producto_compra
                             dic['activo']=producto_activo
