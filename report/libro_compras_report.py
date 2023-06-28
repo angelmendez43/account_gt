@@ -154,7 +154,12 @@ class LibroCompras(models.AbstractModel):
                             doc_ref = compra.journal_id.tipo_factura
                         if compra.move_type == 'in_refund':
                             rectificativa=True
-
+                        
+                        nit = compra.partner_id.vat if compra.partner_id.vat else ''
+                        
+                        if compra.partner_id.documento_personal_identificacion:
+                            nit = compra.partner_id.documento_personal_identificacion
+                            
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
@@ -162,7 +167,7 @@ class LibroCompras(models.AbstractModel):
                             'factura': documento,
                             'documento': doc_ref,
                             'proveedor': compra.partner_id.name if compra.partner_id else '',
-                            'nit': compra.partner_id.vat if compra.partner_id.vat else '',
+                            'nit': nit,
                             'compra': 0,
                             'farmacia_exento': 0,
                             'compra_exento':0,
