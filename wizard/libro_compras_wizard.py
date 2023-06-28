@@ -173,7 +173,7 @@ class LibroComprasWizard(models.TransientModel):
 
             fila += 1
 
-            if len(res['gastos_no']) > 0 and self.env.user.company.gastos_no_deducibles:
+            if len(res['gastos_no']) > 0 and self.env.company.gastos_no_deducibles:
 
                 hoja.write(fila,0,'Gastos no deducibles')
 
