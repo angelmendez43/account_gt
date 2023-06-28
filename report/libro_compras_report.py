@@ -463,7 +463,7 @@ class LibroCompras(models.AbstractModel):
 
 
 
-                        if compra.move_type in ['in_refund']:
+                        if dic['documento'] == "NCRE" or compra.move_type in ['in_refund']:
                             dic['compra']  = dic['compra'] * -1
                             dic['compra_exento'] = dic['compra_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
