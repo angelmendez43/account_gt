@@ -467,6 +467,8 @@ class LibroCompras(models.AbstractModel):
                             dic['compra']  = dic['compra'] * -1
                             dic['compra_exento'] = dic['compra_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
+                            if dic['farmacia_exento'] > 0:
+                                dic['farmacia_exento']  = dic['farmacia_exento'] * -1
                             dic['servicio_exento'] = dic['servicio_exento'] * -1
                             dic['importacion'] = dic['importacion'] * -1
                             dic['pequenio'] = dic['pequenio'] * -1
