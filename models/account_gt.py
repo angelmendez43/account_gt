@@ -15,6 +15,7 @@ class ResCompany(models.Model):
     _inherit = "res.company"
 
     columna_farmacia_exento_ventas = fields.Boolean('Columna farmacia exento')
+    gastos_no_deducibles = fields.Boolean('Mostrar gastos no deducibles Libro compras')
 
 class Liquidacion(models.Model):
     _name = "account_gt.liquidacion"
