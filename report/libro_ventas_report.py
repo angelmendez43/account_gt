@@ -12,8 +12,6 @@ class LibroVentas(models.AbstractModel):
         conversion = {'impuesto': 0,'total':0 }
         total_sin_impuesto = 0
         total_total = 0
-
-
         amount_untaxed = 0
         amount_tax = 0
         amount_total = 0
@@ -22,7 +20,6 @@ class LibroVentas(models.AbstractModel):
         amount_tax_signed = 0
         amount_total_signed = 0
         amount_residual_signed = 0
-
 
         for move in move_id:
             total_untaxed = 0.0
