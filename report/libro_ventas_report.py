@@ -66,8 +66,6 @@ class LibroVentas(models.AbstractModel):
             else:
                 sign = -1
 
-            # logging.warn(total_sin_impuesto)
-            # logging.warn(total)
 
 
 
