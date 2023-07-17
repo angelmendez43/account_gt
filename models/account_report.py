@@ -34,39 +34,39 @@ class AccountReport(models.AbstractModel):
             return self.get_new_xslx(options, response)
         else:
             return res
-            
-    def _get_table(self, options):   
-        res = super(AccountReport, self)._get_table(options)
-        logging.warning('_get_table inherit')
-        if res:
-            for r in res[1]:
-                # logging.warning('res get table')
-                # logging.warning(r)
-                if 'level' in r and r['level'] == 1:
-                    logging.warning('r')
-                    logging.warning(r)
-                    r['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    r['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                if r['columns'][0]['name'] != "" and 'level' in r and r['level'] == 1:
-                    r['columns'].pop(2)
-                    r['columns'].insert(2, r['columns'][0])
-                    r['columns'][0]['name'] = ""
-                    
-        return res
 
-        
-    def get_header(self, options):
-        res = super(AccountReport, self).get_header(options)
-        res[0].insert(2, {'name': 'Serie'})
-        res[0].insert(3, {'name': 'Numero'})
-        return res
+    # def _get_table(self, options):
+    #     res = super(AccountReport, self)._get_table(options)
+    #     logging.warning('_get_table inherit')
+    #     if res:
+    #         for r in res[1]:
+    #             # logging.warning('res get table')
+    #             # logging.warning(r)
+    #             if 'level' in r and r['level'] == 1:
+    #                 logging.warning('r')
+    #                 logging.warning(r)
+    #                 r['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #                 r['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #             if r['columns'][0]['name'] != "" and 'level' in r and r['level'] == 1:
+    #                 r['columns'].pop(2)
+    #                 r['columns'].insert(2, r['columns'][0])
+    #                 r['columns'][0]['name'] = ""
+    #
+    #     return res
+
+
+    # def get_header(self, options):
+    #     res = super(AccountReport, self).get_header(options)
+    #     res[0].insert(2, {'name': 'Serie'})
+    #     res[0].insert(3, {'name': 'Numero'})
+    #     return res
 
     def _get_lines(self, options, line_id=None):
         res = super(AccountReport, self)._get_lines(options, line_id)
         logging.warning('res get lines')
         logging.warning(res)
         return res
-    
+
     def _get_html_render_values(self, options, report_manager):
         res = super(AccountReport, self)._get_html_render_values(options, report_manager)
         logging.warning('-----------------------_get_html_render_values')
@@ -204,86 +204,79 @@ class AccountReport(models.AbstractModel):
         output.close()
         return generated_file
 
-    def get_html(self, options, line_id=None, additional_context=None):
-        '''
-        return the html value of report, or html value of unfolded line
-        * if line_id is set, the template used will be the line_template
-        otherwise it uses the main_template. Reason is for efficiency, when unfolding a line in the report
-        we don't want to reload all lines, just get the one we unfolded.
-        '''
-        # Prevent inconsistency between options and context.
-        self = self.with_context(self._set_context(options))
-
-        templates = self._get_templates()
-        report_manager = self._get_report_manager(options)
-
-        render_values = self._get_html_render_values(options, report_manager)
-        if additional_context:
-            render_values.update(additional_context)
-
-        # Create lines/headers.
-        if line_id:
-            headers = options['headers']
-            lines = self._get_lines(options, line_id=line_id)
-            #logging.warning('lines gethrml inherit')
-            #logging.warning(lines)
-            logging.warning('get_html')
-            for l in lines:
-                logging.warning(l)
-                if 'Saldo inicial' in l['name']:
-                    logging.warning('si hay clase')
-                    l['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                if 'unfolded' in l and l['unfolded'] == True:
-                    l['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    # if l['columns'][0]['name'] == '':
-                    #     l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    # else:
-                    #     l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    #     l['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    
-                    #logging.warning(l)
-                #lines['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-            template = templates['line_template']
-        else:
-            headers, lines = self._get_table(options)
-            options['headers'] = headers
-            #logging.warning('headers')
-            #logging.warning(headers)
-            template = templates['main_template']
-        if options.get('hierarchy'):
-            lines = self._create_hierarchy(lines, options)
-            #logging.warning('lines 2')
-            #logging.warning(lines)
-        if options.get('selected_column'):
-            lines = self._sort_lines(lines, options)
-            #logging.warning('lines 3')
-            #logging.warning(lines)
-
-        lines = self._format_lines_for_display(lines, options)
-
-        render_values['lines'] = {'columns_header': headers, 'lines': lines}
-
-        # Manage footnotes.
-        footnotes_to_render = []
-        if self.env.context.get('print_mode', False):
-            # we are in print mode, so compute footnote number and include them in lines values, otherwise, let the js compute the number correctly as
-            # we don't know all the visible lines.
-            footnotes = dict([(str(f.line), f) for f in report_manager.footnotes_ids])
-            number = 0
-            for line in lines:
-                f = footnotes.get(str(line.get('id')))
-                if f:
-                    number += 1
-                    line['footnote'] = str(number)
-                    footnotes_to_render.append({'id': f.id, 'number': number, 'text': f.text})
-
-        # Render.
-        html = self.env.ref(template)._render(render_values)
-        if self.env.context.get('print_mode', False):
-            for k,v in self._replace_class().items():
-                html = html.replace(k, v)
-            # append footnote as well
-            html = html.replace(markupsafe.Markup('<div class="js_account_report_footnotes"></div>'), self.get_html_footnotes(footnotes_to_render))
-        return html
+    # def get_html(self, options, line_id=None, additional_context=None):
+    #     '''
+    #     return the html value of report, or html value of unfolded line
+    #     * if line_id is set, the template used will be the line_template
+    #     otherwise it uses the main_template. Reason is for efficiency, when unfolding a line in the report
+    #     we don't want to reload all lines, just get the one we unfolded.
+    #     '''
+    #     # Prevent inconsistency between options and context.
+    #     self = self.with_context(self._set_context(options))
+    #
+    #     templates = self._get_templates()
+    #     report_manager = self._get_report_manager(options)
+    #
+    #     render_values = self._get_html_render_values(options, report_manager)
+    #     if additional_context:
+    #         render_values.update(additional_context)
+    #
+    #     # Create lines/headers.
+    #     if line_id:
+    #         headers = options['headers']
+    #         lines = self._get_lines(options, line_id=line_id)
+    #         #logging.warning('lines gethrml inherit')
+    #         #logging.warning(lines)
+    #         logging.warning('get_html')
+    #         for l in lines:
+    #             logging.warning(l)
+    #             if 'Saldo inicial' in l['name']:
+    #                 logging.warning('si hay clase')
+    #                 l['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #                 l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #             if 'unfolded' in l and l['unfolded'] == True:
+    #                 l['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #                 l['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+    #
+    #         template = templates['line_template']
+    #     else:
+    #         headers, lines = self._get_table(options)
+    #         options['headers'] = headers
+    #         #logging.warning('headers')
+    #         #logging.warning(headers)
+    #         template = templates['main_template']
+    #     if options.get('hierarchy'):
+    #         lines = self._create_hierarchy(lines, options)
+    #         #logging.warning('lines 2')
+    #         #logging.warning(lines)
+    #     if options.get('selected_column'):
+    #         lines = self._sort_lines(lines, options)
+    #         #logging.warning('lines 3')
+    #         #logging.warning(lines)
+    #
+    #     lines = self._format_lines_for_display(lines, options)
+    #
+    #     render_values['lines'] = {'columns_header': headers, 'lines': lines}
+    #
+    #     # Manage footnotes.
+    #     footnotes_to_render = []
+    #     if self.env.context.get('print_mode', False):
+    #         # we are in print mode, so compute footnote number and include them in lines values, otherwise, let the js compute the number correctly as
+    #         # we don't know all the visible lines.
+    #         footnotes = dict([(str(f.line), f) for f in report_manager.footnotes_ids])
+    #         number = 0
+    #         for line in lines:
+    #             f = footnotes.get(str(line.get('id')))
+    #             if f:
+    #                 number += 1
+    #                 line['footnote'] = str(number)
+    #                 footnotes_to_render.append({'id': f.id, 'number': number, 'text': f.text})
+    #
+    #     # Render.
+    #     html = self.env.ref(template)._render(render_values)
+    #     if self.env.context.get('print_mode', False):
+    #         for k,v in self._replace_class().items():
+    #             html = html.replace(k, v)
+    #         # append footnote as well
+    #         html = html.replace(markupsafe.Markup('<div class="js_account_report_footnotes"></div>'), self.get_html_footnotes(footnotes_to_render))
+    #     return html
