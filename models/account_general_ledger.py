@@ -51,28 +51,13 @@ class AccountGeneralLedgerReport(models.AbstractModel):
         logging.warning('_get_aml_line')
         logging.warning(res)
         logging.warning(aml)
-        if 'level' in res and res['level'] == 2:
-            fel_serie = aml['fel_serie'] if aml['fel_serie'] else ""
-            fel_numero = aml['fel_numero'] if aml['fel_numero'] else ""
-            res['columns'].insert(1,  {'name': fel_serie, 'class': 'o_account_report_line_ellipsis'})
-            res['columns'].insert(2,  {'name': fel_numero, 'class': 'o_account_report_line_ellipsis'})
-            #res['columns'].insert(3,  {'name': "", 'class': 'o_account_report_line_ellipsis'})
-        #if 'caret_options' in res and res['caret_options'] == 'account.payment':
-        #    logging.warning('caret_options')
-        #    res['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-        #    res['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
+        #if 'level' in res and res['level'] == 2:
+        #    fel_serie = aml['fel_serie'] if aml['fel_serie'] else ""
+        #    fel_numero = aml['fel_numero'] if aml['fel_numero'] else ""
+        #    res['columns'].insert(1,  {'name': fel_serie, 'class': 'o_account_report_line_ellipsis'})
+        #    res['columns'].insert(2,  {'name': fel_numero, 'class': 'o_account_report_line_ellipsis'})
         if 'columns' in res and len(res['columns']) > 1:
             if aml['payment_id']:
                 if 'name' in res['columns'][1] and res['columns'][1]['name'] and aml['descripcion']:
                     res['columns'][1]['name'] += ", "+ aml['descripcion']
-                    #res['columns'].insert(1,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-                    #res['columns'].insert(2,  {'name': '', 'class': 'o_account_report_line_ellipsis'})
-            #else:
-                #logging.warning('entra el res')
-                #if aml['fel_serie']:
-                    #logging.warning('si tiene fel_serie')
-                    #res['columns'].insert(1,  {'name': aml['fel_serie'], 'class': 'o_account_report_line_ellipsis'})
-                    #res['columns'].insert(2,  {'name': aml['fel_numero'], 'class': 'o_account_report_line_ellipsis'})
-                    #logging.warning('despues de insertar')
-                    #logging.warning(res)
         return res
