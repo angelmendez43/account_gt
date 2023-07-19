@@ -208,7 +208,8 @@ class LibroCompras(models.AbstractModel):
                                         producto_activo += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
                                     if linea.product_id.detailed_type == 'product':
-                                        farmacia_exento += linea.price_subtotal
+                                        producto_compra += linea.price_subtotal
+                                        iva_general += linea.price_total - linea.price_subtotal
 
                             dic['compra']=producto_compra
                             dic['farmacia_exento'] = farmacia_exento
