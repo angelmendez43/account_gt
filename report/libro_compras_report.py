@@ -186,7 +186,7 @@ class LibroCompras(models.AbstractModel):
 
 #        Si la factura es nota de credito si es consumible y activo es igual a false
 
-                        if compra.journal_id.tipo_factura == "NCRE":
+                        if compra.journal_id.tipo_factura in ["NCRE","NABN"]:
                             logging.warning('es nota de credito')
                             producto_compra = 0
                             producto_servicio = 0
@@ -477,7 +477,7 @@ class LibroCompras(models.AbstractModel):
 
 
 
-                        if dic['documento'] == "NCRE" or compra.move_type in ['in_refund']:
+                        if dic['documento'] in ["NCRE","NABN"] or compra.move_type in ['in_refund']:
                             dic['compra']  = dic['compra'] * -1
                             dic['compra_exento'] = dic['compra_exento'] * -1
                             dic['servicio'] =  dic['servicio'] * -1
