@@ -201,15 +201,19 @@ class LibroCompras(models.AbstractModel):
                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
                                         producto_compra += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
+                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'service' and linea.product_id.es_activo == False:
                                         producto_servicio += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
+                                        dic['iva_servicio'] += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo:
                                         producto_activo += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
+                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'product':
                                         producto_compra += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
+                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
 
                             dic['compra']=producto_compra
                             dic['farmacia_exento'] = farmacia_exento
@@ -478,7 +482,7 @@ class LibroCompras(models.AbstractModel):
                             dic['servicio_exento'] = dic['servicio_exento'] * -1
                             dic['importacion'] = dic['importacion'] * -1
                             dic['pequenio'] = dic['pequenio'] * -1
-                            dic['iva'] = dic['iva'] * -1
+                            #dic['iva'] = dic['iva'] * -1
                             dic['total'] = dic['total'] * -1
 
 
