@@ -192,6 +192,8 @@ class LibroCompras(models.AbstractModel):
                             producto_servicio = 0
                             producto_activo = 0
                             iva_general = 0
+                            iva_compra = 0
+                            iva_servicio = 0
                             farmacia_exento = 0
                             for linea in compra.invoice_line_ids:
                                 if linea.product_id.farmacia_exento:
@@ -201,24 +203,26 @@ class LibroCompras(models.AbstractModel):
                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo == False:
                                         producto_compra += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
-                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
+                                        iva_compra += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'service' and linea.product_id.es_activo == False:
                                         producto_servicio += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
-                                        dic['iva_servicio'] += (linea.price_total - linea.price_subtotal) * -1
+                                        iva_servicio += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'consu' and linea.product_id.es_activo:
                                         producto_activo += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
-                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
+                                        iva_compra += (linea.price_total - linea.price_subtotal) * -1
                                     if linea.product_id.detailed_type == 'product':
                                         producto_compra += linea.price_subtotal
                                         iva_general += linea.price_total - linea.price_subtotal
-                                        dic['iva_compra'] += (linea.price_total - linea.price_subtotal) * -1
+                                        iva_compra += (linea.price_total - linea.price_subtotal) * -1
 
                             dic['compra']=producto_compra
                             dic['farmacia_exento'] = farmacia_exento
                             dic['activo']=producto_activo
                             dic['servicio']=producto_servicio
+                            dic['iva_compra'] = iva_compra
+                            dic['iva_servicio'] = iva_servicio
                             dic['iva']=iva_general
 
 #                         if compra.tipo_factura == 'combustible':
@@ -483,6 +487,7 @@ class LibroCompras(models.AbstractModel):
                             dic['importacion'] = dic['importacion'] * -1
                             dic['pequenio'] = dic['pequenio'] * -1
                             #dic['iva'] = dic['iva'] * -1
+                            dic['iva'] = dic['iva_compra']  + dic['iva_servicio']
                             dic['total'] = dic['total'] * -1
 
 
