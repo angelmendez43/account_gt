@@ -71,7 +71,7 @@ class AccountReport(models.AbstractModel):
         res = super(AccountReport, self)._get_html_render_values(options, report_manager)
         logging.warning('-----------------------_get_html_render_values')
         logging.warning(res)
-        date_fom = False
+        date_from = False
         date_to = False
         if 'date' in options and ('date_from' and 'date_to' in options['date']):
             date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y")
@@ -90,7 +90,7 @@ class AccountReport(models.AbstractModel):
         })
         logging.warning('get_new_xslx imporgesa')
 
-        date_fom = False
+        date_from = False
         date_to = False
         if 'date' in options and ('date_from' and 'date_to' in options['date']):
             date_from = datetime.datetime.strptime(options['date']['date_from'], "%Y-%m-%d").strftime("%d/%m/%Y")
