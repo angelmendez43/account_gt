@@ -11,6 +11,19 @@
                     <field name="liquidacion_id"/>
                     <field name="tipo_factura"/>
                 </field>
+                <page name="other_info" position="after">
+                    <page name="datos_fexp" string="Datos Factura exportación">
+                        <group>
+                            <field name="consignatario_destinatario_id"/>
+                            <field name="comprador_id"/>
+                            <field name="exportador_id"/>
+                        </group>
+                        <group>
+                            <field name="otra_referencia"/>
+                            <field name="incoterm_exp"/>
+                        </group>
+                    </page>
+                </page>                
             </field>
         </record>
 
