@@ -44,13 +44,21 @@ class AccountMove(models.Model):
     direccion_comprador = fields.Char('Dirección comprador')
     codigo_comprador = fields.Char('Código comprador')
     otra_referencia = fields.Char('Otra referencia')
-    incoterm_exp = fields.Selection([('EXW','EXW'),('FCA', 'FCA'),
-    ('FAS', 'FAS'), ('FOB', 'FOB'),
-    ('CFR','CFR'), ('CIF', 'CIF'),
-    ('CPT', 'CPT'),('CIP','CIP'),
-    ('DDP','DDP'),('DAP','DAP'),
-    ('DPU','DPU'),('ZZZ','ZZZ')],
-        string="Intocerm exportación")    
+    incoterm_exp = fields.Selection([
+            ('EXW', 'En fábrica'),
+            ('FCA', 'Libre transportista'),
+            ('FAS', 'Libre al costado del buque'),
+            ('FOB', 'Libre a bordo'),
+            ('CFR', 'Costo y flete'),
+            ('CIF','Costo, seguro y flete'),
+            ('CPT','Flete pagado hasta'),
+            ('CIP','Flete y seguro pagado hasta'),
+            ('DDP','Entregado en destino con derechos pagados'),
+            ('DAP','Entregada en lugar'),
+            ('DAT','Entregada en terminal'),
+            ('ZZZ','Otros')
+        ],string="Incoterm",default="EXW",
+        help="Termino de entrega")  
     nombre_exportador = fields.Char('Nombre exportador')
     codigo_exportador = fields.Char('Código exportador')
     
