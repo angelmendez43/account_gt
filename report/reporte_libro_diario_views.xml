@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-      <template id="reporte_libro_diario">
+      <template id="reporte_libro_diario_document">
 
         <t t-call="web.html_container">
             <t t-set="data_report_margin_top" t-value="5"/>
@@ -216,7 +216,15 @@
         </t>
 
       </template>
-
+        <template id="reporte_libro_diario">
+            <t t-call="web.html_container">
+                <!-- <t t-set="data_report_margin_top" t-value="12"/>
+                <t t-set="data_report_header_spacing" t-value="9"/> -->
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="account_gt.reporte_libro_diario_document" t-lang="user.lang"/>
+                </t>
+            </t>
+        </template>
     </data>
 </odoo>
 
