@@ -52,8 +52,8 @@ class LibroDiarioWizard(models.TransientModel):
             )
             
             if reporte_data:
-                hoja.write(0, 3, self.env.user.company_id.name)
-                hoja.write(1, 3, 'NIT: ' + str(self.env.user.company_id.vat))
+                hoja.write(0, 3, self.env.company.name)
+                hoja.write(1, 3, 'NIT: ' + str(self.env.company.vat))
                 hoja.write(2, 3, 'Libro Diario')
                 hoja.write(3, 3, 'Periodo del ' + str(w.fecha_inicio) + ' AL ' + str(w.fecha_fin))
                 hoja.write(4, 3, 'CIFRAS EXPRESADAS EN QUETZALES')
@@ -99,8 +99,8 @@ class LibroDiarioWizard(models.TransientModel):
 
             
             if reporte_data_consolidado:
-                hoja.write(0, 2, self.env.user.company_id.name)
-                hoja.write(1, 2, 'NIT: ' + str(self.env.user.company_id.vat))
+                hoja.write(0, 2, self.env.company.name)
+                hoja.write(1, 2, 'NIT: ' + str(self.env.company.vat))
                 hoja.write(2, 2, 'Libro Diario')
                 hoja.write(3, 2, 'Periodo del ' + str(w.fecha_inicio) + ' AL ' + str(w.fecha_fin))
                 hoja.write(4, 2, 'CIFRAS EXPRESADAS EN QUETZALES')
