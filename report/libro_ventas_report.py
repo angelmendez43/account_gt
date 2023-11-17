@@ -233,7 +233,7 @@ class LibroVentas(models.AbstractModel):
                                                 dic['compra'] += monto_convertir
                                             if linea.product_id.detailed_type != 'product':
                                                 dic['servicio'] +=  monto_convertir
-                                        elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id :
+                                        elif compra.tipo_factura == 'exportacion':
                                             dic['importacion'] += monto_convertir
 
                                         else:
@@ -250,7 +250,7 @@ class LibroVentas(models.AbstractModel):
                                                 dic['compra'] += monto_convertir
                                             if linea.product_id.detailed_type != 'product':
                                                 dic['servicio'] +=  monto_convertir
-                                        elif compra.tipo_factura == 'exportacion' or self.env.company.id != compra.currency_id.id:
+                                        elif compra.tipo_factura == 'exportacion':
                                             dic['importacion'] += monto_convertir
 
                                         else:
