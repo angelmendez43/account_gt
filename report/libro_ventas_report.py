@@ -284,7 +284,7 @@ class LibroVentas(models.AbstractModel):
                                             logging.warning('Lo que es I')
                                             logging.warning(i)
                                             if 'IVA 29-89' == i['name']:
-                                                iva_certo = True
+                                                iva_cero = True
                                         if iva_cero:
                                             if linea.product_id.detailed_type == 'product':
                                                 dic['compra_exento'] += linea.price_total
