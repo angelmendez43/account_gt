@@ -220,11 +220,14 @@ class LibroVentas(models.AbstractModel):
                                         monto_convertir_precio = compra.currency_id.with_context(date=compra.invoice_date).compute(precio_unitario, compra.company_id.currency_id)
 
                                         r = linea.tax_ids.compute_all(monto_convertir_precio, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
-
+                                        iva_cero = False
                                         for i in r['taxes']:
-                                            if 'IVA' in i['name']:
+                                            if 'IVA por Pagar' in i['name']:
                                                 dic['iva'] += i['amount']
                                             logging.warn(i)
+                                            
+                                            if 'IVA 29-89' == i['name']:
+                                                iva_cero = True
 
                                         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_subtotal, compra.company_id.currency_id)
 
@@ -237,10 +240,16 @@ class LibroVentas(models.AbstractModel):
                                             dic['importacion'] += monto_convertir
 
                                         else:
-                                            if linea.product_id.detailed_type == 'product':
-                                                dic['compra'] += monto_convertir
-                                            if linea.product_id.detailed_type != 'product':
-                                                dic['servicio'] +=  monto_convertir
+                                            if iva_cero:
+                                                if linea.product_id.detailed_type == 'product':
+                                                    dic['compra_exento'] += linea.price_total
+                                                if linea.product_id.detailed_type != 'product':
+                                                    dic['servicio_exento'] +=  linea.price_total
+                                            else:
+                                                if linea.product_id.detailed_type == 'product':
+                                                    dic['compra'] += monto_convertir
+                                                if linea.product_id.detailed_type != 'product':
+                                                    dic['servicio'] +=  monto_convertir
 
                                     else:
                                         monto_convertir = compra.currency_id.with_context(date=compra.invoice_date).compute(linea.price_total, compra.company_id.currency_id)
