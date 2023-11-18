@@ -270,9 +270,9 @@ class LibroVentas(models.AbstractModel):
                                             precio_unitario = linea.price_unit - (linea.price_unit*(linea.discount/100))
 
                                         r = linea.tax_ids.compute_all(precio_unitario, currency=compra.currency_id, quantity=linea.quantity, product=linea.product_id, partner=compra.partner_id)
-
+                                        iva_cero = False
                                         for i in r['taxes']:
-                                            if 'IVA' in i['name']:
+                                            if 'IVA por Pagar' == i['name']:
                                                 logging.warning('')
                                                 logging.warning('')
                                                 logging.warning(compra.name)
@@ -283,19 +283,26 @@ class LibroVentas(models.AbstractModel):
                                             logging.warning('')
                                             logging.warning('Lo que es I')
                                             logging.warning(i)
-
-                                        if compra.tipo_factura == 'varios':
+                                            if 'IVA 29-89' == i['name']:
+                                                iva_certo = True
+                                        if iva_cero:
                                             if linea.product_id.detailed_type == 'product':
-                                                dic['compra'] += linea.price_subtotal
+                                                dic['compra_exento'] += linea.price_total
                                             if linea.product_id.detailed_type != 'product':
-                                                dic['servicio'] +=  linea.price_subtotal
-                                        elif compra.tipo_factura == 'importacion':
-                                            dic['importacion'] += linea.price_subtotal
+                                                dic['servicio_exento'] +=  linea.price_total                                            
                                         else:
-                                            if linea.product_id.detailed_type == 'product':
-                                                dic['compra'] += linea.price_subtotal
-                                            if linea.product_id.detailed_type != 'product':
-                                                dic['servicio'] +=  linea.price_subtotal
+                                            if compra.tipo_factura == 'varios':
+                                                if linea.product_id.detailed_type == 'product':
+                                                    dic['compra'] += linea.price_subtotal
+                                                if linea.product_id.detailed_type != 'product':
+                                                    dic['servicio'] +=  linea.price_subtotal
+                                            elif compra.tipo_factura == 'importacion':
+                                                dic['importacion'] += linea.price_subtotal
+                                            else:
+                                                if linea.product_id.detailed_type == 'product':
+                                                    dic['compra'] += linea.price_subtotal
+                                                if linea.product_id.detailed_type != 'product':
+                                                    dic['servicio'] +=  linea.price_subtotal
 
 
                                     else:
