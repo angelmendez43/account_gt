@@ -57,37 +57,40 @@ class Liquidacion(models.Model):
                             if not l.reconciled:
                                 total += l.credit - l.debit
                                 lineas.append(l)
-                                logging.warn(l.credit - l.debit)
+                                logging.warning(l.credit - l.debit)
                             else:
                                 raise UserError('La factura %s ya esta conciliada' % (linea.factura_id.name))
-            logging.warn('PASA FACTURA')
-            logging.warn(lineas)
+            logging.warning('PASA FACTURA')
+            logging.warning(lineas)
 
             if dato.pago_ids:
                 moneda_pago = dato.pago_ids[0].currency_id
                 for linea in dato.pago_ids:
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
-                    for l in linea.pago_id.move_line_ids:
+                    for l in linea.pago_id.line_ids:
                         if l.account_id.reconcile:
                             if not l.reconciled :
                                 total -= l.debit - l.credit
                                 lineas.append(l)
-                                logging.warn(l.debit - l.credit)
+                                logging.warning(l.debit - l.credit)
                             else:
                                 raise UserError('El Pago %s ya esta conciliado' % (linea.pago_id.name))
 
-            logging.warn('PASA PAGO')
-            logging.warn(lineas)
+            logging.warning('PASA PAGO')
+            logging.warning(lineas)
 
-            if (moneda_pago.name=="GTQ" and moneda_factura.name=="GTQ") and moneda_factura.id == moneda_pago.id and round(total) != 0:
-                logging.warn('TOTAL')
-                logging.warn(total)
-                break
+            # if (moneda_pago.name=="GTQ" and moneda_factura.name=="GTQ") and moneda_factura.id == moneda_pago.id and round(total) != 0:
+            #     logging.warning('TOTAL')
+            #     logging.warning(total)
+            #     break
 
             lineas_conciliares = []
             nuevas_lineas = []
             for linea in lineas:
+                logging.warning('linea nuebvas')
+                logging.warning(linea.credit)
+                logging.warning(linea.debit)
                 nuevas_lineas.append((0, 0, {
                     'name': linea.name,
                     'debit': linea.credit,
@@ -97,7 +100,8 @@ class Liquidacion(models.Model):
                     'journal_id': dato.diario_id.id,
                     'date_maturity': dato.fecha,
                 }))
-
+            logging.warning('lineas')
+            logging.warning(lineas)
             if total != 0 and moneda_factura.id != moneda_pago.id:
                 nuevas_lineas.append((0, 0, {
                     'name': 'Diferencia de ' + dato.name,
@@ -108,7 +112,7 @@ class Liquidacion(models.Model):
                 }))
 
             if total != 0 and moneda_factura.name== 'USD' and moneda_pago.name=='USD':
-                logging.warn('DOLAR')
+                logging.warning('DOLAR')
                 nuevas_lineas.append((0, 0, {
                     'name': 'Diferencia de ' + dato.name,
                     'debit': -1 * total if total < 0 else 0,
@@ -117,21 +121,26 @@ class Liquidacion(models.Model):
                     'date_maturity': dato.fecha,
                 }))
 
+            logging.warning('a crear move')
             move = self.env['account.move'].create({
-                'line_ids': nuevas_lineas,
+                # 'line_ids': nuevas_lineas,
                 'ref': dato.name,
                 'date': dato.fecha,
                 'journal_id': dato.diario_id.id,
             });
+            logging.warning('MOVE')
+            logging.warning(move)
             #
-            indice = 0
-            for linea in lineas:
-                lineas_conciliar = linea | move.line_ids[indice]
-                lineas_conciliar.reconcile()
-                indice += 1
+            # move.write()
+            if move and move.line_ids:
+                indice = 0
+                for linea in lineas:
+                    lineas_conciliar = linea | move.line_ids[indice]
+                    lineas_conciliar.reconcile()
+                    indice += 1
 
-            move.post()
-            self.write({'move_id': move.id})
+                move.post()
+                self.write({'move_id': move.id})
 
         if move:
             for linea in dato.factura_ids:
@@ -183,3 +192,9 @@ class LiquidacionPago(models.Model):
     pago_id = fields.Many2one('account.payment','Pago')
     currency_id = fields.Many2one('res.currency',string='moneda', related='pago_id.currency_id')
     total = fields.Monetary('Total',related='pago_id.amount')
+
+
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    es_activo = fields.Boolean(string='Es un activo?', default=False)

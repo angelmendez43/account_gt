@@ -16,7 +16,7 @@
                         <field name="archivo" readonly="1" filename="name"/>
                     </group>
                     <footer>
-                        <button name="print_report" type="object" string="Generar" class="oe_highlight"/>
+                        <!-- <button name="print_report" type="object" string="Generar" class="oe_highlight"/> -->
                         <button name="print_report_excel" string="Reporte excel" type="object" class="oe_highlight"/>
                         <!-- <button name="test" string="test" type="object" class="oe_highlight"/> -->
                         or
@@ -33,7 +33,7 @@
                     view_mode="form"
                     target="new"/>
 
-        <menuitem action="launch_account_gt_libro_compras" id="menu_reporte_libro_compras" parent="account.menu_finance_reports"/>
+        <menuitem action="launch_account_gt_libro_compras" id="menu_reporte_libro_compras" parent="account.account_reports_management_menu"/>
 
     </data>
 </odoo>

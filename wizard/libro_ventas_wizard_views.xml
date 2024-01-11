@@ -10,13 +10,14 @@
                     <group>
                         <field name="fecha_inicio"/>
                         <field name="fecha_fin"/>
+                        <field name="diarios_ids" widget="many2many_tags"/>
                     </group>
                     <group>
                         <field name="name" invisible="1"/>
                         <field name="archivo" readonly="1" filename="name"/>
                     </group>
                     <footer>
-                        <button name="print_report" type="object" string="Generar" class="oe_highlight"/>
+                        <!-- <button name="print_report" type="object" string="Generar" class="oe_highlight"/> -->
                         <button name="print_report_excel" string="Reporte excel" type="object" class="oe_highlight"/>
                         or
                         <button special="cancel" string="Cancel"/>
@@ -32,7 +33,7 @@
                     view_mode="form"
                     target="new"/>
 
-        <menuitem action="launch_account_gt_libro_ventas" id="menu_reporte_libro_ventas" parent="account.menu_finance_reports"/>
+        <menuitem action="launch_account_gt_libro_ventas" id="menu_reporte_libro_ventas" parent="account.account_reports_management_menu"/>
 
     </data>
 </odoo>

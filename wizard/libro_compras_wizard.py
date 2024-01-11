@@ -43,53 +43,92 @@ class LibroComprasWizard(models.TransientModel):
             hoja.write(2, 1, self.env.company.vat)
             hoja.write(3, 0, 'NOMBRE COMERCIAL')
             hoja.write(3, 1,  self.env.company.name)
-            hoja.write(2, 3, 'DOMICILIO FISCAL')
-            hoja.write(2, 4,  self.env.company.street)
+            # hoja.write(2, 3, 'DOMICILIO FISCAL')
+            # hoja.write(2, 4,  self.env.company.street)
             hoja.write(3, 3, 'REGISTRO DEL')
             hoja.write(3, 4, str(w.fecha_inicio) + ' al ' + str(w.fecha_fin))
 
 
 
             hoja.write(5, 0, 'Fecha')
-            hoja.write(5, 1, 'Documento')
-            hoja.write(5, 2, 'NIT')
-            hoja.write(5, 3, 'Proveedor')
-            hoja.write(5, 4, 'Compras')
-            hoja.write(5, 5, 'Compras exentos')
-            hoja.write(5, 6, 'Servicios')
-            hoja.write(5, 7, 'Servicios exentos')
-            hoja.write(5, 8, 'Importacion')
-            hoja.write(5, 9, 'Pequeño contribuyente')
-            hoja.write(5, 10, 'IVA')
-            hoja.write(5, 11, 'Total')
+            hoja.write(5, 1, 'Serie')
+            hoja.write(5, 2, 'Factura')
+            hoja.write(5, 3, 'Documento')
+            hoja.write(5, 4, 'NIT')
+            hoja.write(5, 5, 'Proveedor')
+            hoja.write(5, 6, 'Combustible')
+            hoja.write(5, 7, 'Compras')
+            hoja.write(5, 8, 'Exentos')
+            hoja.write(5, 9, 'Servicios')
+            hoja.write(5, 10, 'Servicios exentos')
+            hoja.write(5, 11, 'Importacion')
+            hoja.write(5, 12, 'Pequeño contribuyente')
+            hoja.write(5, 13, 'Activos')
+            hoja.write(5, 14, 'IVA')
+            hoja.write(5, 15, 'Total')
 
             fila = 6
+            iva_proveedor=0
+            iva_combustible=0
+            iva_compra=0
+            iva_servicios=0
+            iva_pequenio=0
+            iva_importaciones=0
+            iva_exento=0
+            iva_activo=0
             for compra in res['compras_lista']:
                 hoja.write(fila, 0, compra['fecha'])
-                hoja.write(fila, 1, compra['documento'])
-                hoja.write(fila, 2, compra['nit'])
-                hoja.write(fila, 3, compra['proveedor'])
-                hoja.write(fila, 4, compra['compra'])
-                hoja.write(fila, 5, compra['compra_exento'])
-                hoja.write(fila, 6, compra['servicio'])
-                hoja.write(fila, 7, compra['servicio_exento'])
-                hoja.write(fila, 8, compra['importacion'])
-                hoja.write(fila, 9, compra['pequenio'])
-                hoja.write(fila, 10, compra['iva'])
-                hoja.write(fila, 11, compra['total'])
+                hoja.write(fila, 1, compra['serie'])
+                hoja.write(fila, 2, compra['factura'])
+                hoja.write(fila, 3, compra['documento'])
+                hoja.write(fila, 4, compra['nit'])
+                hoja.write(fila, 5, compra['proveedor'])
 
+                if compra['combustible']:
+                    iva_combustible+=compra['iva']
+
+                if compra['compra']:
+                    iva_compra+=compra['iva_compra']
+
+                if compra['compra_exento']:
+                    iva_exento+=compra['iva']
+
+                if compra['servicio']:
+                    iva_servicios+=compra['iva_servicio']
+
+                if compra['importacion']:
+                    iva_importaciones+=compra['iva']
+
+                if compra['pequenio']:
+                    iva_pequenio+=compra['iva']
+
+                if compra['activo']:
+                    iva_activo+=compra['iva']
+
+
+                hoja.write(fila, 6, compra['combustible'])
+                hoja.write(fila, 7, compra['compra'])
+                hoja.write(fila, 8, compra['compra_exento'])
+                hoja.write(fila, 9, compra['servicio'])
+                hoja.write(fila, 10, compra['servicio_exento'])
+                hoja.write(fila, 11, compra['importacion'])
+                hoja.write(fila, 12, compra['pequenio'])
+                hoja.write(fila, 13, compra['activo'])
+                hoja.write(fila, 14, compra['iva'])
+                hoja.write(fila, 15, compra['total'])
                 fila += 1
-
-
-            hoja.write(fila, 4, res['total']['compra'])
-            hoja.write(fila, 5, res['total']['compra_exento'])
-            hoja.write(fila, 6, res['total']['servicio'])
-            hoja.write(fila, 7, res['total']['servicio_exento'])
-            hoja.write(fila, 8, res['total']['importacion'])
-            hoja.write(fila, 9, res['total']['pequenio'])
-            hoja.write(fila, 10, res['total']['iva'])
-            hoja.write(fila, 11, res['total']['total'])
-
+            
+            hoja.write(fila, 5, 'TOTAL')
+            hoja.write(fila, 6, res['total']['combustible'])
+            hoja.write(fila, 7, res['total']['compra'])
+            hoja.write(fila, 8, res['total']['compra_exento'])
+            hoja.write(fila, 9, res['total']['servicio'])
+            hoja.write(fila, 10, res['total']['servicio_exento'])
+            hoja.write(fila, 11, res['total']['importacion'])
+            hoja.write(fila, 12, res['total']['pequenio'])
+            hoja.write(fila, 13, res['total']['activo'])
+            hoja.write(fila, 14, res['total']['iva'])
+            hoja.write(fila, 15, res['total']['total'])
             fila += 1
 
 
@@ -98,33 +137,33 @@ class LibroComprasWizard(models.TransientModel):
 
             fila += 1
 
-            logging.warn(res['gastos_no'])
-            if len(res['gastos_no']) > 0:
-
-                hoja.write(fila,0,'Gastos no deducibles')
-
-                fila += 1
-
-                hoja.write(fila,0,'Fecha')
-                hoja.write(fila,1,'Documento')
-                hoja.write(fila,2,'NIT')
-                hoja.write(fila,3,'Proveedor')
-                hoja.write(fila,4,'Total')
-
-                fila += 1
-
-                for gasto in res['gastos_no']:
-                    hoja.write(fila,0,gasto['fecha'])
-                    hoja.write(fila,1,gasto['documento'])
-                    hoja.write(fila,2,gasto['nit'])
-                    hoja.write(fila,3,gasto['proveedor'])
-                    hoja.write(fila,4,gasto['total'])
-
-                    fila += 1
-
-
-                hoja.write(fila,3,'Total gastos no deducibles')
-                hoja.write(fila,4,res['total_gastos_no'])
+            # logging.warn(res['gastos_no'])
+            # if len(res['gastos_no']) > 0:
+            #
+            #     hoja.write(fila,0,'Gastos no deducibles')
+            #
+            #     fila += 1
+            #
+            #     hoja.write(fila,0,'Fecha')
+            #     hoja.write(fila,1,'Documento')
+            #     hoja.write(fila,2,'NIT')
+            #     hoja.write(fila,3,'Proveedor')
+            #     hoja.write(fila,4,'Total')
+            #
+            #     fila += 1
+            #
+            #     for gasto in res['gastos_no']:
+            #         hoja.write(fila,0,gasto['fecha'])
+            #         hoja.write(fila,1,gasto['documento'])
+            #         hoja.write(fila,2,gasto['nit'])
+            #         hoja.write(fila,3,gasto['proveedor'])
+            #         hoja.write(fila,4,gasto['total'])
+            #
+            #         fila += 1
+            #
+            #
+            #     hoja.write(fila,3,'Total gastos no deducibles')
+            #     hoja.write(fila,4,res['total_gastos_no'])
 
             libro.close()
             datos = base64.b64encode(f.getvalue())
