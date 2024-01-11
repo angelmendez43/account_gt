@@ -69,7 +69,7 @@ class Liquidacion(models.Model):
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
                     for l in linea.pago_id.line_ids:
-                        if l.account_id.reconcile:
+                        if l.account_id.reconcile and l.account_id.user_type_id.name == "A pagar":
                             if not l.reconciled :
                                 total -= l.debit - l.credit
                                 lineas.append(l)
@@ -78,7 +78,13 @@ class Liquidacion(models.Model):
                                 raise UserError('El Pago %s ya esta conciliado' % (linea.pago_id.name))
 
             logging.warning('PASA PAGO')
+            for l in lineas:
+                logging.warning(l.account_id.user_type_id.name)
+                logging.warning(l.debit)
+                logging.warning(l.credit)
+
             logging.warning(lineas)
+
 
             # if (moneda_pago.name=="GTQ" and moneda_factura.name=="GTQ") and moneda_factura.id == moneda_pago.id and round(total) != 0:
             #     logging.warning('TOTAL')
@@ -123,13 +129,13 @@ class Liquidacion(models.Model):
 
             logging.warning('a crear move')
             move = self.env['account.move'].create({
-                # 'line_ids': nuevas_lineas,
+                'line_ids': nuevas_lineas,
                 'ref': dato.name,
                 'date': dato.fecha,
                 'journal_id': dato.diario_id.id,
             });
-            logging.warning('MOVE')
-            logging.warning(move)
+
+            move.action_post()
             #
             # move.write()
             if move and move.line_ids:
@@ -138,8 +144,8 @@ class Liquidacion(models.Model):
                     lineas_conciliar = linea | move.line_ids[indice]
                     lineas_conciliar.reconcile()
                     indice += 1
+            #
 
-                move.post()
                 self.write({'move_id': move.id})
 
         if move:
