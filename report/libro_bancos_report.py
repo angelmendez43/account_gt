@@ -26,7 +26,7 @@ class LibroBancos(models.AbstractModel):
     def moneda_cuenta(self, datos):
         moneda = False
         account_account = self.env['account.account'].search([('id','=',datos['cuenta_id'][0])])
-        moneda = account_account.currency_id
+        moneda = account_account.currency_id if account_account.currency_id else account_account.company_id.currency_id
         return moneda
 
     def movimientos(self, datos):
@@ -46,7 +46,7 @@ class LibroBancos(models.AbstractModel):
                 'descripcion': (movimiento.ref if movimiento.ref else ''),
                 'debito': debito,
                 'credito': credito,
-                'moneda': movimiento.currency_id,
+                'moneda': movimiento.currency_id if movimiento.currency_id else movimiento.company_id.currency_id,
                 'saldo': 0,
                 # 'moneda': linea.company_id.currency_id,
             }
