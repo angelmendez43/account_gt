@@ -13,27 +13,44 @@ class LibroBancos(models.AbstractModel):
         saldo = 0
         if account_move_line_ids:
             for movimiento in account_move_line_ids:
-                if movimiento.move_id.state == 'posted':
-                    saldo += movimiento.debit - movimiento.credit
+                debito = 0
+                credito = 0
+                if movimiento.amount_currency > 0:
+                    debito = movimiento.amount_currency
+                else:
+                    credito = (movimiento.amount_currency * -1)
+                saldo += debito - credito
         logging.warn(saldo)
         return saldo
+
+    def moneda_cuenta(self, datos):
+        moneda = False
+        account_account = self.env['account.account'].search([('id','=',datos['cuenta_id'][0])])
+        moneda = account_account.currency_id
+        return moneda
 
     def movimientos(self, datos):
         moves = []
         account_move_line_ids = self.env['account.move.line'].search([('account_id','=',datos['cuenta_id'][0]), ('date','>=',datos['fecha_inicio']), ('date','<=',datos['fecha_fin'])], order='date')
         for movimiento in account_move_line_ids:
-            if movimiento.move_id.state == 'posted':
-                mov = {
-                    'fecha': movimiento.date,
-                    # 'documento': movimiento.move_id.name if movimiento.move_id else '',
-                    'nombre': movimiento.partner_id.name if movimiento.partner_id else '',
-                    'descripcion': (movimiento.ref if movimiento.ref else ''),
-                    'debito': movimiento.debit,
-                    'credito': movimiento.credit,
-                    'saldo': 0,
-                    # 'moneda': linea.company_id.currency_id,
-                }
-                moves.append(mov)
+            debito = 0
+            credito = 0
+            if movimiento.amount_currency > 0:
+                debito = movimiento.amount_currency
+            else:
+                credito = movimiento.amount_currency * -1
+            mov = {
+                'fecha': movimiento.date,
+                # 'documento': movimiento.move_id.name if movimiento.move_id else '',
+                'nombre': movimiento.partner_id.name if movimiento.partner_id else '',
+                'descripcion': (movimiento.ref if movimiento.ref else ''),
+                'debito': debito,
+                'credito': credito,
+                'moneda': movimiento.currency_id,
+                'saldo': 0,
+                # 'moneda': linea.company_id.currency_id,
+            }
+            moves.append(mov)
 
         saldo_inicial = self.saldo_inicial(datos)
         saldo = saldo_inicial

@@ -41,7 +41,7 @@
                                         <td></td>
                                         <td></td>
                                         <td class="text-right">
-                                            <span t-esc="saldo_inicial(data)" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/>
+                                            <span t-esc="saldo_inicial(data)" t-options="{'widget': 'monetary', 'display_currency': moneda_cuenta(data)}"/>
                                         </td>
                                     </tr>
                                     <tr t-foreach="movimientos(data)" t-as="m">
@@ -55,13 +55,13 @@
                                             <span t-esc="m['descripcion']"/>
                                         </td>
                                         <td class="text-right">
-                                             <span t-esc="m['debito']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/>
+                                             <span t-esc="m['debito']" t-options="{'widget': 'monetary', 'display_currency': m['moneda']}"/>
                                         </td>
                                         <td class="text-right">
-                                            <span t-esc="m['credito']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/>
+                                            <span t-esc="m['credito']" t-options="{'widget': 'monetary', 'display_currency': m['moneda']}"/>
                                         </td>
                                         <td class="text-right">
-                                            <span t-esc="m['saldo']" t-options="{'widget': 'monetary', 'display_currency': user.company_id.currency_id}"/>
+                                            <span t-esc="m['saldo']" t-options="{'widget': 'monetary', 'display_currency': m['moneda']}"/>
                                         </td>
                                     </tr>
                                 </tbody>
