@@ -75,6 +75,7 @@ class LibroBancos(models.AbstractModel):
             'docs': docs,
             'movimientos': self.movimientos,
             'saldo_inicial': self.saldo_inicial,
+            'moneda_cuenta': self.moneda_cuenta,
             # 'direccion': diario.direccion and diario.direccion.street,
         }
 
