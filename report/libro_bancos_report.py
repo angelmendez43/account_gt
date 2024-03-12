@@ -41,6 +41,7 @@ class LibroBancos(models.AbstractModel):
                 credito = movimiento.amount_currency * -1
             mov = {
                 'fecha': movimiento.date,
+                'transaccion': movimiento.move_id.journal_id.name,
                 # 'documento': movimiento.move_id.name if movimiento.move_id else '',
                 'nombre': movimiento.partner_id.name if movimiento.partner_id else '',
                 'descripcion': (movimiento.ref if movimiento.ref else ''),

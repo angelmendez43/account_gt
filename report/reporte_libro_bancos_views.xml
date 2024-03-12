@@ -26,6 +26,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-left">Fecha</th>
+                                        <th  class="text-left">Transacción</th>
                                         <th  class="text-left">Nombre</th>
                                         <th  class="text-left">Descripcion</th>
                                         <th  class="text-right">Debe</th>
@@ -35,6 +36,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td>Saldo Inicial</td>
@@ -48,6 +50,9 @@
                                         <td>
                                             <span t-esc="m['fecha']" t-options='{"widget": "date"}'/>
                                         </td>
+                                        <td>
+                                            <span t-esc="m['transaccion']"/>
+                                        </td>                                         
                                         <td>
                                             <span t-esc="m['nombre']"/>
                                         </td>
