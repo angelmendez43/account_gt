@@ -40,8 +40,9 @@
         # 'wizard/libro_conciliacion_bancaria_wizard_views.xml',
         # 'wizard/conciliacion_bancaria_wizard_views.xml',
         'data/ir_sequence_data.xml',
+        'report/reporte_liqudiacion.xml',
     ],
     'assets': {
 
-        }    
+        }
 }

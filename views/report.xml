@@ -32,6 +32,15 @@
       name="account_gt.reporte_libro_bancos"
       file="account_gt.reporte_libro_banos"/>
 
+  <record id="account_gt_liquidacion" model="ir.actions.report">
+      <field name="name">Liquidacion</field>
+      <field name="model">account_gt.liquidacion</field>
+      <field name="report_type">qweb-pdf</field>
+      <field name="report_name">account_gt.liquidacion</field>
+      <field name="report_file">account_gt.liquidacion</field>
+      <field name="binding_model_id" ref="account_gt.model_account_gt_liquidacion"/>
+      <field name="binding_type">report</field>
+  </record>
 
 
   <!-- <record id="action_libro_conciliacion_bancaria"

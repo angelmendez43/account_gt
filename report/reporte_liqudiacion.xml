@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="liquidacion">
+    <t t-call="web.html_container">
+    <t t-set="data_report_margin_top" t-value="1"/>
+    <t t-set="data_report_header_spacing" t-value="1"/>
+      <t t-foreach="docs" t-as="o">
+          <div class="article">
+<div class="page">
+                        <div class="oe_structure"/>
+                        <h2>Liquidacion: <span t-field="o.name"/></h2>
+
+                        <div class="row mt32 mb32">
+                            <div class="col-xs-4">
+                                <strong>Fecha:</strong><br/>
+                                <span t-field="o.fecha"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Diario:</strong><br/>
+                                <span t-field="o.diario_id.name"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Asiento:</strong><br/>
+                                <span t-field="o.move_id.name"/>
+                            </div>
+                        </div>
+
+                        <h3>Facturas</h3>
+                        <t t-set="total_factura" t-value="0"/>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th><strong>No. Interno</strong></th>
+                                    <th><strong>No. Proveedor</strong></th>
+                                    <th><strong>Proveedor</strong></th>
+                                    <!-- <th><strong>Cuenta</strong></th> -->
+                                    <th class="text-right"><strong>Valor</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.factura_ids" t-as="f">
+                                    <t t-set="total_factura" t-value="total_factura + f.total"/>
+                                    <td>
+                                        <span t-field="f.factura_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="f.factura_id.ref"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="f.factura_id.partner_id.name"/>
+                                    </td>
+                                    <!-- <td>
+                                        <span t-field="f.account_id"/>
+                                    </td> -->
+                                    <td class="text-right">
+                                        <span t-field="f.total" t-options='{"widget": "monetary", "display_currency": f.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Total
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <!-- <td>
+                                    </td> -->
+                                    <td class="text-right">
+                                        <span t-esc="total_factura" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Pagos</h3>
+                        <t t-set="total_cheque" t-value="0"/>
+
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th><strong>No. Interno</strong></th>
+                                    <th><strong>Referencia</strong></th>
+                                    <th><strong>Cuenta</strong></th>
+                                    <th class="text-right"><strong>Valor</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.pago_ids" t-as="c">
+                                    <t t-set="total_cheque" t-value="total_cheque + c.pago_id.amount"/>
+                                    <td>
+                                        <span t-field="c.pago_id.name"/>-<t t-esc="foo"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="c.pago_id.ref"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="c.pago_id.destination_account_id"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="c.pago_id.amount" t-options='{"widget": "monetary", "display_currency": c.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Total
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="total_cheque" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Diferencia
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="total_factura - total_cheque" t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="oe_structure"/>
+                    </div>
+
+          </div>
+
+        </t>
+    </t>
+
+  </template>
+
+</odoo>
