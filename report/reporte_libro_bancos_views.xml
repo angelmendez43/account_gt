@@ -27,6 +27,7 @@
                                     <tr>
                                         <th class="text-left">Fecha</th>
                                         <th  class="text-left">Transacción</th>
+                                        <th  class="text-left">Número de cheque</th>
                                         <th  class="text-left">Nombre</th>
                                         <th  class="text-left">Descripcion</th>
                                         <th  class="text-right">Debe</th>
@@ -36,6 +37,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -52,7 +54,10 @@
                                         </td>
                                         <td>
                                             <span t-esc="m['transaccion']"/>
-                                        </td>                                         
+                                        </td>
+                                        <td>
+                                            <span t-esc="m['numero_cheque']"/>
+                                        </td>
                                         <td>
                                             <span t-esc="m['nombre']"/>
                                         </td>

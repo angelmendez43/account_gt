@@ -42,6 +42,7 @@ class LibroBancos(models.AbstractModel):
             mov = {
                 'fecha': movimiento.date,
                 'transaccion': movimiento.move_id.journal_id.name,
+                'numero_cheque': movimiento.move_id.payment_id.check_number if movimiento.move_id.payment_id else '',
                 # 'documento': movimiento.move_id.name if movimiento.move_id else '',
                 'nombre': movimiento.partner_id.name if movimiento.partner_id else '',
                 'descripcion': (movimiento.ref if movimiento.ref else ''),
