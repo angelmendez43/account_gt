@@ -10,6 +10,7 @@
             <field name="arch" type="xml">
                 <tree string="Liquidaciones">
                     <field name="name"/>
+                    <field name="descripcion"/>
                     <field name="fecha"/>
                     <field name="state"/>
                 </tree>
@@ -52,20 +53,22 @@
                         </group>
                         <notebook>
                             <page string="Facturas" name="facturas">
-                                <field name="factura_ids">
+                                <field name="factura_relacion_ids"/>
+                                <!-- <field name="factura_ids">
                                     <tree editable="bottom">
                                         <field name="factura_id"/>
                                         <field name="total" sum="total"/>
                                     </tree>
-                                </field>
+                                </field> -->
                             </page>
                             <page string="Pagos" name="pagos">
-                                <field name="pago_ids">
+                                <field name="pago_relacion_ids"/>
+                                <!-- <field name="pago_ids">
                                     <tree editable="bottom">
                                         <field name="pago_id"/>
                                         <field name="total"/>
                                     </tree>
-                                </field>
+                                </field> -->
                             </page>
                         </notebook>
                     </sheet>
@@ -84,6 +87,7 @@
             <field name="model">account_gt.liquidacion</field>
             <field name="arch" type="xml">
                 <search string="Buscar liquidacion">
+                    <field name="descripcion" string="Descripción"/
                     <field name="name" string="Nombre"/>
                     <field name="fecha"/>
                     <field name="diario_id"/>
