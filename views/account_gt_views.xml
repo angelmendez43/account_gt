@@ -87,7 +87,7 @@
             <field name="model">account_gt.liquidacion</field>
             <field name="arch" type="xml">
                 <search string="Buscar liquidacion">
-                    <field name="descripcion" string="Descripción"/
+                    <field name="descripcion" string="Descripción"/>
                     <field name="name" string="Nombre"/>
                     <field name="fecha"/>
                     <field name="diario_id"/>
