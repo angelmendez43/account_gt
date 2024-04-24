@@ -27,7 +27,7 @@ class AccountMove(models.Model):
             logging.warn(tipo)
             self.tipo_factura = tipo
 
-    liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion')
+    liquidacion_id = fields.Many2one('account_gt.liquidacion','Liquidacion', tracking=True)
     tipo_factura = fields.Selection([('venta','Venta'),('compra', 'Compra o Bien'),
     ('activo', 'Activo'), ('servicio', 'Servicio'),
     ('varios','Varios'), ('combustible', 'Combustible'),
