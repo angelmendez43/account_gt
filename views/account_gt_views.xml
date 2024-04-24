@@ -43,6 +43,7 @@
                             <group>
                                 <field name="descripcion"/>
                                 <field name="fecha"/>
+                                <field name="total_factura"/>
                             </group>
                             <group>
                                 <field name="diario_id"/>
