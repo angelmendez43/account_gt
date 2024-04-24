@@ -39,7 +39,38 @@ class Liquidacion(models.Model):
         ('cancelado', 'Cancelado'),], string='Estado', readonly=True, copy=False, index=True, tracking=3, default='borrador')
     factura_relacion_ids = fields.One2many('account.move','liquidacion_id','Facturas')
     pago_relacion_ids = fields.One2many('account.payment','liquidacion_id' ,'Pagos')
-    
+    total_factura = fields.Float('Total factura')
+
+    def _sincronizar_facturas(self):
+        liquidaciones = self.env['account_gt.liquidacion'].search([])
+        if len(liquidaciones) > 0:
+            total_factura = 0
+            for liquidacion in liquidaciones:
+                facturas_existentes  = []
+                pagos_existentes = []
+                for fe in liquidacion.factura_relacion_ids:
+                    facturas_existentes.append(fe.id)
+                    
+                logging.warning(facturas_existentes)
+                for fn in liquidacion.factura_ids:
+                    logging.warning(fn.factura_id.id)
+                    if fn.factura_id.id not in facturas_existentes:
+                        logging.warning('no exsite')
+                        logging.warning(fn.factura_id.id)
+                        fn.factura_id.liquidacion_id = liquidacion.id
+
+                if len(liquidacion.pago_relacion_ids):
+                    for pe in liquidacion.pago_relacion_ids:
+                        pagos_existentes.append(pe.id)
+
+                    if len(liquidacion.pago_ids) > 0:
+                        for pn in liquidacion.pago_ids:
+                            if pn.pago_id not in pagos_existentes:
+                                pn.pago_id.liquidacion_id = liquidacion.id
+
+                for fe in liquidacion.factura_relacion_ids:
+                    total_factura += fe.amount_total
+                liquidacion.total_factura = total_factura
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
@@ -84,7 +115,7 @@ class Liquidacion(models.Model):
                     # logging.warn(c.name)
                     # logging.warn(c.amount)
                     for l in linea.line_ids:
-                        if l.account_id.reconcile and l.account_id.user_type_id.name == "Por pagar":
+                        if l.account_id.reconcile and l.account_id.user_type_id.name in ["Por pagar",]:
                             if not l.reconciled :
                                 total -= l.debit - l.credit
                                 lineas.append(l)
