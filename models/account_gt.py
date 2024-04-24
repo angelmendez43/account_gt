@@ -37,8 +37,8 @@ class Liquidacion(models.Model):
         ('borrador', 'Borrador'),
         ('conciliado', 'Conciliado'),
         ('cancelado', 'Cancelado'),], string='Estado', readonly=True, copy=False, index=True, tracking=3, default='borrador')
-    factura_relacion_ids = fields.One2many('account.move','liquidacion_id','Facturas')
-    pago_relacion_ids = fields.One2many('account.payment','liquidacion_id' ,'Pagos')
+    factura_relacion_ids = fields.One2many('account.move','liquidacion_id','Facturas', tracking=True)
+    pago_relacion_ids = fields.One2many('account.payment','liquidacion_id' ,'Pagos', tracking=True)
     total_factura = fields.Float('Total factura')
 
     def _sincronizar_facturas(self):
