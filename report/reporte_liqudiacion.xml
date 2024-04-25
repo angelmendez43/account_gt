@@ -34,31 +34,51 @@
                                 <tr>
                                     <th><strong>No. Interno</strong></th>
                                     <th><strong>No. Proveedor</strong></th>
+                                    <th><strong>Fecha</strong></th>
                                     <th><strong>Proveedor</strong></th>
-                                    <!-- <th><strong>Cuenta</strong></th> -->
+                                    <th><strong>Concepto</strong></th>
+                                    <th><strong>Productos</strong></th>
+                                    <th><strong>Cuenta</strong></th>
                                     <th class="text-right"><strong>Valor</strong></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="o.factura_ids" t-as="f">
-                                    <t t-set="total_factura" t-value="total_factura + f.total"/>
+                                <tr t-foreach="o.factura_relacion_ids" t-as="f">
+                                    <t t-set="total_factura" t-value="total_factura + f.amount_total"/>
                                     <td>
-                                        <span t-field="f.factura_id.name"/>
+                                        <span t-field="f.name"/>
                                     </td>
                                     <td>
-                                        <span t-field="f.factura_id.ref"/>
+                                        <span t-field="f.ref"/>
                                     </td>
                                     <td>
-                                        <span t-field="f.factura_id.partner_id.name"/>
+                                        <span t-field="f.invoice_date"/>
+                                    </td>                                    
+                                    <td>
+                                        <span t-field="f.partner_id.name"/>
                                     </td>
-                                    <!-- <td>
-                                        <span t-field="f.account_id"/>
-                                    </td> -->
+                                    <td>
+                                        <span t-field="f.invoice_line_ids[0].name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="f.invoice_line_ids[0].product_id.name"/>
+                                    </td>                                     
+                                    <td>
+                                        <span t-field="f.invoice_line_ids[0].account_id.name"/>
+                                    </td> 
                                     <td class="text-right">
-                                        <span t-field="f.total" t-options='{"widget": "monetary", "display_currency": f.currency_id}'/>
+                                        <span t-field="f.amount_total" t-options='{"widget": "monetary", "display_currency": f.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>                                    
+                                    <td>
+                                    </td>
                                     <td>
                                         Total
                                     </td>
@@ -82,28 +102,34 @@
                             <thead>
                                 <tr>
                                     <th><strong>No. Interno</strong></th>
+                                    <th><strong>Fecha</strong></th>
                                     <th><strong>Referencia</strong></th>
                                     <th><strong>Cuenta</strong></th>
                                     <th class="text-right"><strong>Valor</strong></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="o.pago_ids" t-as="c">
-                                    <t t-set="total_cheque" t-value="total_cheque + c.pago_id.amount"/>
+                                <tr t-foreach="o.pago_relacion_ids" t-as="c">
+                                    <t t-set="total_cheque" t-value="total_cheque + c.amount"/>
                                     <td>
-                                        <span t-field="c.pago_id.name"/>-<t t-esc="foo"/>
+                                        <span t-field="c.name"/>-<t t-esc="foo"/>
                                     </td>
                                     <td>
-                                        <span t-field="c.pago_id.ref"/>
+                                        <span t-field="c.date"/>
+                                    </td>                                    
+                                    <td>
+                                        <span t-field="c.ref"/>
                                     </td>
                                     <td>
-                                        <span t-field="c.pago_id.destination_account_id"/>
+                                        <span t-field="c.destination_account_id"/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-field="c.pago_id.amount" t-options='{"widget": "monetary", "display_currency": c.currency_id}'/>
+                                        <span t-field="c.amount" t-options='{"widget": "monetary", "display_currency": c.currency_id}'/>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>
+                                    </td>                                    
                                     <td>
                                         Total
                                     </td>
