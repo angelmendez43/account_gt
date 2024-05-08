@@ -93,7 +93,7 @@ class Liquidacion(models.Model):
             lineas = []
 
             total = 0
-            if dato.factura_ids:
+            if dato.factura_relacion_ids:
                 moneda_factura = dato.factura_relacion_ids[0].currency_id
                 for linea in dato.factura_relacion_ids:
                     # logging.warn(f.number)
