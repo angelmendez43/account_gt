@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="vat" position="after">
                     <field name="documento_personal_identificacion"/>
+                    <field name="numero_documento_extranjero"/>
                     <field name="pequenio_contribuyente"/>
                 </field>
 
