@@ -392,7 +392,7 @@ class LibroCompras(models.AbstractModel):
 
                                                 dic['importacion'] += linea.price_subtotal
 #                                               if compra.tipo_factura == 'combustible':
-                                            elif compra.tipo_factura == 'combustible' and linea.product_id.detailed_type == 'consu':
+                                            elif compra.tipo_factura == 'combustible' and (linea.product_id.detailed_type == 'consu' or linea.product_id.detailed_type == 'service'):
                                                 
                                                 #crea un diccionario 
                                                 datos_json = json.loads(compra.tax_totals_json)
