@@ -331,7 +331,6 @@ class LibroCompras(models.AbstractModel):
                                                     dic['servicio'] +=  monto_convertir
 
 
-
                                             if compra.partner_id.pequenio_contribuyente:
                                                 dic['compra'] = 0
                                                 dic['servicio'] = 0
