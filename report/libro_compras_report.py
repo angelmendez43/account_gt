@@ -388,6 +388,8 @@ class LibroCompras(models.AbstractModel):
                                                     dic['compra'] += linea.price_subtotal
                                                 if linea.product_id.detailed_type != 'product':
                                                     dic['servicio'] +=  linea.price_subtotal
+                                            elif compra.tipo_factura == 'compra':
+                                                dic['compra'] += linea.price_subtotal
                                             elif compra.tipo_factura == 'importacion':
 
                                                 dic['importacion'] += linea.price_subtotal
@@ -596,9 +598,6 @@ class LibroCompras(models.AbstractModel):
                         dicc_resumen_total[7]['total_iva_exento']+=lista['iva']
                         dicc_resumen_total[7]['total_farmacia_exento']+=lista['total']                        
 
-        if dic['id'] == 6435:
-            logging.warning('Prestar atención ')
-            logging.warning(dic)
         return {'compras_lista': compras_lista,'total': total,'documentos_operados':documentos_operados,'resumen_total':dicc_resumen_total,'gastos_no': gastos_no_lista,'total_gastos_no': total_gastos_no}
 
     @api.model
