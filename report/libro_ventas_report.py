@@ -172,6 +172,7 @@ class LibroVentas(models.AbstractModel):
                                     fel_serie = ""
                                     fel_numero = ""
 
+                        dpi = compra.partner_id.documento_personal_identificacion
                         dic = {
                             'id': compra.id,
                             'fecha': formato_fecha,
@@ -181,7 +182,7 @@ class LibroVentas(models.AbstractModel):
                             'tipo_doc': compra.journal_id.tipo_factura if compra.journal_id.tipo_factura else '',
                             'proveedor': compra.partner_id.name,
                             'estado_factura': nombre_proveedor,
-                            'nit': compra.partner_id.vat if compra.partner_id.vat else '',
+                            'nit': dpi if dpi else (compra.partner_id.vat if compra.partner_id.vat else ''),
                             'compra': 0,
                             'compra_exento':0,
                             'servicio': 0,
