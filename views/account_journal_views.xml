@@ -10,6 +10,7 @@
         <xpath expr="//field[@name='code']" position="after">
             <field name="tipo_factura" string="Tipo factura"/>
             <field name="factura_exportacion"/>
+            <field name="fel_nombre_comercial"/>
           
         </xpath>
 
