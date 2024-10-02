@@ -14,6 +14,7 @@ class AccountJournal(models.Model):
     _inherit = "account.journal"
     _description = " Agregando campo extra "
 
+    factura_exportacion = fields.Boolean('Factura exportación')
     tipo_factura = fields.Selection([('FACT', 'FACT'),
     ('FCAM', 'FCAM'),
     ('FPEQ', 'FPEQ'),
