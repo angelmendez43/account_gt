@@ -9,6 +9,8 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='code']" position="after">
             <field name="tipo_factura" string="Tipo factura"/>
+            <field name="factura_exportacion"/>
+          
         </xpath>
 
         <!-- <xpath expr="//field[@name='tipo_factura']" position="after">
