@@ -158,19 +158,33 @@ class LibroVentas(models.AbstractModel):
                         if self.env['account.move'].fields_get('fel_numero'):
                             fel_numero = compra.fel_numero if compra.fel_numero else False
                         if fel_serie == False and fel_numero == False:
-                            if compra.payment_reference:
-                                if '-' in compra.payment_reference:
-                                    fel_serie = compra.payment_reference.split('-')[0]
-                                    fel_numero = compra.payment_reference.split('-')[1]
-                                elif '/' in compra.payment_reference:
-                                    fel_serie = compra.payment_reference.split('/')[0]
-                                    fel_numero = compra.payment_reference.split('/')[1]
-                                elif ' ' in compra.payment_reference:
-                                    fel_serie = compra.payment_reference.split(' ')[0]
-                                    fel_numero = compra.payment_reference.split(' ')[1]
+                            if compra.ref:
+                                if '-' in compra.ref:
+                                    fel_serie = compra.ref.split('-')[0]
+                                    fel_numero = compra.ref.split('-')[1]
+                                elif '/' in compra.ref:
+                                    fel_serie = compra.ref.split('/')[0]
+                                    fel_numero = compra.ref.split('/')[1]
+                                elif ' ' in compra.ref:
+                                    fel_serie = compra.ref.split(' ')[0]
+                                    fel_numero = compra.ref.split(' ')[1]
                                 else:
                                     fel_serie = ""
-                                    fel_numero = ""
+                                    fel_numero = ""                                
+                            else:
+                                if compra.payment_reference:
+                                    if '-' in compra.payment_reference:
+                                        fel_serie = compra.payment_reference.split('-')[0]
+                                        fel_numero = compra.payment_reference.split('-')[1]
+                                    elif '/' in compra.payment_reference:
+                                        fel_serie = compra.payment_reference.split('/')[0]
+                                        fel_numero = compra.payment_reference.split('/')[1]
+                                    elif ' ' in compra.payment_reference:
+                                        fel_serie = compra.payment_reference.split(' ')[0]
+                                        fel_numero = compra.payment_reference.split(' ')[1]
+                                    else:
+                                        fel_serie = ""
+                                        fel_numero = ""
 
                         dpi = compra.partner_id.documento_personal_identificacion
                         dic = {
