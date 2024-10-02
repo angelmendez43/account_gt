@@ -68,6 +68,8 @@ class AccountMove(models.Model):
         help="Termino de entrega")  
     nombre_exportador = fields.Char('Nombre exportador')
     codigo_exportador = fields.Char('Código exportador')
+    fel_serie = fields.Char('Serie', copy=False, tracking=True)
+    fel_numero = fields.Char('Número', copy=False, tracking=True)
     
     @api.onchange('consignatario_destinatario_id')
     def _onchange_consignatario_destinatario_id(self):
