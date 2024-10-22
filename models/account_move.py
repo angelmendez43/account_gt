@@ -10,8 +10,8 @@ class AccountMove(models.Model):
         for move in self:
             if vals and move.move_type == "entry" and'liquidacion_id' in vals and vals['liquidacion_id']:
                 vals['liquidacion_id'] = False            
-            res = super(AccountMove, move).write(vals)
-            return res
+        res = super(AccountMove, move).write(vals)
+        return res
     
     if version_info[0] == 13:
         @api.onchange('journal_id')
