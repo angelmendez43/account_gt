@@ -27,11 +27,15 @@
 
         <act_window id="launch_account_gt_libro_ventas"
                     name="Libro de ventas"
-                    binding_model="account.account"
                     res_model="account_gt.libro_ventas.wizard"
                     view_mode="form"
                     target="new"/>
-
+        <record id="launch_account_gt_libro_ventas" model="ir.actions.act_window">
+            <field name="name">Libro de ventas</field>
+            <field name="res_model">account_gt.libro_ventas.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
         <menuitem action="launch_account_gt_libro_ventas" id="menu_reporte_libro_ventas" parent="account.menu_finance_reports"/>
 
     </data>
