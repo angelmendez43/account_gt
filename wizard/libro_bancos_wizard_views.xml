@@ -21,12 +21,14 @@
             </field>
         </record>
 
-        <act_window id="launch_account_gt_libro_bancos"
-                    name="Libro de bancos"
-                    binding_model="account.account"
-                    res_model="account_gt.libro_bancos.wizard"
-                    view_mode="form"
-                    target="new"/>
+        <record id="launch_account_gt_libro_bancos" model="ir.actions.act_window">
+            <field name="name">Libro de bancos</field>
+            <field name="res_model">account_gt.libro_bancos.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_gt_libro_compras_form_view"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="account.model_account_account"/>
+        </record>
 
         <menuitem action="launch_account_gt_libro_bancos" id="menu_reporte_libro_bancos" parent="account.menu_finance_reports"/>
 

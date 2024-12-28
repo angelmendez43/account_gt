@@ -36,7 +36,7 @@
         'wizard/libro_ventas_wizard_views.xml',
         'wizard/libro_bancos_wizard_views.xml',
         'wizard/libro_diario_wizard_views.xml',
-        'wizard/top_diez_proveedores_wizard_views.xml',
+        #'wizard/top_diez_proveedores_wizard_views.xml',
         # 'wizard/libro_conciliacion_bancaria_wizard_views.xml',
         # 'wizard/conciliacion_bancaria_wizard_views.xml',
         'data/ir_sequence_data.xml',

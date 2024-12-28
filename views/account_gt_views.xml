@@ -23,11 +23,9 @@
                 <form string="Liquidación">
                     <header>
                         <button name="conciliar_liquidacion" type="object"
-                                string="Conciliar liquidacion" class="oe_highlight"
-                                attrs="{'invisible': [('state', 'in', ['cancelado','conciliado'])]}"/>
+                                string="Conciliar liquidacion" class="oe_highlight" invisible="state != 'borrador'"/>
                         <button name="cancelar_liquidacion" type="object"
-                                string="Cancelar liquidacion" class="oe_highlight"
-                                attrs="{'invisible': [('state', 'in', ['borrador','cancelado'])]}"/>
+                                string="Cancelar liquidacion" class="oe_highlight" invisible="state != 'conciliado'"/>
                         <!-- <button name="cambiar_borrador" type="object"
                                 string="Cambiar a borrador" class="oe_highlight"
                                 attrs="{'invisible': [('state', 'in', ['borrador','conciliado'])]}"/> -->
